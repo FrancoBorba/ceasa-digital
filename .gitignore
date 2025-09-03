@@ -1,0 +1,24 @@
+# Logs e arquivos de dependência do Node.js (geralmente do front-end)
+# Não importa em que pasta estejam, serão ignorados
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Arquivos de IDEs 
+.idea/
+.vscode/
+*.iml
+.DS_Store
+
+# ---FRONT-END ---
+/frontend/node_modules/
+/frontend/build/
+/frontend/.env.local
+
+
+# --- BACK-END ---
+/backend/target/
+/backend/.mvn/
+application.yml
