@@ -1,0 +1,12 @@
+# Ignorar pastas de versionamento e IDEs
+.git
+.idea/
+.vscode/
+
+# Ignorar a pasta de dependências do Node
+node_modules/
+
+build/
+dist/
+
+.env.local

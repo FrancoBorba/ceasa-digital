@@ -1,0 +1,40 @@
+# Compose básico para o projeto
+# Como rodar cada compose: 
+# Desenvolvimento: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ceasa_db_cont
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    networks:
+      - ceasa-network
+  
+  backend:
+    container_name: ceasa-backend_cont
+    #Baixa a imagem do nosso Dockerfile no backend
+    build: 
+      context: ./backend
+    environment:
+      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
+      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
+      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+    depends_on:
+      - db
+    networks:
+      - ceasa-network
+
+
+# Declaração do volume para persistência de dados do banco
+volumes:
+  postgres_data:
+
+# Declaração da rede customizada para comunicação entre os containers
+networks:
+  ceasa-network:
+    driver: bridge

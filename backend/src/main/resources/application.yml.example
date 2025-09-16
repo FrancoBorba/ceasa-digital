@@ -11,7 +11,7 @@ server:
 spring:
   # Configuração do DataSource (Conexão com o Banco de Dados)
   datasource:
-    url: jdbc:postgresql://localhost:5432/ceasa_digital
+    url: jdbc:postgresql://db:5432/ceasadigital_db 
     username: <SEU_USUARIO_DO_POSTGRES>
     password: <SUA_SENHA_DO_POSTGRES>
 

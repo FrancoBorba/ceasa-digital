@@ -1,0 +1,12 @@
+
+.git
+.idea/
+.vscode/
+
+.target
+
+#Ignorar os arquivos do maven Wrapper
+.mvn/
+mvnw
+mvwn.cmd
+

@@ -1,5 +1,4 @@
-# Logs e arquivos de dependência do Node.js (geralmente do front-end)
-# Não importa em que pasta estejam, serão ignorados
+# Logs e arquivos de dependência do Node.js 
 logs
 *.log
 npm-debug.log*
@@ -22,3 +21,5 @@ yarn-error.log*
 /backend/target/
 /backend/.mvn/
 application.yml
+
+.env
