@@ -3,28 +3,36 @@
 # Cada um deve criar seu próprio 'application.yml' a partir deste.
 # ===================================================================
 
-# Configurações do Servidor
-server:
-  port: 8080 # Porta onde a API vai rodar
-
-# Configurações do Spring
+# Configurações principais da aplicação
 spring:
-  # Configuração do DataSource (Conexão com o Banco de Dados)
-  datasource:
-    url: jdbc:postgresql://db:5432/ceasadigital_db 
-    username: <SEU_USUARIO_DO_POSTGRES>
-    password: <SUA_SENHA_DO_POSTGRES>
-
-  # Configuração do JPA (Java Persistence API)
+  application:
+    name: ceasa-digital-api
+  
+  # Profile ativo - escolha um dos profiles disponíveis:
+  # - test: Banco H2 em memória (para desenvolvimento rápido e testes)
+  # - dev: Banco PostgreSQL (para desenvolvimento com dados persistentes)
+  profiles:
+    active: test  # Altere para 'dev' se quiser usar PostgreSQL
+  
+  # Configuração do JPA (aplicada a todos os profiles)
   jpa:
-    hibernate:
-      ddl-auto: validate # Deixa o Flyway cuidar do banco
-    show-sql: true
-    properties:
-      hibernate:
-        format_sql: true
+    open-in-view: false
 
-  # Configuração do Flyway
-  flyway:
-    baseline-on-migrate: true
-    locations: classpath:db/migration
+# ===================================================================
+# PROFILES DISPONÍVEIS:
+# 
+# 1. Profile TEST (application-test.yml):
+#    - Banco H2 em memória
+#    - Ideal para desenvolvimento rápido e testes
+#    - Console H2 disponível em: http://localhost:8080/h2-console
+#    - Não requer configuração adicional
+#
+# 2. Profile DEV (application-dev.yml):
+#    - Banco PostgreSQL
+#    - Ideal para desenvolvimento com dados persistentes
+#    - Requer configuração do banco PostgreSQL
+#    - Use o Docker Compose para subir o banco
+#
+# Para usar um profile específico, execute:
+# mvn spring-boot:run -Dspring.profiles.active=dev
+# ===================================================================

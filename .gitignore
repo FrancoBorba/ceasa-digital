@@ -21,5 +21,8 @@ yarn-error.log*
 /backend/target/
 /backend/.mvn/
 application.yml
+application-dev.yml
+application-prod.yml
+application-test.yml
 
 .env
