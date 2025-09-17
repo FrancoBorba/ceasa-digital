@@ -26,6 +26,14 @@ spring:
         '[format_sql]': true
         dialect: org.hibernate.dialect.H2Dialect
     database-platform: org.hibernate.dialect.H2Dialect
+    # Executar o script de dados de teste após criar as tabelas
+    defer-datasource-initialization: true
+  
+  # Configurar inicialização de dados para testes
+  sql:
+    init:
+      mode: always
+      data-locations: classpath:db/test/seed.sql
   
   # Desabilitar Flyway para testes com H2
   flyway:
