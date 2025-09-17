@@ -1,13 +1,15 @@
 # Configuração do profile DEV - Banco PostgreSQL para desenvolvimento
-server:
-  port: 8080 
 
 # Configurações do Spring
 spring:
+
+  config:
+    import: optional:file:.env[.properties]
+
   datasource:
-    url: jdbc:postgresql://localhost:5432/ceasa_digital
-    username: your_postgres_username
-    password: your_postgres_password
+    url: ${DEV_DATASOURCE_URL}
+    username: ${DEV_DATASOURCE_USERNAME}
+    password: ${DEV_DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
@@ -28,3 +30,6 @@ logging:
     org.springframework.web: DEBUG
     org.hibernate.SQL: DEBUG
     org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+server:
+  port: ${SERVER_PORT}
