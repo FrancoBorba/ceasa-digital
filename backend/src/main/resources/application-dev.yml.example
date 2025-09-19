@@ -2,14 +2,13 @@
 
 # Configurações do Spring
 spring:
-
   config:
-    import: optional:file:.env[.properties]
+    import: optional:file:../.env[.properties]
 
   datasource:
-    url: ${DEV_DATASOURCE_URL}
-    username: ${DEV_DATASOURCE_USERNAME}
-    password: ${DEV_DATASOURCE_PASSWORD}
+    url: ${DATASOURCE_URL}
+    username: ${DATASOURCE_USERNAME}
+    password: ${DATASOURCE_PASSWORD}
 
   jpa:
     hibernate:
@@ -23,13 +22,6 @@ spring:
     baseline-on-migrate: true
     locations: classpath:db/migration 
     enabled: true
-
-# Configurações de logging (opcional)
-logging:
-  level:
-    org.springframework.web: DEBUG
-    org.hibernate.SQL: DEBUG
-    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
 
 server:
   port: ${SERVER_PORT}

@@ -1,40 +1,93 @@
-# Compose básico para o projeto
-# Como rodar cada compose: 
-# Desenvolvimento: docker-compose -f docker-compose.yml -f docker-compose.dev.yml up --build
+# ================================================================
+# Docker Compose para o projeto CEASA Digital
+# Como rodar: docker-compose up --build
+# ================================================================
 
 services:
-  db:
+  # ====================== Banco de Dados ======================
+  database-ceasa-digital:
     image: postgres:16-alpine
-    container_name: ceasa_db_cont
+    container_name: database-ceasa-digital
+    restart: unless-stopped
     environment:
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
-      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${DATASOURCE_USERNAME}
+      POSTGRES_PASSWORD: ${DATASOURCE_PASSWORD}
+      POSTGRES_DB: ${DATASOURCE_DB}
+    ports:
+      - "${DATASOURCE_EXTERNAL_PORT}:${DATASOURCE_INTERNAL_PORT}"
     volumes:
       - postgres_data:/var/lib/postgresql/data/
+      - ./backend/init.sql:/docker-entrypoint-initdb.d/init.sql
     networks:
       - ceasa-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${DATASOURCE_USERNAME} -d ${DATASOURCE_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
   
+  # ====================== Backend API ======================
   backend:
-    container_name: ceasa-backend_cont
-    #Baixa a imagem do nosso Dockerfile no backend
+    container_name: ceasa-backend-container
     build: 
       context: ./backend
+      dockerfile: Dockerfile
+    restart: unless-stopped
     environment:
-      - SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}
-      - SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}
-      - SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}
+      # Spring Profile
+      - SPRING_PROFILES_ACTIVE=dev
+      
+      # Server Configuration
+      - SERVER_PORT=${SERVER_INTERNAL_PORT}
+      
+      # Database Configuration
+      - DATASOURCE_URL=jdbc:postgresql://database-ceasa-digital:${DATASOURCE_INTERNAL_PORT}/${DATASOURCE_DB}
+      - DATASOURCE_USERNAME=${DATASOURCE_USERNAME}
+      - DATASOURCE_PASSWORD=${DATASOURCE_PASSWORD}
+      - DATASOURCE_DB=${DATASOURCE_DB}
+      
+      # OAuth2 Configuration
+      - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
+      - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
+      - OAUTH2_JWT_DURATION=${OAUTH2_JWT_DURATION}
+      - OAUTH2_CORS_ORIGINS=${OAUTH2_CORS_ORIGINS}
+    ports:
+      - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
     depends_on:
-      - db
+      database-ceasa-digital:
+        condition: service_healthy
     networks:
       - ceasa-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -f http://localhost:${SERVER_INTERNAL_PORT}/actuator/health || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
 
+  # ====================== Frontend ======================
+  frontend:
+    container_name: ceasa-frontend-container
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    networks:
+      - ceasa-network
+    environment:
+      - REACT_APP_API_URL=http://localhost:${SERVER_EXTERNAL_PORT}
 
-# Declaração do volume para persistência de dados do banco
+# ================================================================
+# Volumes e Networks
+# ================================================================
 volumes:
   postgres_data:
+    driver: local
 
-# Declaração da rede customizada para comunicação entre os containers
 networks:
   ceasa-network:
     driver: bridge

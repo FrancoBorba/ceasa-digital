@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/users")
 public class UserController {
 
-    @Value("${DEV_DATASOURCE_URL}")
+    @Value("${DATASOURCE_URL}")
     private String databaseUrl;
 
     @GetMapping("/public")
