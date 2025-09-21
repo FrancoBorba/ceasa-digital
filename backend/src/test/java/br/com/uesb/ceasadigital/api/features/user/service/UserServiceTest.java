@@ -5,6 +5,8 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.when;
 
+import org.mockito.Mockito;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -47,27 +49,11 @@ class UserServiceTest {
         Long roleId = 1L;
         String authority = "ROLE_USER";
 
-        UserDetailsProjection projection = new UserDetailsProjection() {
-            @Override
-            public String getUsername() {
-                return email;
-            }
-
-            @Override
-            public String getPassword() {
-                return password;
-            }
-
-            @Override
-            public Long getRoleId() {
-                return roleId;
-            }
-
-            @Override
-            public String getAuthority() {
-                return authority;
-            }
-        };
+        UserDetailsProjection projection = Mockito.mock(UserDetailsProjection.class);
+        when(projection.getUsername()).thenReturn(email);
+        when(projection.getPassword()).thenReturn(password);
+        when(projection.getRoleId()).thenReturn(roleId);
+        when(projection.getAuthority()).thenReturn(authority);
 
         userDetailsProjections.add(projection);
         when(userRepository.searchUserAndRolesByEmail(email)).thenReturn(userDetailsProjections);
@@ -106,8 +92,15 @@ class UserServiceTest {
         String email = "admin@example.com";
         String password = "admin123";
 
-        UserDetailsProjection projection1 = createUserDetailsProjection(email, password, 1L, "ROLE_USER");
-        UserDetailsProjection projection2 = createUserDetailsProjection(email, password, 2L, "ROLE_ADMIN");
+        UserDetailsProjection projection1 = Mockito.mock(UserDetailsProjection.class);
+        when(projection1.getUsername()).thenReturn(email);
+        when(projection1.getPassword()).thenReturn(password);
+        when(projection1.getRoleId()).thenReturn(1L);
+        when(projection1.getAuthority()).thenReturn("ROLE_USER");
+        
+        UserDetailsProjection projection2 = Mockito.mock(UserDetailsProjection.class);
+        when(projection2.getRoleId()).thenReturn(2L);
+        when(projection2.getAuthority()).thenReturn("ROLE_ADMIN");
 
         userDetailsProjections.add(projection1);
         userDetailsProjections.add(projection2);
@@ -121,29 +114,5 @@ class UserServiceTest {
         assertEquals(email, result.getUsername());
         assertEquals(password, result.getPassword());
         assertEquals(2, result.getAuthorities().size());
-    }
-
-    private UserDetailsProjection createUserDetailsProjection(String username, String password, Long roleId, String authority) {
-        return new UserDetailsProjection() {
-            @Override
-            public String getUsername() {
-                return username;
-            }
-
-            @Override
-            public String getPassword() {
-                return password;
-            }
-
-            @Override
-            public Long getRoleId() {
-                return roleId;
-            }
-
-            @Override
-            public String getAuthority() {
-                return authority;
-            }
-        };
     }
 }
