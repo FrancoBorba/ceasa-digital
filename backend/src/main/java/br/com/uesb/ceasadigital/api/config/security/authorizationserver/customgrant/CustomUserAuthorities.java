@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.config.security.customgrant;
+package br.com.uesb.ceasadigital.api.config.security.authorizationserver.customgrant;
 
 import java.util.Collection;
 
