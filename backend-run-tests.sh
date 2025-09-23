@@ -62,11 +62,17 @@ show_progress_bar() {
 show_test_summary() {
     local test_output="$1"
     
-    # Extrair informações dos testes
-    local total_tests=$(echo "$test_output" | grep -o "Tests run: [0-9]*" | tail -1 | grep -o "[0-9]*")
-    local failures=$(echo "$test_output" | grep -o "Failures: [0-9]*" | tail -1 | grep -o "[0-9]*")
-    local errors=$(echo "$test_output" | grep -o "Errors: [0-9]*" | tail -1 | grep -o "[0-9]*")
-    local skipped=$(echo "$test_output" | grep -o "Skipped: [0-9]*" | tail -1 | grep -o "[0-9]*")
+    # Extrair informações dos testes com melhor parsing
+    local total_tests=$(echo "$test_output" | grep -E "Tests run: [0-9]+," | tail -1 | sed 's/.*Tests run: \([0-9]*\).*/\1/')
+    local failures=$(echo "$test_output" | grep -E "Failures: [0-9]+," | tail -1 | sed 's/.*Failures: \([0-9]*\).*/\1/')
+    local errors=$(echo "$test_output" | grep -E "Errors: [0-9]+," | tail -1 | sed 's/.*Errors: \([0-9]*\).*/\1/')
+    local skipped=$(echo "$test_output" | grep -E "Skipped: [0-9]+" | tail -1 | sed 's/.*Skipped: \([0-9]*\).*/\1/')
+    
+    # Definir valores padrão se estiverem vazios
+    total_tests=${total_tests:-0}
+    failures=${failures:-0}
+    errors=${errors:-0}
+    skipped=${skipped:-0}
     
     local passed=$((total_tests - failures - errors - skipped))
     
