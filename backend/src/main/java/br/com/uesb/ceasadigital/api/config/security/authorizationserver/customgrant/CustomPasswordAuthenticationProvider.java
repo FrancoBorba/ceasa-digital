@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.config.security.customgrant;
+package br.com.uesb.ceasadigital.api.config.security.authorizationserver.customgrant;
 
 import java.security.Principal;
 import java.util.HashSet;
@@ -19,6 +19,7 @@ import org.springframework.security.oauth2.core.OAuth2AccessToken;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
+import org.springframework.security.oauth2.core.OAuth2RefreshToken;
 import org.springframework.security.oauth2.core.OAuth2Token;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
@@ -124,11 +125,23 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		} else {
 			authorizationBuilder.accessToken(accessToken);
 		}
+
+		//-----------REFRESH TOKEN----------
+		OAuth2RefreshToken refreshToken = null;
+		if (registeredClient.getAuthorizationGrantTypes().contains(AuthorizationGrantType.REFRESH_TOKEN)) {
+			OAuth2TokenContext refreshTokenContext = tokenContextBuilder.tokenType(OAuth2TokenType.REFRESH_TOKEN).build();
+			OAuth2Token generatedRefreshToken = this.tokenGenerator.generate(refreshTokenContext);
+			if (generatedRefreshToken != null) {
+				refreshToken = new OAuth2RefreshToken(generatedRefreshToken.getTokenValue(),
+						generatedRefreshToken.getIssuedAt(), generatedRefreshToken.getExpiresAt());
+				authorizationBuilder.refreshToken(refreshToken);
+			}
+		}
 				
 		OAuth2Authorization authorization = authorizationBuilder.build();
 		this.authorizationService.save(authorization);
 		
-		return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken);
+		return new OAuth2AccessTokenAuthenticationToken(registeredClient, clientPrincipal, accessToken, refreshToken);
 	}
 
 	@Override

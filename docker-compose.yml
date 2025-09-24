@@ -50,7 +50,10 @@ services:
       - OAUTH2_CLIENT_ID=${OAUTH2_CLIENT_ID}
       - OAUTH2_CLIENT_SECRET=${OAUTH2_CLIENT_SECRET}
       - OAUTH2_JWT_DURATION=${OAUTH2_JWT_DURATION}
+      - OAUTH2_REFRESH_DURATION=${OAUTH2_REFRESH_DURATION}
       - OAUTH2_CORS_ORIGINS=${OAUTH2_CORS_ORIGINS}
+      - OAUTH2_JWK_SET_URI=${OAUTH2_JWK_SET_URI}
+      - OAUTH2_ISSUER_URI=${OAUTH2_ISSUER_URI}
     ports:
       - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
     depends_on:
@@ -59,11 +62,11 @@ services:
     networks:
       - ceasa-network
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:${SERVER_INTERNAL_PORT}/actuator/health || exit 1"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+      test: ["CMD-SHELL", "netstat -tlnp | grep :${SERVER_INTERNAL_PORT} || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 20s
 
   # ====================== Frontend ======================
   frontend:
@@ -73,13 +76,14 @@ services:
       dockerfile: Dockerfile
     restart: unless-stopped
     ports:
-      - "3000:80"
+      - "${FRONTEND_EXTERNAL_PORT}:${FRONTEND_INTERNAL_PORT}"
     depends_on:
-      - backend
+      backend:
+        condition: service_healthy
     networks:
       - ceasa-network
     environment:
-      - REACT_APP_API_URL=http://localhost:${SERVER_EXTERNAL_PORT}
+      - VITE_API_URL=http://localhost:${SERVER_EXTERNAL_PORT}
 
 # ================================================================
 # Volumes e Networks

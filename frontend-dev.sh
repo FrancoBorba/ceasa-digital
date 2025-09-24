@@ -59,6 +59,9 @@ if [[ "$DB_STATUS" == "✅" && "$BACKEND_STATUS" == "✅" ]]; then
     echo "   - Ver logs todos: docker-compose logs -f"
     echo "   - Parar: docker-compose down"
     echo "   - Status: docker-compose ps"
+    echo ""
+    echo "🚀 Iniciando frontend..."
+    cd frontend/src && npm install && npm run dev
 else
     echo "❌ Erro ao iniciar serviços"
     echo "📋 Verificando logs..."

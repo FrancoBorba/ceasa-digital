@@ -1,4 +1,4 @@
-# Configuração do profile TEST - Banco H2 em memória para testes
+# Dados de conexão do BD H2
 spring:
 
   config:
