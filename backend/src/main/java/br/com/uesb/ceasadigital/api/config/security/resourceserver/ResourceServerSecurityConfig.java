@@ -80,6 +80,7 @@ public class ResourceServerSecurityConfig {
 					"/webjars/**"          // libraries JS/CSS
 				).permitAll()
 
+        // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
 
 				// Internal endpoints for error delegation (protected from external access)
