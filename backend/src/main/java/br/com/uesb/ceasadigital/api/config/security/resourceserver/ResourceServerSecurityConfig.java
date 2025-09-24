@@ -80,6 +80,8 @@ public class ResourceServerSecurityConfig {
 					"/webjars/**"          // libraries JS/CSS
 				).permitAll()
 
+        .requestMatchers("/actuator/**").permitAll()
+
 				// Internal endpoints for error delegation (protected from external access)
 				.requestMatchers("/error/auth").access((authentication, context) -> {
 					// Only allow internal forwards (when attributes are set by our components)
