@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.config.security;
+package br.com.uesb.ceasadigital.api.config.security.authorizationserver;
 
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
@@ -41,20 +41,23 @@ import org.springframework.security.oauth2.server.authorization.token.Delegating
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.JwtGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2AccessTokenGenerator;
+import org.springframework.security.oauth2.server.authorization.token.OAuth2RefreshTokenGenerator;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 
-import br.com.uesb.ceasadigital.api.config.security.customgrant.CustomPasswordAuthenticationConverter;
-import br.com.uesb.ceasadigital.api.config.security.customgrant.CustomPasswordAuthenticationProvider;
-import br.com.uesb.ceasadigital.api.config.security.customgrant.CustomUserAuthorities;
+import br.com.uesb.ceasadigital.api.config.security.authorizationserver.customgrant.CustomPasswordAuthenticationConverter;
+import br.com.uesb.ceasadigital.api.config.security.authorizationserver.customgrant.CustomPasswordAuthenticationProvider;
+import br.com.uesb.ceasadigital.api.config.security.authorizationserver.customgrant.CustomUserAuthorities;
+import br.com.uesb.ceasadigital.api.config.security.authorizationserver.filters.OAuth2ResponseInterceptorFilter;
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 @Configuration
-public class AuthorizationServerConfig {
+public class AuthorizationServerSecurityConfig {
 
 	@Value("${security.client-id}")
 	private String clientId;
@@ -65,11 +68,17 @@ public class AuthorizationServerConfig {
 	@Value("${security.jwt.duration}")
 	private Integer jwtDurationSeconds;
 
+	@Value("${security.jwt.refresh-duration:7200}")
+	private Integer refreshTokenDurationSeconds;
+
 	@Autowired
 	private UserDetailsService userDetailsService;
 
 	@Autowired
 	private CorsConfigurationSource corsConfigurationSource;
+
+	@Autowired
+	private OAuth2ResponseInterceptorFilter oauth2ResponseInterceptorFilter;
 
 	@Bean
 	@Order(2)
@@ -87,6 +96,9 @@ public class AuthorizationServerConfig {
 		
 		// Configure CORS explicitly using the same configuration source
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+		
+		// Add filter to intercept OAuth2 responses
+		http.addFilterBefore(oauth2ResponseInterceptorFilter, LogoutFilter.class);
 		// @formatter:on
 
 		return http.build();
@@ -117,6 +129,7 @@ public class AuthorizationServerConfig {
 			.scope("read")
 			.scope("write")
 			.authorizationGrantType(new AuthorizationGrantType("password"))
+			.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 			.tokenSettings(tokenSettings())
 			.clientSettings(clientSettings())
 			.build();
@@ -131,6 +144,8 @@ public class AuthorizationServerConfig {
 		return TokenSettings.builder()
 			.accessTokenFormat(OAuth2TokenFormat.SELF_CONTAINED)
 			.accessTokenTimeToLive(Duration.ofSeconds(jwtDurationSeconds))
+			.refreshTokenTimeToLive(Duration.ofSeconds(refreshTokenDurationSeconds))
+			.reuseRefreshTokens(false)
 			.build();
 		// @formatter:on
 	}
@@ -151,7 +166,8 @@ public class AuthorizationServerConfig {
 		JwtGenerator jwtGenerator = new JwtGenerator(jwtEncoder);
 		jwtGenerator.setJwtCustomizer(tokenCustomizer());
 		OAuth2AccessTokenGenerator accessTokenGenerator = new OAuth2AccessTokenGenerator();
-		return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator);
+		OAuth2RefreshTokenGenerator refreshTokenGenerator = new OAuth2RefreshTokenGenerator();
+		return new DelegatingOAuth2TokenGenerator(jwtGenerator, accessTokenGenerator, refreshTokenGenerator);
 	}
 
 	@Bean

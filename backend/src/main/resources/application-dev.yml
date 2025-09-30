@@ -1,6 +1,4 @@
-# Configuração do profile DEV - Banco PostgreSQL para desenvolvimento
-
-# Configurações do Spring
+#Configurações do Spring
 spring:
   config:
     import: optional:file:../.env[.properties]
@@ -24,4 +22,4 @@ spring:
     enabled: true
 
 server:
-  port: ${SERVER_PORT}
+  port: ${SERVER_PORT} 

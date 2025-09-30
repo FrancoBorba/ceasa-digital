@@ -18,6 +18,7 @@
     <mapstruct.version>1.5.5.Final</mapstruct.version>
     <jjwt.version>0.12.5</jjwt.version>
     <springdoc.version>2.6.0</springdoc.version>
+    <jacoco.version>0.8.11</jacoco.version>
   </properties>
   <dependencies>
 
@@ -117,6 +118,15 @@
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
     </dependency>
+    
+    <!-- Dependências adicionais para testes -->
+    <dependency>
+      <groupId>org.mockito</groupId>
+      <artifactId>mockito-inline</artifactId>
+      <version>5.2.0</version>
+      <scope>test</scope>
+    </dependency>
+    
   </dependencies>
 
   <build>
@@ -141,6 +151,48 @@
           </annotationProcessorPaths>
         </configuration>
       </plugin>
+      
+      <!-- Plugin JaCoCo para cobertura de testes -->
+      <plugin>
+        <groupId>org.jacoco</groupId>
+        <artifactId>jacoco-maven-plugin</artifactId>
+        <version>${jacoco.version}</version>
+        <executions>
+          <execution>
+            <goals>
+              <goal>prepare-agent</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>report</id>
+            <phase>test</phase>
+            <goals>
+              <goal>report</goal>
+            </goals>
+          </execution>
+          <execution>
+            <id>jacoco-check</id>
+            <goals>
+              <goal>check</goal>
+            </goals>
+            <configuration>
+              <rules>
+                <rule>
+                  <element>PACKAGE</element>
+                  <limits>
+                    <limit>
+                      <counter>LINE</counter>
+                      <value>COVEREDRATIO</value>
+                      <minimum>0.50</minimum>
+                    </limit>
+                  </limits>
+                </rule>
+              </rules>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      
     </plugins>
   </build>
 
