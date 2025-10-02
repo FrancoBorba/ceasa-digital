@@ -49,9 +49,6 @@ public class User implements UserDetails {
   @OneToMany(mappedBy = "usuario")
   private List<Pedido> pedidos = new ArrayList<>();
 
-  @OneToMany(mappedBy = "entregador")
-  private List<Pedido> pedidosEntregadores = new ArrayList<>();
-
   /* Getters and Setters */
 
   public Long getId() {
@@ -88,10 +85,6 @@ public class User implements UserDetails {
 
   public List<Pedido> getPedidos() {
     return pedidos;
-  }
-
-  public List<Pedido> getPedidosEntregadores() {
-    return pedidosEntregadores;
   }
 
   public Set<Role> getRoles() {

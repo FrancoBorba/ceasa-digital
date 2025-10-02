@@ -23,14 +23,13 @@ public class Pedido {
   private Long id;
 
   @ManyToOne
-  @JoinColumn(name = "user_id")
+  @JoinColumn(name = "usuario_id")
   private User usuario;
 
+  /*
   @ManyToOne
   @JoinColumn(name = "entregador_id")
-  private User entregador;
-
-  /*
+  private Entregador entregador;
   @ManyToOne
   @JoinColumn(name = "endereco_id")
   private Endereco endereco;
@@ -40,11 +39,12 @@ public class Pedido {
   private Cupom cupom;
   */
 
+  @Column(name = "valor_total", columnDefinition = "DECIMAL(10, 2)")
   private BigDecimal valorTotal;
 
   private PedidoStatus status;
 
-  @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+  @Column(name = "data_pedido", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
   private Instant dataPedido;
 
   // Getters and Setters
@@ -62,14 +62,6 @@ public class Pedido {
 
   public void setUsuario(User usuario) {
     this.usuario = usuario;
-  }
-
-  public User getEntregador() {
-    return entregador;
-  }
-
-  public void setEntregador(User entregador) {
-    this.entregador = entregador;
   }
 
   public BigDecimal getValorTotal() {
