@@ -21,6 +21,7 @@
 									"if (responseCode.code >= 200 && responseCode.code < 300) {\r",
 									"   var json = JSON.parse(responseBody);\r",
 									"   postman.setEnvironmentVariable('token', json.access_token);\r",
+									"   postman.setEnvironmentVariable('refresh_token', json.refresh_token)\r",
 									"} "
 								],
 								"type": "text/javascript",
@@ -92,6 +93,22 @@
 				},
 				{
 					"name": "Refresh Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (responseCode.code >= 200 && responseCode.code < 300) {",
+									"   var json = JSON.parse(responseBody);",
+									"   postman.setEnvironmentVariable('token', json.access_token);",
+									"   postman.setEnvironmentVariable('refresh_token', json.refresh_token)",
+									"} "
+								],
+								"type": "text/javascript",
+								"packages": {}
+							}
+						}
+					],
 					"request": {
 						"auth": {
 							"type": "basic",
@@ -230,6 +247,165 @@
 									"path": [
 										"users",
 										"public"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "Pedido",
+					"item": [
+						{
+							"name": "PedidoById",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {},
+										"requests": {}
+									}
+								}
+							],
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"id\": 2,\n    \"usuario\": {\n        \"id\": 2,\n        \"email\": \"marcus.cesar\"\n    },\n    \"valor_total\": 200.00,\n    \"status\": \"AGUARDANDO_PAGAMENTO\",\n    \"data_pedido\": \"2025-01-01T13:00:00Z\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{rshost}}/pedidos/2",
+									"host": [
+										"{{rshost}}"
+									],
+									"path": [
+										"pedidos",
+										"2"
+									]
+								},
+								"description": "This is a GET request and it is used to \"get\" data from an endpoint. There is no request body for a GET request, but you can use query parameters to help specify the resource you want data on (e.g., in this request, we have `id=1`).\n\nA successful GET response will have a `200 OK` status, and should include some kind of response body - for example, HTML web content or JSON data."
+							},
+							"response": []
+						},
+						{
+							"name": "Insert Pedido",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"valor_total\": \"3000\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{rshost}}/pedidos",
+									"host": [
+										"{{rshost}}"
+									],
+									"path": [
+										"pedidos"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Update Pedido",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"valor_total\": 3000,\n    \"status\": \"AGUARDANDO_PAGAMENTO\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "{{rshost}}/pedidos/7",
+									"host": [
+										"{{rshost}}"
+									],
+									"path": [
+										"pedidos",
+										"7"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "New Request",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "{{token}}",
+											"type": "string"
+										}
+									]
+								},
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "{{rshost}}/pedidos/7",
+									"host": [
+										"{{rshost}}"
+									],
+									"path": [
+										"pedidos",
+										"7"
 									]
 								}
 							},
