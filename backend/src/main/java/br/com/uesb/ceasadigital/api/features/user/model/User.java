@@ -1,13 +1,16 @@
 package br.com.uesb.ceasadigital.api.features.user.model;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,13 +20,15 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
 @Profile({"test", "dev"})
 public class User implements UserDetails {
-  
+
+/* Base fiels for User */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
@@ -38,6 +43,16 @@ public class User implements UserDetails {
   @ManyToMany
   @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
+
+/* Other Fields */
+
+  @OneToMany(mappedBy = "usuario")
+  private List<Pedido> pedidos = new ArrayList<>();
+
+  @OneToMany(mappedBy = "entregador")
+  private List<Pedido> pedidosEntregadores = new ArrayList<>();
+
+  /* Getters and Setters */
 
   public Long getId() {
     return id;
@@ -69,6 +84,14 @@ public class User implements UserDetails {
 
   public void setPassword(String password) {
     this.password = password;
+  }
+
+  public List<Pedido> getPedidos() {
+    return pedidos;
+  }
+
+  public List<Pedido> getPedidosEntregadores() {
+    return pedidosEntregadores;
   }
 
   public Set<Role> getRoles() {
