@@ -135,6 +135,7 @@ public class ResourceServerSecurityConfig {
 
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    jwtAuthenticationConverter.setPrincipalClaimName("username");
 		return jwtAuthenticationConverter;
 	}
 
