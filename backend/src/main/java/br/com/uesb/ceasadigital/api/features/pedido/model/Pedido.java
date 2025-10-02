@@ -7,6 +7,8 @@ import br.com.uesb.ceasadigital.api.features.pedido.model.enums.PedidoStatus;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -30,6 +32,7 @@ public class Pedido {
   @ManyToOne
   @JoinColumn(name = "entregador_id")
   private Entregador entregador;
+  
   @ManyToOne
   @JoinColumn(name = "endereco_id")
   private Endereco endereco;
@@ -42,6 +45,7 @@ public class Pedido {
   @Column(name = "valor_total", columnDefinition = "DECIMAL(10, 2)")
   private BigDecimal valorTotal;
 
+  @Enumerated(EnumType.STRING)
   private PedidoStatus status;
 
   @Column(name = "data_pedido", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
