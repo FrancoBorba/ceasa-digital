@@ -80,6 +80,9 @@ public class ResourceServerSecurityConfig {
 					"/webjars/**"          // libraries JS/CSS
 				).permitAll()
 
+        .requestMatchers("/api/v1/products").permitAll()
+        .requestMatchers("/api/v1/products/{id}").permitAll()
+
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
 
