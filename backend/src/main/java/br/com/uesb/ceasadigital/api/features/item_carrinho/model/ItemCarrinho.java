@@ -6,7 +6,7 @@ import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
-import br.com.uesb.ceasadigital.api.features.Carrinho.model.Carrinho;
+import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -41,7 +41,7 @@ public class ItemCarrinho {
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
 
-  
+
 
   public Long getId() {
     return id;

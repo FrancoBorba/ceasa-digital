@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.features.Carrinho.model;
+package br.com.uesb.ceasadigital.api.features.carrinho.model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
