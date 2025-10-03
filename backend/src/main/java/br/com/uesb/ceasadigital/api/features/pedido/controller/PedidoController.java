@@ -11,6 +11,7 @@ import br.com.uesb.ceasadigital.api.features.pedido.service.PedidoService;
 
 import jakarta.validation.Valid;
 import java.net.URI;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +31,12 @@ public class PedidoController {
 
   @Autowired
   private PedidoService pedidoService;
+
+  @GetMapping()
+  @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+  public ResponseEntity<List<PedidoResponseDTO>> getAllPedidosByCurrentUser() {
+    return ResponseEntity.ok(pedidoService.getAllPedidosByCurrentUser());
+  }
 
   @GetMapping(value ="/{id}")
   @PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")

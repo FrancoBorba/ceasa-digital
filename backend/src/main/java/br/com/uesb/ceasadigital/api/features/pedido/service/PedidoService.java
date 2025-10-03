@@ -1,6 +1,7 @@
 package br.com.uesb.ceasadigital.api.features.pedido.service;
 
 import java.time.Instant;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -84,6 +85,19 @@ public class PedidoService {
     }
     
     return pedidoRepository.findByIdAndUsuarioId(pedidoId, user.getId()).isPresent();
+  }
+
+  @Transactional(readOnly = true)
+  public List<PedidoResponseDTO> getAllPedidosByCurrentUser() {
+    User currentUser = userService.getCurrentUser();
+    if (currentUser == null) {
+      throw new RuntimeException("User not authenticated");
+    }
+    
+    List<Pedido> pedidos = pedidoRepository.findByUsuarioId(currentUser.getId());
+    return pedidos.stream()
+        .map(PedidoResponseDTO::new)
+        .toList();
   }
 
   @Transactional(propagation = Propagation.SUPPORTS)
