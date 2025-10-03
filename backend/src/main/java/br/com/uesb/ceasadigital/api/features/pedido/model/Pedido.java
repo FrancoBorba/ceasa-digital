@@ -48,7 +48,9 @@ public class Pedido {
   @Enumerated(EnumType.STRING)
   private PedidoStatus status;
 
-  @Column(name = "data_pedido", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+  // Tava dando erro então mudei de  @Column(name = "data_pedido", columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+  // Para:
+  @Column(name = "data_pedido", columnDefinition = "TIMESTAMP")
   private Instant dataPedido;
 
   // Getters and Setters
