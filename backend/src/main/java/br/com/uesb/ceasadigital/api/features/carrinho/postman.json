@@ -1,0 +1,132 @@
+{
+  "info": {
+    "name": "Carrinho API Tests",
+    "description": "Coleção de testes para a API de Carrinho",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar todos os carrinhos",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar carrinho por ID",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Buscar carrinho por ID do usuário",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos/usuario/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos", "usuario", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Criar novo carrinho",
+      "request": {
+        "method": "POST",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuarioId\": 1\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Atualizar carrinho",
+      "request": {
+        "method": "PUT",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"usuarioId\": 2\n}"
+        },
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos", "1"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Deletar carrinho",
+      "request": {
+        "method": "DELETE",
+        "header": [
+          {
+            "key": "Content-Type",
+            "value": "application/json"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/api/v1/carrinhos/1",
+          "host": ["{{base_url}}"],
+          "path": ["api", "v1", "carrinhos", "1"]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    }
+  ]
+}
