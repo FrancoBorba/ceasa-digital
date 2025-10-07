@@ -10,6 +10,9 @@ import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
@@ -18,12 +21,15 @@ import jakarta.persistence.Table;
 @Table(name = "tb_carrinho_itens")
 public class ItemCarrinho {
 
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @ManyToOne // Muitos itens pertencem a um carrinho
   @JoinColumn(name = "carrinho_id" , nullable = false)
   private Carrinho carrinho;
 
+  @ManyToOne // Muitos itens pertencem a uma oferta de produtor
   @JoinColumn(name = "oferta_produtor_id" , nullable = false)
   private OfertaProdutor ofertaProdutor;
 
