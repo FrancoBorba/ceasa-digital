@@ -29,7 +29,8 @@ public class CarrinhoService {
 
     private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
 
-     public CarrinhoResponseDTO findCarrinho() {
+    @Transactional(readOnly = true)
+    public CarrinhoResponseDTO findCarrinho() {
 
         Carrinho carrinho = getCarrinho();
 
