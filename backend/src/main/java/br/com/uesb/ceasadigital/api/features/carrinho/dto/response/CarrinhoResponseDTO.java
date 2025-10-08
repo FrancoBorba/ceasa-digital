@@ -1,7 +1,9 @@
 package br.com.uesb.ceasadigital.api.features.carrinho.dto.response;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
+import br.com.uesb.ceasadigital.api.features.item_carrinho.dto.response.CarrinhoItemResponseDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class CarrinhoResponseDTO {
@@ -20,6 +22,11 @@ public class CarrinhoResponseDTO {
 
     @Schema(description = "Data e hora da última atualização do carrinho", example = "2024-01-15T14:45:00")
     private LocalDateTime atualizadoEm;
+
+  
+    private List<CarrinhoItemResponseDTO> itens;
+
+  
 
     // Getters and Setters
     public Long getId() {
@@ -60,5 +67,12 @@ public class CarrinhoResponseDTO {
 
     public void setAtualizadoEm(LocalDateTime atualizadoEm) {
         this.atualizadoEm = atualizadoEm;
+    }  
+    public List<CarrinhoItemResponseDTO> getItens() {
+      return itens;
+    }
+
+    public void setItens(List<CarrinhoItemResponseDTO> itens) {
+      this.itens = itens;
     }
 }
