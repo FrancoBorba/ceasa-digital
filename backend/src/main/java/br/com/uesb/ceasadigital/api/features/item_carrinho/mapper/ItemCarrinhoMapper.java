@@ -1,12 +1,12 @@
 package br.com.uesb.ceasadigital.api.features.item_carrinho.mapper;
 
-import java.util.List;
+
 
 import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
+import org.mapstruct.Mapping;
 
-import br.com.uesb.ceasadigital.api.features.item_carrinho.dto.request.CarrinhoAddItemRequestDTO;
-import br.com.uesb.ceasadigital.api.features.item_carrinho.dto.request.CarrinhoUpdateItemRequestDTO;
+
+
 import br.com.uesb.ceasadigital.api.features.item_carrinho.dto.response.CarrinhoItemResponseDTO;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 
@@ -14,12 +14,11 @@ import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 public interface ItemCarrinhoMapper {
   
 
-    ItemCarrinho toEntity(CarrinhoAddItemRequestDTO requestDTO);
 
+    @Mapping(source = "precoUnitarioArmazenado", target = "precoUnitario")
+    @Mapping(target = "subTotal", ignore = true)
     CarrinhoItemResponseDTO toResponseDTO(ItemCarrinho itemCarrinho);
-
-    void updateEntityFromDto(CarrinhoUpdateItemRequestDTO updateDTO, @MappingTarget ItemCarrinho itemCarrinho);
-
-    List<CarrinhoItemResponseDTO> toResponseDTOList(List<ItemCarrinho> itemList);
+    
+  
   
 }
