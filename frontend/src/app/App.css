@@ -1,10 +1,17 @@
 @import "tailwindcss";
 
+@theme {
+  --color-ceasa-green: #8EC340;
+  --height-100: 100px;
+  --height-60: 80px;
+  --width-60: 80px;
+}
+
 #root {
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
 }
 
 .logo {
