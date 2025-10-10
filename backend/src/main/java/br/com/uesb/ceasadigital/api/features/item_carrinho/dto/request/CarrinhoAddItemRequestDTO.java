@@ -25,13 +25,13 @@ public class CarrinhoAddItemRequestDTO {
   )
   BigDecimal quantidade; // pensei em BigDecimal pq como é kilo pode ser 1,5 kg 
 
-  public Long getProductId() {
-    return ofertaProdutorId;
-  }
+    public Long getOfertaProdutorId() {
+        return ofertaProdutorId;
+    }
 
-  public void setProductId(Long ofertaProdutorId) {
-    this.ofertaProdutorId = ofertaProdutorId;
-  }
+    public void setOfertaProdutorId(Long ofertaProdutorId) {
+        this.ofertaProdutorId = ofertaProdutorId;
+    }
 
   public BigDecimal getQuantidade() {
     return quantidade;
