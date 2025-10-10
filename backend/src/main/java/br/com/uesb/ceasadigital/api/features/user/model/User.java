@@ -1,11 +1,14 @@
 package br.com.uesb.ceasadigital.api.features.user.model;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,12 +36,30 @@ public class User implements UserDetails {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
+  @Column(nullable = false)
   private String name;
 
   @Column(unique = true)
   private String email;
 
+  @Column(nullable = false)
   private String password;
+
+  @Column(length=20)
+  private String telefone; 
+
+  @Column(length=11)
+  private String cpf;
+  
+  private boolean ativo;
+
+  @CreationTimestamp
+  @Column(name = "criado_em")
+  private LocalDateTime criadoEm;
+
+  @UpdateTimestamp
+  @Column(name = "atualizado_em")
+  private LocalDateTime atualizadoEm;
 
   @ManyToMany
   @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))

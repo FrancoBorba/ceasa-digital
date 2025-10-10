@@ -77,7 +77,7 @@ public class ResourceServerSecurityConfig {
 					"/swagger-ui/**",      // Interface of Swagger UI
 					"/v3/api-docs/**",     // Configuration of the API (JSON)
 					"/swagger-resources/**", // Resources of Swagger
-					"/webjars/**"          // libraries JS/CSS
+					"/webjars/**"          // libraries JS/CSS				
 				).permitAll()
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
@@ -85,6 +85,7 @@ public class ResourceServerSecurityConfig {
 
         .requestMatchers("/api/v1/products").permitAll()
         .requestMatchers("/api/v1/products/{id}").permitAll()
+		.requestMatchers("/auth/**").permitAll()
 
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
