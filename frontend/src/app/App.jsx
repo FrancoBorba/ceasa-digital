@@ -1,11 +1,11 @@
 import React from 'react'
 import './App.css'
-import Header from './layouts/header/header.jsx'
+import Home from './pages/Home/Home.jsx'
 
 function App() {
   return (
     <>
-      <Header />
+      <Home />
     </>
   )
 }
