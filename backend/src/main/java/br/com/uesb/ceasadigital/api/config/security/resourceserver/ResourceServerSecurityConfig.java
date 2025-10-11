@@ -80,6 +80,13 @@ public class ResourceServerSecurityConfig {
 					"/webjars/**"          // libraries JS/CSS
 				).permitAll()
 
+				// OAuth2 Documentation endpoints (read-only for Swagger)
+				.requestMatchers("/oauth2-docs/**").permitAll()
+
+        .requestMatchers("/api/v1/products").permitAll()
+        .requestMatchers("/api/v1/products/{id}").permitAll()
+
+        // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
 
 				// Internal endpoints for error delegation (protected from external access)
@@ -134,6 +141,7 @@ public class ResourceServerSecurityConfig {
 
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    jwtAuthenticationConverter.setPrincipalClaimName("username");
 		return jwtAuthenticationConverter;
 	}
 

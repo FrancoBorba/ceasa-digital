@@ -4,17 +4,21 @@ import java.time.Instant;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
 import org.springframework.security.oauth2.core.OAuth2Error;
 import org.springframework.security.oauth2.server.resource.InvalidBearerTokenException;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.common.response.ErrorResponse;
+import br.com.uesb.ceasadigital.api.common.response.ValidationError;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -34,6 +38,57 @@ public class ControllerExceptionHandler {
     HttpStatus status = HttpStatus.CONFLICT; // 409
     ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
     return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(MethodArgumentNotValidException.class)
+  public ResponseEntity<ErrorResponse> methodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
+    HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY; // 422
+    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid request" , request.getRequestURI());
+    for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
+      err.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
+    }
+    return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(HttpMessageNotReadableException.class)
+  public ResponseEntity<ErrorResponse> httpMessageNotReadable(HttpMessageNotReadableException e, HttpServletRequest request) {
+    HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY; // 422
+    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid JSON format" , request.getRequestURI());
+    
+    String errorMessage = e.getMessage();
+    String fieldName = "body";
+    String customMessage = "Invalid JSON format";
+    
+    // Check for enum deserialization errors
+    if (errorMessage != null && errorMessage.contains("Cannot deserialize value of type")) {
+      if (errorMessage.contains("PedidoStatus")) {
+        fieldName = "status";
+        customMessage = "Status had to be one of the following values: AGUARDANDO_PAGAMENTO, PAGO, EM_TRANSPORTE, ENTREGUE, CANCELADO";
+      } else if (errorMessage.contains("from String")) {
+        // Extract the invalid value from the error message
+        String invalidValue = extractInvalidValue(errorMessage);
+        if (invalidValue != null) {
+          customMessage = "Invalid value '" + invalidValue + "' provided";
+        }
+      }
+    }
+    
+    err.addValidationError(fieldName, customMessage);
+    return ResponseEntity.status(status).body(err);
+  }
+  
+  private String extractInvalidValue(String errorMessage) {
+    // Extract value from: "from String \"PAG\"" -> "PAG"
+    try {
+      int startIndex = errorMessage.indexOf("from String \"") + 13;
+      int endIndex = errorMessage.indexOf("\"", startIndex);
+      if (startIndex > 12 && endIndex > startIndex) {
+        return errorMessage.substring(startIndex, endIndex);
+      }
+    } catch (Exception ex) {
+      // If extraction fails, return null
+    }
+    return null;
   }
 
   @ExceptionHandler(Exception.class)
