@@ -7,78 +7,79 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.uesb.ceasadigital.api.exceptions.InvalidProductException;
+import br.com.uesb.ceasadigital.api.exceptions.ProductNotFoundException;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 
-
 @Service
 public class ProductService {
-  
-  @Autowired
-  private ProductRepository repository;
 
-  @Autowired 
-  private ProductMapper mapper;
+    @Autowired
+    private ProductRepository repository;
 
-   private final Logger logger = LoggerFactory.getLogger(ProductService.class.getName());
+    @Autowired 
+    private ProductMapper mapper;
 
-  public List<ProductResponseUserDTO> findAllProducts(){
+    private final Logger logger = LoggerFactory.getLogger(ProductService.class);
 
-    logger.info("Find All Products");
-    
-    List<Product> allProducts = repository.findAll();
+    public List<ProductResponseUserDTO> findAllProducts() {
+        logger.info("Find All Products");
+        List<Product> allProducts = repository.findAll();
+        return mapper.toProductUserDTOList(allProducts);
+    }
 
-    return mapper.toProductUserDTOList(allProducts);
-  }
+    public ProductResponseUserDTO findProductByID(Long id) {
+        logger.info("Find product with id: {}", id);
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
+        return mapper.productToProductResponseUserDTO(entity);
+    }
 
-  public ProductResponseUserDTO findProductByID(Long id){
-      logger.info("Find product with id: " + id);
+    public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO) {
+        logger.info("Create a product");
 
-     // TODO:
-    // Throw Excpetions like price negative , Null name , etc
-      var entity = repository.findById(id).orElseThrow();
+        if (productRequestDTO.getNome() == null || productRequestDTO.getNome().isBlank()) {
+            throw new InvalidProductException("O nome do produto não pode ser vazio.");
+        }
 
-      return mapper.productToProductResponseUserDTO(entity);
-  }
+        if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
+            throw new InvalidProductException("O preço do produto não pode ser negativo.");
+        }
 
+        var entity = mapper.toEntity(productRequestDTO);
+        repository.save(entity);
+        return mapper.productToProductResponseUserDTO(entity);
+    }
 
-  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO){
-    logger.info("Create a product");
-    // TODO:
-    // Throw Excpetions like price negative , Null name , etc
-    var entity = mapper.toEntity(productRequestDTO);
+    public ProductResponseUserDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
+        var entity = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
-    repository.save(entity);
+        logger.info("Update product with id: {}", id);
 
-    return mapper.productToProductResponseUserDTO(entity);
-  }
+        if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
+            throw new InvalidProductException("Preço inválido ao atualizar o produto.");
+        }
 
-  public ProductResponseUserDTO updateProduct(Long id , ProductRequestDTO productRequestDTO){
-    
-    var entity = repository.findById(id).orElseThrow();
+        entity.setDescricao(productRequestDTO.getDescricao());
+        entity.setNome(productRequestDTO.getNome());
+        entity.setPreco(productRequestDTO.getPreco());
+        entity.setUnidadeDeMedida(productRequestDTO.getUnidadeDeMedida());
 
-    logger.info("Update a info about the item with id : " + id);
-    entity.setDescricao(productRequestDTO.getDescricao());
-    entity.setNome(productRequestDTO.getNome());
-    entity.setPreco(productRequestDTO.getPreco());
-    entity.setUnidadeDeMedida(productRequestDTO.getUnidadeDeMedida());
+        repository.save(entity);
+        return mapper.productToProductResponseUserDTO(entity);
+    }
 
-    repository.save(entity);
+    public void deleteProduct(Long id) {
+        logger.info("Deletando produto com ID: {}", id);
 
-    return mapper.productToProductResponseUserDTO(entity);
-  }
+        Product entity = repository.findById(id)
+                .orElseThrow(() -> new ProductNotFoundException(id));
 
-
-
-  public void deleteProduct(Long id) {
-    logger.info("Deletando o produto com ID: " + id);
-
-
-    Product entity = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Produto with {} not found: " + id)); //
-    repository.delete(entity);
-}
+        repository.delete(entity);
+    }
 }
