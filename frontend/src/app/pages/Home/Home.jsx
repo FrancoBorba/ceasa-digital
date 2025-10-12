@@ -1,8 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../layouts/header/header';
+import { getProducts } from '../../services/productService';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Imagens promocionais para o carrossel
     const promotionalImages = [
@@ -52,6 +55,20 @@ const Home = () => {
     const goToSlide = (index) => {
         setCurrentSlide(index);
     };
+    //retornando produtos do backend
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const data = await getProducts();
+                setProducts(data);
+            } catch (error) {
+                console.error('Erro ao buscar produtos:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -128,6 +145,37 @@ const Home = () => {
                             ))}
                         </div>
                     </div>
+                </section>
+
+                {/* Seção de Produtos */}
+                <section>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Produtos disponíveis</h2>
+
+                    {loading ? (
+                        <p>Carregando produtos...</p>
+                    ) : !Array.isArray(products) || products.length === 0 ? (
+                        <p>Nenhum produto encontrado.</p>
+                    ) : (
+                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+                            {products.map((p) => (
+                                <div 
+                                    key={p.id} 
+                                    className="bg-white shadow-md rounded-2xl p-4 hover:shadow-lg transition-all duration-200"
+                                >
+                                    <img 
+                                        src={p.imageUrl || "https://via.placeholder.com/150"}
+                                        alt={p.name} 
+                                        className="w-full h-40 object-cover rounded-xl mb-3"
+                                    />
+                                    <h3 className="text-lg font-semibold text-gray-900">{p.nome}</h3>
+                                    <p className="text-gray-600 text-sm mb-2">{p.descricao}</p>
+                                    <span className="text-green-600 font-bold">
+                                        R$ {p.preco?.toFixed(2)}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </section>
             </main>
         </div>
