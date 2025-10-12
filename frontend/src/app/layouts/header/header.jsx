@@ -3,7 +3,6 @@ import './header.css';
 
 const Header = () => {
   const searchInputRef = useRef(null);
-  const cartCountRef = useRef(0);
 
   useEffect(() => {
     // Setup search functionality when component mounts
@@ -45,21 +44,10 @@ const Header = () => {
     alert('Carrinho de compras - Funcionalidade em desenvolvimento');
   };
 
-  const updateCartCount = (count) => {
-    cartCountRef.current = count;
-    // Update cart icon with item count if needed
-    console.log('Cart count updated:', count);
-  };
-
   // Profile functionality
   const handleProfileClick = () => {
     console.log('Profile button clicked');
     alert('Perfil do usuário - Funcionalidade em desenvolvimento');
-  };
-
-  // Utility methods
-  const showNotification = (message, type = 'info') => {
-    console.log(`${type.toUpperCase()}: ${message}`);
   };
 
   return (
