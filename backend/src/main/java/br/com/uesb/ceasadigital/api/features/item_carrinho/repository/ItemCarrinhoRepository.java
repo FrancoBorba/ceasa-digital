@@ -10,5 +10,6 @@ import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 
 public interface ItemCarrinhoRepository extends JpaRepository<ItemCarrinho , Long> {
   
-Optional<ItemCarrinho> findByCarrinhoAndOfertaProdutorId(Carrinho carrinho, Long ofertaProdutorId);
+  
+  Optional<ItemCarrinho> findByCarrinhoAndProdutoId(Carrinho carrinho, Long produtoId);
 } 

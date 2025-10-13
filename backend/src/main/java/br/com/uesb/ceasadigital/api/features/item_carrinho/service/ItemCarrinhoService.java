@@ -18,9 +18,11 @@ import br.com.uesb.ceasadigital.api.features.item_carrinho.mapper.ItemCarrinhoMa
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.repository.ItemCarrinhoRepository;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
-
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
+import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.transaction.Transactional;
 
 @Service
 public class ItemCarrinhoService {
@@ -41,43 +43,49 @@ public class ItemCarrinhoService {
   @Autowired
   CarrinhoRepository carrinhoRepository;
 
+  @Autowired
+  ProductRepository productRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
+
+
+    // Nosso ID fake, que corresponde ao que inserimos no banco de dev
+    // CADA UM TEM QUE MOCKAR NO SEU BD LOCALMENTE
+    private static final Long FAKE_OFERTA_ID = 101L;
 
   
 private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
 
-  public CarrinhoItemResponseDTO addItemInCarrinho(CarrinhoAddItemRequestDTO item){
-
+  @Transactional
+  public CarrinhoItemResponseDTO addItemInCarrinho(CarrinhoAddItemRequestDTO itemToAdd){
 
     Carrinho carrinho = carrinhoService.getCarrinho();
 
-     Long ofertaId = item.getOfertaProdutorId();
-
-     MockOfertaProvider.OfertaProdutorDTO oferta = mockOfertaProvider.buscarOfertaCompleta(ofertaId)
-                .orElseThrow(() -> new RuntimeException("Oferta com ID " + ofertaId + " não encontrada."));
-
-
-    Optional<ItemCarrinho> itemOptional = repository.findByCarrinhoAndOfertaProdutorId(carrinho, ofertaId);
-
     ItemCarrinho itemParaSalvar;
+
+    Optional<ItemCarrinho> itemOptional = repository.findByCarrinhoAndProdutoId(carrinho, itemToAdd.getProdutoID());
+
     if(itemOptional.isPresent()){ // O item já estava então aumenta a quantidade
 
       itemParaSalvar = itemOptional.get();
       BigDecimal quantidadeExistente = itemParaSalvar.getQuantidade();
-      BigDecimal quantidadeAdicional = item.getQuantidade();
+      BigDecimal quantidadeAdicional = itemToAdd.getQuantidade();
       itemParaSalvar.setQuantidade(quantidadeExistente.add(quantidadeAdicional));
 
     }else{
       itemParaSalvar = new ItemCarrinho();
+
+      Product produto = productRepository.findById(itemToAdd.getProdutoID())
+                .orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+
       itemParaSalvar.setCarrinho(carrinho);
-      itemParaSalvar.setQuantidade(item.getQuantidade());
-  
-            BigDecimal precoCongelado = oferta.getEstoqueVirtual().getPrecoDefinido();
-            itemParaSalvar.setPrecoUnitarioArmazenado(precoCongelado);
+      itemParaSalvar.setQuantidade(itemToAdd.getQuantidade());
+      itemParaSalvar.setProduto(produto); // AQUI NÃO DEVERIA SER APENAS O ID DO PRODUTO
+      itemParaSalvar.setPrecoUnitarioArmazenado(produto.getPreco());
+     
 
-            OfertaProdutor ofertaReferencia = entityManager.getReference(OfertaProdutor.class, ofertaId);
-
+         OfertaProdutor ofertaReferencia = entityManager.getReference(OfertaProdutor.class, FAKE_OFERTA_ID);
             itemParaSalvar.setOfertaProdutor(ofertaReferencia);
         }
 
