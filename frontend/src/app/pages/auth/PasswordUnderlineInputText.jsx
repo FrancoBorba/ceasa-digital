@@ -1,9 +1,12 @@
-function PasswordUnderlineInputText() {
+function PasswordUnderlineInputText({name, onTextChanged}) {
   return (
     <div className="flex flex-col">
       <h2 className="text-black font-bold text-xs">Senha:</h2>
-      <input className="border-b border-[#00853D] text-black outline-none
-      focus:border-[#00B050] focus:border-2" type="password" />
+      <input className="border-b border-[#00853D] text-black outline-none focus:border-[#00B050] 
+        focus:border-2"
+        name={name}
+        onChange={onTextChanged}
+        type="password" />
     </div>
   );
 }
