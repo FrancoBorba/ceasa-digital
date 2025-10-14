@@ -163,7 +163,7 @@ const Home = () => {
                                     className="bg-white shadow-md rounded-2xl p-4 hover:shadow-lg transition-all duration-200"
                                 >
                                     <img 
-                                        src={p.imageUrl || "https://via.placeholder.com/150"}
+                                        src={`http://localhost:8080${p.fotoUrl}`}
                                         alt={p.name} 
                                         className="w-full h-40 object-cover rounded-xl mb-3"
                                     />
