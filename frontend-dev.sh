@@ -27,6 +27,9 @@ docker-compose up -d database-ceasa-digital
 echo "⏳ Aguardando banco de dados ficar disponível..."
 sleep 10
 
+echo "🔨 Rebuilding imagem do backend..."
+docker-compose build backend
+
 echo "🚀 Iniciando backend..."
 docker-compose up -d backend
 

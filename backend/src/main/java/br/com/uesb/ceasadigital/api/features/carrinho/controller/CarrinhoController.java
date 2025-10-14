@@ -80,7 +80,5 @@ public class CarrinhoController implements CarrinhoControllerDocs {
 
         return ResponseEntity.noContent().build();
     }
-
-  
    
 }
