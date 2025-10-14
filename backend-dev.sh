@@ -16,9 +16,13 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Parar containers existentes
-echo "🛑 Parando containers existentes..."
-docker-compose down
+# Parar containers existentes e limpar volumes
+echo "🛑 Parando containers existentes e removendo volumes..."
+docker-compose down -v
+
+# Remover container do banco de dados
+echo "🧹 Limpando container do banco de dados..."
+docker-compose rm -f database-ceasa-digital
 
 # Iniciar apenas o banco de dados
 echo "🚀 Iniciando banco de dados..."

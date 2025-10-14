@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 
 @Service
-@Profile("dev") // Só ativa em ambiente de desenvolvimento
+@Profile({"dev", "test"}) // Ativa em ambiente de desenvolvimento e teste
 public class MockOfertaProvider {
 
     // ====================================================================

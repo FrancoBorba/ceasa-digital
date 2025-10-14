@@ -16,13 +16,18 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Parar containers existentes
-echo "🛑 Parando containers existentes..."
-docker-compose down
+# Parar containers existentes e limpar volumes
+echo "🛑 Parando containers existentes e removendo volumes..."
+docker-compose down -v
 
-# Fazer build e iniciar todos os serviços
-echo "🔨 Fazendo build das imagens..."
-docker-compose build
+# Remover imagens antigas dos serviços
+echo "🧹 Removendo imagens antigas..."
+docker-compose rm -f
+docker rmi ceasa-backend-container ceasa-frontend-container 2>/dev/null || true
+
+# Fazer build completo e iniciar todos os serviços
+echo "🔨 Fazendo build completo das imagens (sem cache)..."
+docker-compose build --no-cache
 
 echo "🚀 Iniciando todos os serviços..."
 docker-compose up -d
