@@ -10,10 +10,6 @@ import br.com.uesb.ceasadigital.api.common.validator.validators.CPFValidator;
 import jakarta.validation.Constraint;
 import jakarta.validation.Payload;
 
-
-
-
-
 @Target({ElementType.FIELD})
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CPFValidator.class) // Classe que possui a regra de négocio

@@ -1,0 +1,18 @@
+package br.com.uesb.ceasadigital.api.config;
+
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
+/**
+ * Classe de configuracao para definir beans gerenciados pelo Spring.
+ */
+@Configuration
+public class AppConfig {
+  
+  @Bean
+  public PasswordEncoder passwordEncoder() {
+    return new BCryptPasswordEncoder();
+  }
+}
