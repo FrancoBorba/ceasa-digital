@@ -32,6 +32,9 @@ public class ItemPedidoResponseDTO {
   @JsonProperty("atualizado_em")
   private Instant atualizado_em;
 
+  public ItemPedidoResponseDTO() {
+  }
+
   public ItemPedidoResponseDTO(ItemPedido item) {
     this.id = item.getId();
     this.pedido_id = item.getPedido().getId();
