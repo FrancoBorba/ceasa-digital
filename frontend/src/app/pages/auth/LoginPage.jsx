@@ -1,47 +1,32 @@
-import { useState } from "react";
-import { setToken } from "../../api/authTokenService";
-import apiRequester from "../../api/apiRequester";
-import { useNavigate } from "react-router";
+import {useEffect, useState } from "react";
 import AuthFormBrackground from "../../components/auth/AuthFormBrackground";
 import AuthUnderlineInputText from "../../components/auth/AuthUnderlineInputText";
+import useUserLoginAuthentication from "../../hooks/auth/useUserLoginAuthentication";
+import AuthLinkText from "../../components/auth/AuthLinkText";
+import useTryToRefreshAccessToken from "../../hooks/auth/useTryToRefreshAccessToken";
 
 function LoginPage() {
+  const tryToRefreshAccessToken = useTryToRefreshAccessToken();
+  useEffect(() => {
+    tryToRefreshAccessToken();
+  }, [tryToRefreshAccessToken]);
+
+  const { tryToAuthenticateUser } = useUserLoginAuthentication();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
 
-  const navigate = useNavigate();
+  const handleLoginFormSubmit = async (e) => {
+    e.preventDefault();
+    tryToAuthenticateUser(formData);
+  };
 
   const handleLoginFormInputChange = (e) => {
     setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-  };
-
-  const handleLoginFormSubmit = async (e) => {
-    e.preventDefault();
-
-    try {
-      const { data } = await sendLoginRequestAndReturnDataResponse();
-      console.log(data);
-      setToken(data.access_token);
-      navigate("/");
-    } catch (err) {
-      console.error("Erro no login:", err);
-      alert("Usuário ou senha incorretos");
-    }
-
-    function sendLoginRequestAndReturnDataResponse() {
-      return apiRequester.post("/oauth2-docs/login", null, {
-        params: {
-          username: formData.username,
-          password: formData.password,
-          grant_type: "password",
-        },
-      });
-    }
   };
 
   return (
@@ -62,9 +47,10 @@ function LoginPage() {
         onTextChanged={handleLoginFormInputChange}
         type={"password"}
       />
-      <a href="" className="text-left text-[#1F4B1D] underline text-xs">
-        Esqueceu email ou senha?
-      </a>
+      <div className="flex flex-col gap-1">
+        <AuthLinkText link={"/"} >Esqueceu o e-mail ou senha?</AuthLinkText>
+        <AuthLinkText link={"/register"} >Crie sua conta</AuthLinkText>
+      </div>
     </AuthFormBrackground>
   );
 }
