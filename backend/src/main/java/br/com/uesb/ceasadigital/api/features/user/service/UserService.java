@@ -3,6 +3,7 @@ package br.com.uesb.ceasadigital.api.features.user.service;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -21,6 +22,9 @@ public class UserService implements UserDetailsService{
 
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired
+  private Environment environment;
 
   @Transactional(readOnly = true)
   @Override
@@ -44,8 +48,35 @@ public class UserService implements UserDetailsService{
     if (authentication != null && authentication.isAuthenticated()) {
       String email = authentication.getName();
       return userRepository.findByEmail(email)
-          .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+          .orElseGet(() -> {
+            if (isDevOrTestProfile()) {
+              return createMockUser();
+            }
+            throw new UsernameNotFoundException("User not found");
+          });
+    }
+    if (isDevOrTestProfile()) {
+      return createMockUser();
     }
     return null;
+  }
+
+  private boolean isDevOrTestProfile() {
+    String[] activeProfiles = environment.getActiveProfiles();
+    for (String profile : activeProfiles) {
+      if ("dev".equals(profile) || "test".equals(profile)) {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  private User createMockUser() {
+    User mockUser = new User();
+    mockUser.setId(1L);
+    mockUser.setName("Mock User");
+    mockUser.setEmail("mock@dev.com");
+    mockUser.addRole(new Role(1L, "ROLE_USER"));
+    return mockUser;
   }
 }

@@ -27,12 +27,12 @@ public class ItemCarrinho {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne // Muitos itens pertencem a um carrinho
+  @ManyToOne
   @JoinColumn(name = "carrinho_id" , nullable = false)
   private Carrinho carrinho;
 
-  @ManyToOne // Muitos itens pertencem a uma oferta de produtor
-  @JoinColumn(name = "oferta_produtor_id" , nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "oferta_produtor_id" , nullable = true)
   private OfertaProdutor ofertaProdutor;
 
   @Column(nullable = false , precision = 10 , scale = 3)

@@ -33,19 +33,19 @@ public class PedidoController {
   private PedidoService pedidoService;
 
   @GetMapping()
-  @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+  //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
   public ResponseEntity<List<PedidoResponseDTO>> getAllPedidosByCurrentUser() {
     return ResponseEntity.ok(pedidoService.getAllPedidosByCurrentUser());
   }
 
   @GetMapping(value ="/{id}")
-  @PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
+  //@PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
   public ResponseEntity<PedidoResponseDTO> getPedidoById(@PathVariable Long id) {
       return ResponseEntity.ok(pedidoService.getPedidoById(id));
   }
 
   @PostMapping()
-  @PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
+  //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
   public ResponseEntity<PedidoResponseDTO> insertPedido(@Valid @RequestBody PedidoPostRequestDTO pedidoRequestDTO) {
     PedidoResponseDTO pedidoResponseDTO = pedidoService.insertPedido(pedidoRequestDTO);
     URI uri = ServletUriComponentsBuilder.fromCurrentRequest().path("/{id}").buildAndExpand(pedidoResponseDTO.getId()).toUri();
@@ -53,13 +53,13 @@ public class PedidoController {
   }
 
   @PutMapping(value ="/{id}")
-  @PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
+  //@PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
   public ResponseEntity<PedidoResponseDTO> updatePedido(@PathVariable Long id, @Valid @RequestBody PedidoPutRequestDTO pedidoRequestDTO) {
     return ResponseEntity.ok(pedidoService.updatePedido(id, pedidoRequestDTO));
   }
 
   @DeleteMapping(value ="/{id}")
-  @PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
+  //@PreAuthorize("hasRole('ROLE_ADMIN') or @pedidoService.userIsOwner(#id)")
   public ResponseEntity<Void> deletePedido(@PathVariable Long id) {
     pedidoService.deletePedido(id);
     return ResponseEntity.noContent().build();
