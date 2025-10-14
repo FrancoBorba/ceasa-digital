@@ -17,11 +17,8 @@ import br.com.uesb.ceasadigital.api.features.item_carrinho.dto.response.Carrinho
 import br.com.uesb.ceasadigital.api.features.item_carrinho.mapper.ItemCarrinhoMapper;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.repository.ItemCarrinhoRepository;
-import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
-import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import jakarta.transaction.Transactional;
 
 @Service
@@ -38,24 +35,12 @@ public class ItemCarrinhoService {
   ItemCarrinhoRepository repository;
 
   @Autowired
-  MockOfertaProvider mockOfertaProvider;
-
-  @Autowired
   CarrinhoRepository carrinhoRepository;
 
   @Autowired
   ProductRepository productRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-
-    // Nosso ID fake, que corresponde ao que inserimos no banco de dev
-    // CADA UM TEM QUE MOCKAR NO SEU BD LOCALMENTE
-    private static final Long FAKE_OFERTA_ID = 101L;
-
   
-private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
+  private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
 
   @Transactional
   public CarrinhoItemResponseDTO addItemInCarrinho(CarrinhoAddItemRequestDTO itemToAdd){
@@ -81,12 +66,9 @@ private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getN
 
       itemParaSalvar.setCarrinho(carrinho);
       itemParaSalvar.setQuantidade(itemToAdd.getQuantidade());
-      itemParaSalvar.setProduto(produto); // AQUI NÃO DEVERIA SER APENAS O ID DO PRODUTO
+      itemParaSalvar.setProduto(produto);
       itemParaSalvar.setPrecoUnitarioArmazenado(produto.getPreco());
-     
-
-         OfertaProdutor ofertaReferencia = entityManager.getReference(OfertaProdutor.class, FAKE_OFERTA_ID);
-            itemParaSalvar.setOfertaProdutor(ofertaReferencia);
+      itemParaSalvar.setOfertaProdutor(null);
         }
 
         ItemCarrinho itemSalvo = repository.save(itemParaSalvar);

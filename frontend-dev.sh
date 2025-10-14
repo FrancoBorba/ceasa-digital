@@ -16,9 +16,14 @@ if [ ! -f ".env" ]; then
     exit 1
 fi
 
-# Parar containers existentes
-echo "🛑 Parando containers existentes..."
-docker-compose down
+# Parar containers existentes e limpar volumes
+echo "🛑 Parando containers existentes e removendo volumes..."
+docker-compose down -v
+
+# Remover imagens antigas dos serviços
+echo "🧹 Removendo imagens antigas..."
+docker-compose rm -f
+docker rmi ceasa-backend-container 2>/dev/null || true
 
 # Iniciar banco de dados e backend
 echo "🚀 Iniciando banco de dados..."
@@ -27,8 +32,8 @@ docker-compose up -d database-ceasa-digital
 echo "⏳ Aguardando banco de dados ficar disponível..."
 sleep 10
 
-echo "🔨 Rebuilding imagem do backend..."
-docker-compose build backend
+echo "🔨 Rebuilding imagem do backend (sem cache)..."
+docker-compose build --no-cache backend
 
 echo "🚀 Iniciando backend..."
 docker-compose up -d backend
@@ -64,6 +69,9 @@ if [[ "$DB_STATUS" == "✅" && "$BACKEND_STATUS" == "✅" ]]; then
     echo "   - Status: docker-compose ps"
     echo ""
     echo "🚀 Iniciando frontend..."
+    echo "🧹 Limpando node_modules antigo..."
+    rm -rf frontend/src/node_modules
+    echo "📦 Instalando dependências do frontend..."
     cd frontend/src && npm install && npm run dev
 else
     echo "❌ Erro ao iniciar serviços"

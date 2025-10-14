@@ -53,7 +53,7 @@ public class CarrinhoController implements CarrinhoControllerDocs {
     }
 
     @Override
-     @PostMapping("/itens") 
+    @PostMapping("/itens") 
     public ResponseEntity<CarrinhoItemResponseDTO> adicionarItemAoCarrinho( @RequestBody @Valid
       CarrinhoAddItemRequestDTO itemRequest) {
 
