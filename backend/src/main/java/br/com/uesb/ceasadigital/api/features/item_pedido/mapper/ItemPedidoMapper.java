@@ -13,12 +13,13 @@ import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 @Mapper(componentModel = "spring")
 public interface ItemPedidoMapper {
 
+  @Mapping(source = "id", target = "id")
   @Mapping(source = "pedido.id", target = "pedido_id")
-  @Mapping(source = "precoUnitario", target = "preco_unitario")
+  @Mapping(source = "oferta.id", target = "oferta_id")
   @Mapping(source = "quantidade", target = "quantidade")
+  @Mapping(source = "precoUnitario", target = "preco_unitario")
   @Mapping(source = "criadoEm", target = "criado_em")
   @Mapping(source = "atualizadoEm", target = "atualizado_em")
-  @Mapping(source = "oferta.id", target = "oferta_id")
   ItemPedidoResponseDTO toResponseDTO(ItemPedido item);
 
 }

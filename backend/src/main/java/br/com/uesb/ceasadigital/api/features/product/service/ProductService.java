@@ -7,6 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
@@ -39,7 +40,7 @@ public class ProductService {
 
      // TODO:
     // Throw Excpetions like price negative , Null name , etc
-      var entity = repository.findById(id).orElseThrow();
+      var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
 
       return mapper.productToProductResponseUserDTO(entity);
   }
