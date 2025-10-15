@@ -1,9 +1,9 @@
 import {useEffect, useState } from "react";
-import AuthFormBrackground from "../../components/auth/AuthFormBrackground";
-import AuthUnderlineInputText from "../../components/auth/AuthUnderlineInputText";
-import useUserLoginAuthentication from "../../hooks/auth/useUserLoginAuthentication";
-import AuthLinkText from "../../components/auth/AuthLinkText";
-import useTryToRefreshAccessToken from "../../hooks/auth/useTryToRefreshAccessToken";
+import AuthFormBrackground from "./components/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
+import useUserLoginAuthentication from "./hooks/useUserLoginAuthentication";
+import AuthLinkText from "./components/AuthLinkText";
+import useTryToRefreshAccessToken from "./hooks/useTryToRefreshAccessToken";
 
 function LoginPage() {
   const tryToRefreshAccessToken = useTryToRefreshAccessToken();

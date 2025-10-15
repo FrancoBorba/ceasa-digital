@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router";
-import { setAccessAndRefreshToken } from "../../pages/Home/services/auth/authTokenStorage";
-import apiRequester from "../../pages/Home/services/auth/apiRequester";
+import { setAccessAndRefreshToken } from "../services/authTokenStorage";
+import apiRequester from "../services/apiRequester";
 
 function useUserLoginAuthentication() {
   const navigate = useNavigate();

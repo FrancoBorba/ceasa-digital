@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../layouts/header/header';
-import { getProducts } from '../../services/productService';
+import { getProducts } from '../Product/services/productService';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
