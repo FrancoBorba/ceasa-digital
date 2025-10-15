@@ -10,6 +10,7 @@ yarn-error.log*
 .vscode/
 *.iml
 .DS_Store
+.trae/
 
 # ---FRONT-END ---
 /frontend/node_modules/
@@ -20,5 +21,6 @@ yarn-error.log*
 # --- BACK-END ---
 /backend/target/
 /backend/.mvn/
+
 
 .env

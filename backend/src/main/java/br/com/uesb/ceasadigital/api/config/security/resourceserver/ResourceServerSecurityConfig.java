@@ -80,6 +80,13 @@ public class ResourceServerSecurityConfig {
 					"/webjars/**"          // libraries JS/CSS
 				).permitAll()
 
+				// OAuth2 Documentation endpoints (read-only for Swagger)
+				.requestMatchers("/oauth2-docs/**").permitAll()
+
+        .requestMatchers("/api/v1/products").permitAll()
+        .requestMatchers("/api/v1/products/{id}").permitAll()
+
+        // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
 
 				// Internal endpoints for error delegation (protected from external access)
@@ -98,15 +105,19 @@ public class ResourceServerSecurityConfig {
 						request.getAttribute("oauth2.error.exception") != null
 					);
 				})
-
-				.anyRequest().authenticated());
-		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
+        //Make all endpoints public:
+        .anyRequest().permitAll());
+        //Make all endpoints authenticated:
+				//.anyRequest().authenticated());
+    /* 
+    http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 		    .jwt(jwt -> jwt
 		        .decoder(resourceServerJwtDecoder())
 		        .jwtAuthenticationConverter(jwtAuthenticationConverter()))
 		    .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
     http.exceptionHandling(exceptionHandling -> exceptionHandling
       .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
+    */
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
 	}
@@ -134,6 +145,7 @@ public class ResourceServerSecurityConfig {
 
 		JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
 		jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(grantedAuthoritiesConverter);
+    jwtAuthenticationConverter.setPrincipalClaimName("username");
 		return jwtAuthenticationConverter;
 	}
 
