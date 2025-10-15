@@ -1,10 +1,10 @@
 import { useNavigate } from "react-router";
-import apiRequester from "../../pages/Home/services/auth/apiRequester";
+import apiRequester from "../services/apiRequester";
 import {
   getRefreshToken,
   removeAccessAndRefreshToken,
   setAccessAndRefreshToken,
-} from "../../pages/Home/services/auth/authTokenStorage";
+} from "../services/authTokenStorage";
 import { useCallback } from "react";
 
 function useTryToRefreshAccessToken() {

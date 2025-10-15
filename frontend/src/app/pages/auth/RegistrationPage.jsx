@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthFormBrackground from "../../components/auth/AuthFormBrackground";
-import AuthUnderlineInputText from "../../components/auth/AuthUnderlineInputText";
+import AuthFormBrackground from "./components/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
 
 function RegistrationPage() {
   const [formData, setFormData] = useState({
