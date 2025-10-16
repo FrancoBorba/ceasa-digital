@@ -11,6 +11,9 @@ import jakarta.validation.constraints.NotNull;
  * @date: 14/10/2023
  * @description: DTO para requisições de atualização de ItemPedido.
  * A data de atualização é gerenciada automaticamente na entidade @ItemPedido.
+ * 
+ * Como os itens são imutáveis após o pedido, este DTO provavelmente não será usado para updates em produção.
+ * Caso ainda queira manter, o service deve verificar se o pedido está fechado antes de aceitar alterações.
 */
 public class ItemPedidoPutRequestDTO {
 
@@ -18,7 +21,7 @@ public class ItemPedidoPutRequestDTO {
   private Long id;
 
   @NotNull(message = "Quantity is required")
-  @Digits(integer = 10, fraction = 0, message = "Quantity must have a maximum of 10 integer digits and no decimal digits")
+  @Digits(integer = 10, fraction = 3, message = "Quantity must have a maximum of 10 integer digits and 3 decimal digits")
   private BigDecimal quantidade;
 
   @NotNull(message = "Unit Price is required")

@@ -25,7 +25,7 @@ public class ItemPedidoPostRequestDTO {
   private Long ofertaId;
 
   @NotNull(message = "Quantity is required")
-  @Digits(integer = 10, fraction = 0, message = "Quantity must have a maximum of 10 integer digits and no decimal digits")
+  @Digits(integer = 10, fraction = 3, message = "Quantity must have a maximum of 10 integer digits and 3 decimal digits")
   private BigDecimal quantidade;
 
   @NotNull(message = "Unit Price is required")
