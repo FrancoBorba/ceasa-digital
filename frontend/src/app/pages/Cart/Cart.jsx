@@ -1,9 +1,12 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getCart, cleanCart, removeItemFromCart } from './services/cartService';
 
 function Cart() {
   const [cart, setCart] = useState({ itens: [] });
   const [loading, setLoading] = useState(true);
+
+  const navigate = useNavigate();
 
   // Buscar carrinho ao montar o componente
   useEffect(() => {
@@ -32,6 +35,11 @@ function Cart() {
     }
   };
 
+  // Ir para tela de compra
+  const handleConfirmPurchase = () => {
+    navigate('/purchase');
+  }
+
   // Remover um item do carrinho
   const handleRemoveItem = async (idItem) => {
     try {
@@ -43,14 +51,6 @@ function Cart() {
     } catch (error) {
       console.error('Erro ao remover o item do carrinho:', error);
     }
-  };
-
-  // Calcular o total do carrinho
-  const calcularTotal = () => {
-    return cart.itens.reduce(
-      (acc, item) => acc + item.precoUnitario * item.quantidade,
-      0
-    );
   };
 
   if (loading) return <p>Carregando carrinho...</p>;
@@ -75,7 +75,8 @@ function Cart() {
             className="border p-4 rounded-lg flex justify-between items-center"
           >
             <div>
-              <h2 className="font-semibold">{item.nomeProduto}</h2>
+              <img className="w-full h-40 object-cover rounded-xl mb-3" src={`http://localhost:8080${item.fotoUrl}`}/>
+              <h2 className="font-semibold">{item.nomeDoProduto}</h2>
               <p>Quantidade: {item.quantidade}</p>
               <p>Preço unitário: R$ {item.precoUnitario.toFixed(2)}</p>
             </div>
@@ -91,13 +92,17 @@ function Cart() {
 
       <div className="mt-6 flex justify-between items-center">
         <h2 className="text-xl font-bold">
-          Total: R$ {calcularTotal().toFixed(2)}
+          Total: R$ {cart.total.toFixed(2)}
         </h2>
         <button
           onClick={handleCleanCart}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800"
-        >
+          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800">
           Limpar Carrinho
+        </button>
+        <button
+          onClick={handleConfirmPurchase}
+          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-gray-800">
+          Confirmar Compra
         </button>
       </div>
     </div>
