@@ -13,6 +13,8 @@ import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 @Repository
 public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long> {
 
-  List<ItemPedido> findByPedidoUsuarioId(Long usuarioId);
+  List<ItemPedido> findAllByPedidoUsuarioId(Long usuarioId);
+
+  List<ItemPedido> findAllByPedidoId(Long pedidoId);
 
 }
