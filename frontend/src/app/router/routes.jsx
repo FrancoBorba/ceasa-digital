@@ -3,8 +3,9 @@ import App from "../App";
 import Cart from "../pages/Cart/Cart";
 import PurchaseConfirmation from "../pages/Purchase/Purchase";
 import LoginPage from "../pages/auth/LoginPage";
-import RegistrationPage from "../pages/auth/RegistrationPage";
 import ProductDetail from "../pages/Product/ProductDetail";
+import ClientRegistrationPage from "../pages/auth/ClientRegistrationPage";
+import SellerRegistrationPage from "../pages/auth/SellerRegistrationPage";
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +18,7 @@ export const router = createBrowserRouter([
   },
   {
     path: "/register",
-    element: <RegistrationPage />,
+    element: <ClientRegistrationPage />,
   },
   {
     path: "/cart",
@@ -31,4 +32,8 @@ export const router = createBrowserRouter([
     path: "/productDetail/:id",
     element: <ProductDetail />,
   },
+  {
+    path: "/seller-registration",
+    element: <SellerRegistrationPage />
+  }
 ]);

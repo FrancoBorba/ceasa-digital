@@ -1,8 +1,11 @@
-import { useState } from "react";
-import AuthFormBrackground from "./components/AuthFormBrackground";
-import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
+import {useState } from "react";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
+import useEffectTryToRefreshAccessToken from "./hooks/useEffectTryToRefreshAccessToken";
 
-function RegistrationPage() {
+function ClientRegistrationPage() {
+  useEffectTryToRefreshAccessToken();
+
   const [formData, setFormData] = useState({
     fullName: "",
     email: "",
@@ -66,4 +69,4 @@ function RegistrationPage() {
   );
 }
 
-export default RegistrationPage;
+export default ClientRegistrationPage;
