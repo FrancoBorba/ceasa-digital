@@ -1,5 +1,6 @@
 package br.com.uesb.ceasadigital.api.features.carrinho.dto.response;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -23,10 +24,7 @@ public class CarrinhoResponseDTO {
     @Schema(description = "Data e hora da última atualização do carrinho", example = "2024-01-15T14:45:00")
     private LocalDateTime atualizadoEm;
 
-  
     private List<CarrinhoItemResponseDTO> itens;
-
-  
 
     // Getters and Setters
     public Long getId() {
@@ -74,5 +72,13 @@ public class CarrinhoResponseDTO {
 
     public void setItens(List<CarrinhoItemResponseDTO> itens) {
       this.itens = itens;
+    }
+
+    public BigDecimal getTotal() {
+      BigDecimal totalSum = BigDecimal.ZERO;
+      for (CarrinhoItemResponseDTO item : itens) {
+        totalSum = totalSum.add(item.getSubTotal());
+      }
+      return totalSum;
     }
 }
