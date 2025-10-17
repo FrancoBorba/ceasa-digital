@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../layouts/header/header';
+import Footer from '../../layouts/footer/footer';
 import { getProducts } from '../Product/services/productService';
 
 const Home = () => {
@@ -157,7 +158,7 @@ const Home = () => {
 
                 {/* Seção de Produtos */}
                 <section>
-                    <h2 className="text-3xl font-bold mt-6 mb-6 text-gray-800 text-center">Produtos em Destaque:</h2>
+                    <h2 className="text-3xl font-bold mt-6 mb-6 text-brand-dark text-center">Produtos em Destaque:</h2>
 
                     {loading ? (
                         <p className="text-center text-xl">Carregando produtos...</p>
@@ -175,9 +176,9 @@ const Home = () => {
                                         alt={p.name} 
                                         className="w-full h-40 object-cover rounded-xl mb-3"
                                     />
-                                    <h3 className="text-lg font-semibold text-gray-900">{p.nome}</h3>
-                                    <p className="text-gray-600 text-sm mb-2">{p.descricao}</p>
-                                    <span className="text-green-600 font-bold">
+                                    <h3 className="text-lg font-semibold text-brand-dark">{p.nome}</h3>
+                                    <p className="text-neutral-300 text-sm mb-2">{p.descricao}</p>
+                                    <span className="text-brand-green font-bold">
                                         R$ {p.preco?.toFixed(2)}
                                     </span>
                                 </div>
@@ -186,6 +187,7 @@ const Home = () => {
                     )}
                 </section>
             </main>
+            <Footer />
         </div>
     );
 };

@@ -1,7 +1,13 @@
 @import "tailwindcss";
 
 @theme {
-  --color-ceasa-green: #8EC340;
+  --color-brand-dark: #1D3D1C;
+  --color-brand-green: #B6E572;
+  --color-brand-cream: #FEF5E2;
+  --color-neutral-300: #D3D1B9;
+  --color-neutral-50: #FEFBF6;
+  --color-white: #FFFFFF;
+
   --height-100: 100px;
   --height-60: 80px;
   --width-60: 80px;
