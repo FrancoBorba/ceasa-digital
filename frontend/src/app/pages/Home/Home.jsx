@@ -150,12 +150,12 @@ const Home = () => {
 
                 {/* Seção de Produtos */}
                 <section>
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Produtos disponíveis</h2>
+                    <h2 className="text-3xl font-bold mt-6 mb-6 text-gray-800 text-center">Produtos em Destaque:</h2>
 
                     {loading ? (
-                        <p>Carregando produtos...</p>
+                        <p className="text-center text-xl">Carregando produtos...</p>
                     ) : !Array.isArray(products) || products.length === 0 ? (
-                        <p>Nenhum produto encontrado.</p>
+                        <p className="text-center text-xl">Nenhum produto encontrado.</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {products.map((p) => (
