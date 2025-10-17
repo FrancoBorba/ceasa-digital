@@ -65,7 +65,7 @@ const Header = () => {
   };
 
   return (
-    <header className="w-full h-100 bg-brand-green px-4 flex items-center justify-between shadow-sm">
+    <header className="w-full h-100 bg-ceasa-green px-4 flex items-center justify-between shadow-sm">
       {/* Logo */}
       <div className="flex items-center">
         <div className="logo-container">
@@ -88,7 +88,7 @@ const Header = () => {
             onChange={handleSearchInput}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <div className="bg-brand-dark rounded-r-full px-4 py-3 flex items-center justify-center cursor-pointer transition-colors hover:opacity-90" onClick={handleSearch}>
+          <div className="rounded-r-full px-4 py-3 flex items-center justify-center cursor-pointer transition-colors" style={{backgroundColor: '#2c4c2b'}} onClick={handleSearch}>
             <svg 
               className="w-5 h-5 text-white" 
               fill="none" 

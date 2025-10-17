@@ -87,40 +87,32 @@ const Home = () => {
                         </button>
                         
                         <div className="w-full h-full relative">
-                            {promotionalImages.map((img, index) => (
-                            <div
-                                key={index}
-                                className={`absolute inset-0 transition-opacity duration-3500 ease-in-out ${
-                                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
-                                }`}
-                            >
-                                <img
-                                src={img.image}
-                                alt={img.title}
-                                className="w-full h-full object-cover"
+                            <div className="w-full h-full relative">
+                                <img 
+                                    src={promotionalImages[currentSlide].image} 
+                                    alt={promotionalImages[currentSlide].title}
+                                    className="w-full h-full object-cover transition-transform duration-500"
                                 />
-                                <div
-                                className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
-                                style={{
-                                    background:
-                                    'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)',
-                                }}
+                                <div 
+                                    className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
+                                    style={{
+                                        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)'
+                                    }}
                                 >
-                                <h2
-                                    className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
-                                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}
-                                >
-                                    {img.title}
-                                </h2>
-                                <p
-                                    className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
-                                    style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}
-                                >
-                                    {img.subtitle}
-                                </p>
+                                    <h2 
+                                        className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
+                                        style={{textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'}}
+                                    >
+                                        {promotionalImages[currentSlide].title}
+                                    </h2>
+                                    <p 
+                                        className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
+                                        style={{textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'}}
+                                    >
+                                        {promotionalImages[currentSlide].subtitle}
+                                    </p>
                                 </div>
                             </div>
-                            ))}
                         </div>
                         
                         <button 
@@ -158,12 +150,12 @@ const Home = () => {
 
                 {/* Seção de Produtos */}
                 <section>
-                    <h2 className="text-3xl font-bold mt-6 mb-6 text-brand-dark text-center">Produtos em Destaque:</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Produtos disponíveis</h2>
 
                     {loading ? (
-                        <p className="text-center text-xl">Carregando produtos...</p>
+                        <p>Carregando produtos...</p>
                     ) : !Array.isArray(products) || products.length === 0 ? (
-                        <p className="text-center text-xl">Nenhum produto encontrado.</p>
+                        <p>Nenhum produto encontrado.</p>
                     ) : (
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
                             {products.map((p) => (
@@ -176,9 +168,9 @@ const Home = () => {
                                         alt={p.name} 
                                         className="w-full h-40 object-cover rounded-xl mb-3"
                                     />
-                                    <h3 className="text-lg font-semibold text-brand-dark">{p.nome}</h3>
-                                    <p className="text-neutral-300 text-sm mb-2">{p.descricao}</p>
-                                    <span className="text-brand-green font-bold">
+                                    <h3 className="text-lg font-semibold text-gray-900">{p.nome}</h3>
+                                    <p className="text-gray-600 text-sm mb-2">{p.descricao}</p>
+                                    <span className="text-green-600 font-bold">
                                         R$ {p.preco?.toFixed(2)}
                                     </span>
                                 </div>

@@ -5,9 +5,9 @@
     line-height: 1.5;
     font-weight: 400;
 
-    color-scheme: light;
-    color: var(--color-brand-dark);
-    background-color: var(--color-neutral-50);
+    color-scheme: light dark;
+    color: rgba(255, 255, 255, 0.87);
+    background-color: #242424;
 
     font-synthesis: none;
     text-rendering: optimizeLegibility;
@@ -22,12 +22,12 @@
       Roboto, sans-serif;
     min-width: 320px;
     min-height: 100vh;
-    background-color: var(--color-white);
+    background-color: #ffffff;
     font-family: "Montserrat", sans-serif;
   }
 
   button:hover {
-    border-color: var(--color-brand-green);
+    border-color: #646cff;
   }
 
   button:focus,
@@ -37,14 +37,14 @@
 
   @media (prefers-color-scheme: light) {
     :root {
-      color: var(--color-brand-dark);
-      background-color: var(--color-white);
+      color: #213547;
+      background-color: #ffffff;
     }
     a:hover {
-      color: var(--color-brand-green);
+      color: #747bff;
     }
     button {
-      background-color: var(--color-neutral-50);
+      background-color: #f9f9f9;
     }
   }
 }
