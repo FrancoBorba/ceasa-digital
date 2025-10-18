@@ -14,7 +14,7 @@ import jakarta.validation.Payload;
 @Retention(RetentionPolicy.RUNTIME)
 @Constraint(validatedBy = CNPJValidator.class)
 @Documented
-public @interface CNJP {
+public @interface CNPJ {
   
     String message() default "CNPJ Inválido";
 
