@@ -3,6 +3,7 @@ package br.com.uesb.ceasadigital.api.features.user.service;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -22,7 +23,7 @@ import br.com.uesb.ceasadigital.api.features.user.repository.UserRepository;
 import br.com.uesb.ceasadigital.api.features.user.repository.projections.UserDetailsProjection;
 
 @Service
-public class UserService implements UserDetailsService{
+public class UserService implements UserDetailsService {
   
   @Autowired
   private UserRepository userRepository;
@@ -30,9 +31,13 @@ public class UserService implements UserDetailsService{
   @Autowired
   private PasswordEncoder passwordEncoder;
   
-  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+  @Autowired
+  private Environment environment;
+  
+  public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, Environment environment) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.environment = environment;
   }
   
   @Transactional(readOnly = true)
@@ -57,7 +62,15 @@ public class UserService implements UserDetailsService{
     if (authentication != null && authentication.isAuthenticated()) {
       String email = authentication.getName();
       return userRepository.findByEmail(email)
-      .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+      .orElseGet(() -> {
+        if (isDevOrTestProfile()) {
+          return createMockUser();
+        }
+        throw new UsernameNotFoundException("User not found");
+      });
+    }
+    if (isDevOrTestProfile()) {
+      return createMockUser();
     }
     return null;
   }
@@ -122,5 +135,24 @@ public class UserService implements UserDetailsService{
     User updatedUser = userRepository.save(currentUser);
     
     return new UserResponseDTO(updatedUser);
+  }
+  
+  private boolean isDevOrTestProfile() {
+    String[] activeProfiles = environment.getActiveProfiles();
+    for (String profile : activeProfiles) {
+      if ("dev".equals(profile) || "test".equals(profile)) {
+        return true;
+      }
+    }
+    return false;
+  }
+  
+  private User createMockUser() {
+    User mockUser = new User();
+    mockUser.setId(1L);
+    mockUser.setName("Mock User");
+    mockUser.setEmail("mock@dev.com");
+    mockUser.addRole(new Role(1L, "ROLE_USER"));
+    return mockUser;
   }
 }

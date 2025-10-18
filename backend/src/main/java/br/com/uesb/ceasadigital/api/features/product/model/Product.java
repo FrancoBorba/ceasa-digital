@@ -34,6 +34,11 @@ public class Product {
   @Column(columnDefinition = "TEXT")
   private String descricao;
 
+  @Column(name = "foto_url")
+  private String fotoUrl;   
+
+
+
   @CreationTimestamp // Define a data e a hora de criação
   @Column(name = "criado_em",updatable = false) 
   private LocalDateTime criadoEm;
@@ -41,6 +46,8 @@ public class Product {
   @UpdateTimestamp
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
+
+
 
 
 
@@ -90,6 +97,14 @@ public class Product {
 
   public void setDescricao(String descricao) {
     this.descricao = descricao;
+  }
+
+    public String getFotoUrl() {
+    return fotoUrl;
+  }
+
+  public void setFotoUrl(String fotoUrl) {
+    this.fotoUrl = fotoUrl;
   }
 
   public LocalDateTime getCriadoEm() {

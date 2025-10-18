@@ -35,6 +35,15 @@ public class ProductResponseUserDTO {
   )
   private String descricao;
 
+ @Schema(
+    description = "Url que contém a foto do produto",
+    example = "/produtos/batata.jpg",
+    requiredMode = Schema.RequiredMode.REQUIRED
+  )
+  private String fotoUrl;
+
+  
+
   public Long getId() {
     return id;
   }
@@ -74,5 +83,13 @@ public class ProductResponseUserDTO {
   public void setDescricao(String descricao) {
     this.descricao = descricao;
   }
+
+  public String getFotoUrl() {
+  return fotoUrl;
+}
+
+ public void setFotoUrl(String fotoUrl) {
+  this.fotoUrl = fotoUrl;
+ }
 
 }
