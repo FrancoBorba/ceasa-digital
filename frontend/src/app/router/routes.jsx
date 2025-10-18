@@ -4,6 +4,7 @@ import Cart from "../pages/Cart/Cart";
 import PurchaseConfirmation from "../pages/Purchase/Purchase";
 import LoginPage from "../pages/auth/LoginPage";
 import RegistrationPage from "../pages/auth/RegistrationPage";
+import ProductDetail from "../pages/Product/ProductDetail";
 
 export const router = createBrowserRouter([
   {
@@ -25,5 +26,9 @@ export const router = createBrowserRouter([
   {
     path: "/purchase",
     element: <PurchaseConfirmation />,
+  },
+  {
+    path: "/productDetail/:id",
+    element: <ProductDetail />,
   },
 ]);
