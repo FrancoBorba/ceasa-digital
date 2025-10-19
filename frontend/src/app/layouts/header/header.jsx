@@ -1,9 +1,11 @@
 import React, { useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import './header.css';
 
 const Header = () => {
   const searchInputRef = useRef(null);
   const cartCountRef = useRef(0);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Setup search functionality when component mounts
@@ -42,7 +44,7 @@ const Header = () => {
   // Cart functionality
   const handleCartClick = () => {
     console.log('Cart button clicked');
-    alert('Carrinho de compras - Funcionalidade em desenvolvimento');
+    navigate('/cart');
   };
 
   const updateCartCount = (count) => {

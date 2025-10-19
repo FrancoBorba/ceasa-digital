@@ -157,6 +157,22 @@
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
+        <configuration>
+          <excludes>
+            <exclude>**/dto/**</exclude>
+            <exclude>**/mapper/**</exclude>
+            <exclude>**/model/**</exclude>
+            <exclude>**/entity/**</exclude>
+            <exclude>**/config/**</exclude>
+            <exclude>**/security/**</exclude>
+            <exclude>**/common/handlers/**</exclude>
+            <exclude>**/common/response/**</exclude>
+            <exclude>**/common/exceptions/**</exclude>
+            <exclude>**/common/validator/validators/**</exclude>
+            <exclude>**/controller/**</exclude>
+            <exclude>**/*Application.class</exclude>
+          </excludes>
+        </configuration>
         <executions>
           <execution>
             <goals>
