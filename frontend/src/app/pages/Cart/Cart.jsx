@@ -60,6 +60,12 @@ function Cart() {
       <div className="p-8">
         <h1 className="text-3xl font-bold mb-4">Carrinho de Compras</h1>
         <p>Seu carrinho está vazio por enquanto...</p>
+        <button
+          onClick={() => navigate("/")}
+          className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-800 transition-all"
+        >
+          Voltar
+        </button>
       </div>
     );
   }
@@ -67,7 +73,12 @@ function Cart() {
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold mb-4">Carrinho de Compras</h1>
-
+      <button
+        onClick={() => navigate("/")}
+        className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-800 transition-all"
+      >
+        Voltar
+      </button>
       <ul className="space-y-4">
         {cart.itens.map((item) => (
           <li
@@ -79,6 +90,7 @@ function Cart() {
               <h2 className="font-semibold">{item.nomeDoProduto}</h2>
               <p>Quantidade: {item.quantidade}</p>
               <p>Preço unitário: R$ {item.precoUnitario.toFixed(2)}</p>
+              <p>Subtotal: R$ {(item.quantidade * item.precoUnitario).toFixed(2)}</p>
             </div>
             <button
               onClick={() => handleRemoveItem(item.id)}
