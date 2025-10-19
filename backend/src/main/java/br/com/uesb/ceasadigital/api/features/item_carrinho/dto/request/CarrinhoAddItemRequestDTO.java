@@ -10,11 +10,13 @@ public class CarrinhoAddItemRequestDTO {
   
    @NotNull(message = "O ID do produto não pode ser nulo.")
     @Schema(
-        description = "ID do produto (oferta) a ser adicionado ao carrinho.",
-        example = "42",
+        description = "ID do produto  a ser adicionado ao carrinho.",
+        example = "1",
         requiredMode = Schema.RequiredMode.REQUIRED
     )
-  Long ofertaProdutorId;
+  Long produtoID;
+
+
 
   @NotNull(message = "A quantidade não pode ser nula.")
   @Positive(message = "A quantidade deve ser maior do que zero")
@@ -25,13 +27,7 @@ public class CarrinhoAddItemRequestDTO {
   )
   BigDecimal quantidade; // pensei em BigDecimal pq como é kilo pode ser 1,5 kg 
 
-  public Long getProductId() {
-    return ofertaProdutorId;
-  }
 
-  public void setProductId(Long ofertaProdutorId) {
-    this.ofertaProdutorId = ofertaProdutorId;
-  }
 
   public BigDecimal getQuantidade() {
     return quantidade;
@@ -40,4 +36,12 @@ public class CarrinhoAddItemRequestDTO {
   public void setQuantidade(BigDecimal quantidade) {
     this.quantidade = quantidade;
   }
+  
+  public Long getProdutoID() {
+    return produtoID;
+  }
+
+  public void setProdutoID(Long produtoID) {
+     this.produtoID = produtoID;
+   }
 }

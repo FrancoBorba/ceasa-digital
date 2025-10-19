@@ -30,15 +30,16 @@ import jakarta.persistence.Table;
 @Table(name = "tb_user")
 @Profile({"test", "dev"})
 public class User implements UserDetails {
-
-/* Base fiels for User */
+  
+  /* Base fiels for User */
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
   @Column(nullable = false)
+  
   private String name;
-
+  
   @Column(unique = true)
   private String email;
 
@@ -48,7 +49,7 @@ public class User implements UserDetails {
   @Column(length=20)
   private String telefone; 
 
-  @Column(length=11)
+  @Column(unique = true, nullable = false, length = 14)
   private String cpf;
   
   private boolean ativo;
@@ -60,46 +61,46 @@ public class User implements UserDetails {
   @UpdateTimestamp
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
-
+    
   @ManyToMany
   @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
-
-/* Other Fields */
-
+  
+  /* Other Fields */
+  
   @OneToMany(mappedBy = "usuario")
   private List<Pedido> pedidos = new ArrayList<>();
-
+  
   /* Getters and Setters */
-
+  
   public Long getId() {
     return id;
   }
-
+  
   public void setId(Long id) {
     this.id = id;
   }
-
+  
   public String getName() {
     return name;
   }
-
+  
   public void setName(String name) {
     this.name = name;
   }
-
+  
   public String getEmail() {
     return email;
   }
-
+  
   public void setEmail(String email) {
     this.email = email;
   }
-
+  
   public String getPassword() {
     return password;
   }
-
+  
   public void setPassword(String password) {
     this.password = password;
   }
@@ -143,23 +144,23 @@ public class User implements UserDetails {
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
-
+  
   public List<Pedido> getPedidos() {
     return pedidos;
   }
-
+  
   public Set<Role> getRoles() {
     return roles;
   }
-
+  
   public void setRoles(Set<Role> roles) {
     this.roles = roles;
   }
-
+  
   public void addRole(Role role) {
     this.roles.add(role);
   }
-
+  
   public boolean hasRole(String roleName) {
     for (Role role : roles) {
       if (role.getAuthority().equals(roleName)) {
@@ -168,35 +169,35 @@ public class User implements UserDetails {
     }
     return false;
   }
-
+  
   @Override
   public Collection<? extends GrantedAuthority> getAuthorities() {
     return this.roles;
   }
-
+  
   @Override
   public String getUsername() {
     return this.email;
   }
-
+  
   @Override
   public boolean isAccountNonExpired() {
     // Considerando que a conta não está expirada por padrão
     return true;
   }
-
+  
   @Override
   public boolean isAccountNonLocked() {
     // Considerando que o usuário não está bloqueado por padrão
     return true;
   }
-
+  
   @Override
   public boolean isCredentialsNonExpired() {
     // Considerando que as credenciais não estão expiradas por padrão
     return true;
   }
-
+  
   @Override
   public boolean isEnabled() {
     // Considerando que o usuário está habilitado por padrão

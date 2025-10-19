@@ -33,7 +33,7 @@ public class CarrinhoItemResponseDTO {
     example = "10" , 
     requiredMode = Schema.RequiredMode.REQUIRED
   )
-  float quantidade;
+  BigDecimal quantidade;
 
 
    public Long getId() {
@@ -69,18 +69,18 @@ public class CarrinhoItemResponseDTO {
    }
 
    public BigDecimal getSubTotal() {
-     return subTotal;
+     return  precoUnitario.multiply(quantidade);
    }
 
    public void setSubTotal(BigDecimal subTotal) {
      this.subTotal = subTotal;
    }
 
-   public float getQuantidade() {
+   public BigDecimal getQuantidade() {
      return quantidade;
    }
 
-   public void setQuantidade(float quantidade) {
+   public void setQuantidade(BigDecimal quantidade) {
      this.quantidade = quantidade;
    }
 }

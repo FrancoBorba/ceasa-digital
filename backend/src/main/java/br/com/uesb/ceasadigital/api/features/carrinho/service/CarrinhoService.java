@@ -29,7 +29,7 @@ public class CarrinhoService {
 
     private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
 
-    @Transactional(readOnly = true)
+    @Transactional()
     public CarrinhoResponseDTO findCarrinho() {
 
         Carrinho carrinho = getCarrinho();
@@ -47,7 +47,7 @@ public class CarrinhoService {
     }
 
 
-    private Carrinho getCarrinho() {
+    public Carrinho getCarrinho() {
 
       User currentUser = userService.getCurrentUser();
       logger.info("Find carrinho by usuario: " + currentUser.getName());

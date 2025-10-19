@@ -8,8 +8,10 @@ import org.hibernate.annotations.UpdateTimestamp;
 
 import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -25,12 +27,12 @@ public class ItemCarrinho {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne // Muitos itens pertencem a um carrinho
+  @ManyToOne
   @JoinColumn(name = "carrinho_id" , nullable = false)
   private Carrinho carrinho;
 
-  @ManyToOne // Muitos itens pertencem a uma oferta de produtor
-  @JoinColumn(name = "oferta_produtor_id" , nullable = false)
+  @ManyToOne
+  @JoinColumn(name = "oferta_produtor_id" , nullable = true)
   private OfertaProdutor ofertaProdutor;
 
   @Column(nullable = false , precision = 10 , scale = 3)
@@ -38,6 +40,13 @@ public class ItemCarrinho {
 
   @Column(name = "preco_unitario_armazenado", nullable = false, precision = 10, scale = 2)
   private BigDecimal precoUnitarioArmazenado;
+
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "produto_id", nullable = false)
+  private Product produto;
+
+ 
 
   @CreationTimestamp
   @Column(name = "criado_em", updatable = false)
@@ -104,7 +113,14 @@ public class ItemCarrinho {
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
+  
+   public Product getProduto() {
+    return produto;
+  }
 
+  public void setProduto(Product produto) {
+    this.produto = produto;
+  }
 
   
 }

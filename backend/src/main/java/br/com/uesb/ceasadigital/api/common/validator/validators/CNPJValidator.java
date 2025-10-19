@@ -2,11 +2,11 @@ package br.com.uesb.ceasadigital.api.common.validator.validators;
 
 import java.util.InputMismatchException;
 
-import br.com.uesb.ceasadigital.api.common.validator.annotations.CNJP;
+import br.com.uesb.ceasadigital.api.common.validator.annotations.CNPJ;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 
-public class CNPJValidator implements ConstraintValidator<CNJP , String>{
+public class CNPJValidator implements ConstraintValidator<CNPJ , String>{
 
   @Override
   public boolean isValid(String cnpj, ConstraintValidatorContext context) {
