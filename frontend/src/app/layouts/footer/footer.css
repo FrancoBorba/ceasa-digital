@@ -1,0 +1,8 @@
+/* Footer general styles - only global/reusable styles */
+
+/* Custom utility classes that might be reused across the application */
+.footer-custom-shadow {
+  box-shadow: 0 -4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+/* Any other general footer utilities can be added here */

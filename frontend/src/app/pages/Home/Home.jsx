@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Header from '../../layouts/header/header';
+import Footer from '../../layouts/footer/footer';
+import { getProducts } from '../Product/services/productService';
+import Products from '../Product/Product';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
+    const [products, setProducts] = useState([]);
+    const [loading, setLoading] = useState(true);
 
     // Imagens promocionais para o carrossel
     const promotionalImages = [
@@ -36,7 +41,7 @@ const Home = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % promotionalImages.length);
-        }, 3500); // Passa a cada 1 segundo
+        }, 3500); // Passa a cada x milissegundos
 
         return () => clearInterval(interval);
     }, [promotionalImages.length]);
@@ -52,6 +57,20 @@ const Home = () => {
     const goToSlide = (index) => {
         setCurrentSlide(index);
     };
+    //retornando produtos do backend
+    useEffect(() => {
+        const fetchProducts = async () => {
+            try {
+                const data = await getProducts();
+                setProducts(data);
+            } catch (error) {
+                console.error('Erro ao buscar produtos:', error);
+            } finally {
+                setLoading(false);
+            }
+        };
+        fetchProducts();
+    }, []);
 
     return (
         <div className="min-h-screen bg-gray-50">
@@ -69,32 +88,40 @@ const Home = () => {
                         </button>
                         
                         <div className="w-full h-full relative">
-                            <div className="w-full h-full relative">
-                                <img 
-                                    src={promotionalImages[currentSlide].image} 
-                                    alt={promotionalImages[currentSlide].title}
-                                    className="w-full h-full object-cover transition-transform duration-500"
+                            {promotionalImages.map((img, index) => (
+                            <div
+                                key={index}
+                                className={`absolute inset-0 transition-opacity duration-3500 ease-in-out ${
+                                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                }`}
+                            >
+                                <img
+                                src={img.image}
+                                alt={img.title}
+                                className="w-full h-full object-cover"
                                 />
-                                <div 
-                                    className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)'
-                                    }}
+                                <div
+                                className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
+                                style={{
+                                    background:
+                                    'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)',
+                                }}
                                 >
-                                    <h2 
-                                        className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
-                                        style={{textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'}}
+                                    <h2
+                                    className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
+                                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}
                                     >
-                                        {promotionalImages[currentSlide].title}
-                                    </h2>
-                                    <p 
-                                        className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
-                                        style={{textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'}}
-                                    >
-                                        {promotionalImages[currentSlide].subtitle}
-                                    </p>
+                                    {img.title}
+                                </h2>
+                                <p
+                                    className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
+                                    style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}
+                                >
+                                    {img.subtitle}
+                                </p>
                                 </div>
                             </div>
+                            ))}
                         </div>
                         
                         <button 
@@ -129,7 +156,11 @@ const Home = () => {
                         </div>
                     </div>
                 </section>
+                {/* Produtos em destaque */}
+                <Products />
+                
             </main>
+            <Footer />
         </div>
     );
 };

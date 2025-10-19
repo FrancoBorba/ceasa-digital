@@ -6,7 +6,8 @@ WORKDIR /app
 COPY src/package.json ./
 COPY src/package-lock.json ./
 
-RUN npm install
+# Limpa cache do npm e instala dependências
+RUN npm cache clean --force && npm install
 
 # Copia todo o código fonte
 COPY src/ ./
