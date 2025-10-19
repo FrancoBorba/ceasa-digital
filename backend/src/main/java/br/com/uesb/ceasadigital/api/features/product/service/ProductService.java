@@ -1,10 +1,12 @@
 package br.com.uesb.ceasadigital.api.features.product.service;
 
-import java.util.List;
+
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
@@ -26,13 +28,15 @@ public class ProductService {
 
    private final Logger logger = LoggerFactory.getLogger(ProductService.class.getName());
 
-  public List<ProductResponseUserDTO> findAllProducts(){
+  public Page<ProductResponseUserDTO> findAllProducts(Pageable pageable){
 
     logger.info("Find All Products");
-    
-    List<Product> allProducts = repository.findAll();
 
-    return mapper.toProductUserDTOList(allProducts);
+    Page<Product> products = repository.findAll(pageable);
+    
+   
+
+    return products.map(mapper::productToProductResponseUserDTO);
   }
 
   public ProductResponseUserDTO findProductByID(Long id){
