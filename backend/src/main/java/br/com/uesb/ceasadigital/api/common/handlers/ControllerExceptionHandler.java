@@ -15,8 +15,11 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import br.com.uesb.ceasadigital.api.common.exceptions.BadRequestException;
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ForbiddenException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
+import br.com.uesb.ceasadigital.api.common.exceptions.UnauthorizedException;
 import br.com.uesb.ceasadigital.api.common.response.ErrorResponse;
 import br.com.uesb.ceasadigital.api.common.response.ValidationError;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +39,30 @@ public class ControllerExceptionHandler {
   public ResponseEntity<ErrorResponse> Database(DatabaseException e, HttpServletRequest request) {
 
     HttpStatus status = HttpStatus.CONFLICT; // 409
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
+    return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(BadRequestException.class)
+  public ResponseEntity<ErrorResponse> BadRequest(BadRequestException e, HttpServletRequest request) {
+
+    HttpStatus status = HttpStatus.BAD_REQUEST; // 400
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
+    return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(ForbiddenException.class)
+  public ResponseEntity<ErrorResponse> Forbidden(ForbiddenException e, HttpServletRequest request) {
+
+    HttpStatus status = HttpStatus.FORBIDDEN; // 403
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
+    return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(UnauthorizedException.class)
+  public ResponseEntity<ErrorResponse> Unauthorized(UnauthorizedException e, HttpServletRequest request) {
+
+    HttpStatus status = HttpStatus.UNAUTHORIZED; // 401
     ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
