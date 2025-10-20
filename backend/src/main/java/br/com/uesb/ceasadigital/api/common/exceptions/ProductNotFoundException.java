@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.exceptions;
+package br.com.uesb.ceasadigital.api.common.exceptions;
 
 public class ProductNotFoundException extends RuntimeException {
     public ProductNotFoundException(Long id) {

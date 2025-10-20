@@ -13,53 +13,64 @@ import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
-
+import br.com.uesb.ceasadigital.api.common.exceptions.InvalidProductException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ProductNotFoundException;
 
 @Service
 public class ProductService {
-  
+
   @Autowired
   private ProductRepository repository;
 
-  @Autowired 
+  @Autowired
   private ProductMapper mapper;
 
-   private final Logger logger = LoggerFactory.getLogger(ProductService.class.getName());
+  private final Logger logger = LoggerFactory.getLogger(ProductService.class.getName());
 
-  public List<ProductResponseUserDTO> findAllProducts(){
+  public List<ProductResponseUserDTO> findAllProducts() {
 
     logger.info("Find All Products");
-    
+
     List<Product> allProducts = repository.findAll();
 
     return mapper.toProductUserDTOList(allProducts);
   }
 
-  public ProductResponseUserDTO findProductByID(Long id){
-      logger.info("Find product with id: " + id);
+  public ProductResponseUserDTO findProductByID(Long id) {
+    logger.info("Find product with id: " + id);
 
-     // TODO:
+    // TODO:
     // Throw Excpetions like price negative , Null name , etc
-      var entity = repository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Product not found"));
+    var entity = repository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
 
-      return mapper.productToProductResponseUserDTO(entity);
+    return mapper.productToProductResponseUserDTO(entity);
   }
 
-
-  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO){
+  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO) {
     logger.info("Create a product");
     // TODO:
     // Throw Excpetions like price negative , Null name , etc
     var entity = mapper.toEntity(productRequestDTO);
+
+    if (productRequestDTO.getNome() == null || productRequestDTO.getNome().isBlank()) {
+      throw new InvalidProductException("O nome do produto não pode ser vazio.");
+    }
+    if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
+      throw new InvalidProductException("O preço do produto não pode ser negativo.");
+    }
 
     repository.save(entity);
 
     return mapper.productToProductResponseUserDTO(entity);
   }
 
-  public ProductResponseUserDTO updateProduct(Long id , ProductRequestDTO productRequestDTO){
-    
+  public ProductResponseUserDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
+
     var entity = repository.findById(id).orElseThrow();
+
+    if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
+      throw new InvalidProductException("Preço inválido ao atualizar o produto.");
+    }
 
     logger.info("Update a info about the item with id : " + id);
     entity.setDescricao(productRequestDTO.getDescricao());
@@ -72,14 +83,11 @@ public class ProductService {
     return mapper.productToProductResponseUserDTO(entity);
   }
 
-
-
   public void deleteProduct(Long id) {
     logger.info("Deletando o produto com ID: " + id);
 
-
     Product entity = repository.findById(id)
-            .orElseThrow(() -> new RuntimeException("Produto with {} not found: " + id)); //
+        .orElseThrow(() -> new RuntimeException("Produto with {} not found: " + id)); //
     repository.delete(entity);
-}
+  }
 }
