@@ -63,7 +63,7 @@ public class CarrinhoService {
               .orElseGet(() -> criarCarrinhoParaUsuario(currentUser));
       return carrinho;
      }
-
+    
     private Carrinho criarCarrinhoParaUsuario(User usuario) {
         logger.info("Carrinho ATIVO não encontrado. Criando um novo para o usuário: {}", usuario.getName());
         Carrinho novoCarrinho = new Carrinho(usuario);
