@@ -28,7 +28,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
-@Profile({"test", "dev"})
+//@Profile({"test", "dev"})
 public class User implements UserDetails {
   
   /* Base fiels for User */

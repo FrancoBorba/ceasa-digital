@@ -15,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
+import br.com.uesb.ceasadigital.api.features.role.repository.RoleRepository;
 import br.com.uesb.ceasadigital.api.features.user.dto.request.UserRegisterDTO;
 import br.com.uesb.ceasadigital.api.features.user.dto.response.UserResponseDTO;
 import br.com.uesb.ceasadigital.api.features.user.mapper.UserMapper;
@@ -38,6 +39,9 @@ public class UserService implements UserDetailsService {
   
   @Autowired
   private Environment environment;
+
+  @Autowired
+  private RoleRepository roleRepository;
   
   public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, Environment environment) {
     this.userRepository = userRepository;
@@ -105,11 +109,27 @@ public class UserService implements UserDetailsService {
     // encrypting the password before saving the entity 
     String encryptedPassword = passwordEncoder.encode(entity.getPassword());
     entity.setPassword(encryptedPassword);
-    //entity.setRole(UserRole.USER);
-    userRepository.save(entity); 
 
-    var dto = mapper.toResponseDTO(entity);
+    Role userRole = roleRepository.findByAuthority("ROLE_USER")
+        .orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' não encontrada."));
+    entity.addRole(userRole); // Usando o método da sua entidade
 
+    entity.setAtivo(true);
+
+    System.out.println("--- ESTOU TESTANDO O BUILD V3 (TESTE DE REBUILD) ---");
+    User savedUser = userRepository.save(entity); 
+
+    if(savedUser == null){
+      System.out.println("--- O BUILD V3 FUNCIONOU. SAVEDUSER É NULO. ---");
+      throw new IllegalStateException("usuario nulo.");
+    }
+
+    System.out.println("--- O BUILD V3 FUNCIONOU. SAVEDUSER NÃO É NULO. ---");
+    var dto = mapper.toResponseDTO(savedUser);
+
+    if(dto == null){
+      throw new IllegalStateException("dto nulo.");
+    }
     return dto;
   }
   
