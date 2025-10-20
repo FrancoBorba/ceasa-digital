@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.uesb.ceasadigital.api.exceptions.CarrinhoNotFoundException;
-import br.com.uesb.ceasadigital.api.exceptions.InvalidCarrinhoOperationException;
+import br.com.uesb.ceasadigital.api.common.exceptions.CarrinhoNotFoundException;
+import br.com.uesb.ceasadigital.api.common.exceptions.InvalidCarrinhoOperationException;
 import br.com.uesb.ceasadigital.api.features.carrinho.dto.response.CarrinhoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.carrinho.mapper.CarrinhoMapper;
 import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;

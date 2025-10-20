@@ -1,4 +1,4 @@
-package br.com.uesb.ceasadigital.api.exceptions;
+package br.com.uesb.ceasadigital.api.common.exceptions;
 
 public class CarrinhoNotFoundException extends RuntimeException {
     public CarrinhoNotFoundException(Long id) {
