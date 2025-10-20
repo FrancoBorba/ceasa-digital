@@ -37,10 +37,10 @@ public interface CarrinhoControllerDocs {
     ResponseEntity<Void> limparMeuCarrinho();
 
      @Operation(summary = "Adiciona um item ao carrinho de compras",
-               description = "Adiciona um novo item ao carrinho do usuário logado ou atualiza a quantidade se o item já existir.")
-    @ApiResponse(responseCode = "201", description = "Item adicionado ou atualizado com sucesso")
+               description = "Adiciona um novo item ao carrinho do usuário logado ou atualiza a quantidade se o item já existir. Retorna o carrinho completo atualizado.")
+    @ApiResponse(responseCode = "201", description = "Item adicionado ou atualizado com sucesso. Retorna o carrinho completo.")
     @ApiResponse(responseCode = "400", description = "Requisição inválida (ex: ID da oferta não existe, quantidade inválida)")
-    public ResponseEntity<CarrinhoItemResponseDTO> adicionarItemAoCarrinho( CarrinhoAddItemRequestDTO itemRequest);
+    public ResponseEntity<CarrinhoResponseDTO> adicionarItemAoCarrinho( CarrinhoAddItemRequestDTO itemRequest);
         
          // --- NOVO MÉTODO DE ATUALIZAÇÃO ---
 

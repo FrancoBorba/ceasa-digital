@@ -1,15 +1,30 @@
 package br.com.uesb.ceasadigital.api.features.pedido.service;
 
+import java.math.BigDecimal;
 import java.time.Instant;
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import br.com.uesb.ceasadigital.api.common.exceptions.BadRequestException;
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ForbiddenException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
+import br.com.uesb.ceasadigital.api.common.exceptions.UnauthorizedException;
+import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
+import br.com.uesb.ceasadigital.api.features.carrinho.model.enums.CarrinhoStatus;
+import br.com.uesb.ceasadigital.api.features.carrinho.repository.CarrinhoRepository;
+import br.com.uesb.ceasadigital.api.features.carrinho.service.CarrinhoService;
+import br.com.uesb.ceasadigital.api.features.endereco.model.Endereco;
+import br.com.uesb.ceasadigital.api.features.endereco.repository.EnderecoRepository;
+import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
+import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPostRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoResponseDTO;
@@ -22,11 +37,22 @@ import br.com.uesb.ceasadigital.api.features.user.service.UserService;
 @Service
 public class PedidoService {
 
+  private final Logger logger = LoggerFactory.getLogger(PedidoService.class);
+
   @Autowired
   private PedidoRepository pedidoRepository;
 
   @Autowired
   private UserService userService;
+
+  @Autowired
+  private CarrinhoService carrinhoService;
+
+  @Autowired
+  private CarrinhoRepository carrinhoRepository;
+
+  @Autowired
+  private EnderecoRepository enderecoRepository;
 
   @Transactional(readOnly = true)
   public PedidoResponseDTO getPedidoById(Long id) {
@@ -57,11 +83,6 @@ public class PedidoService {
       
       pedidoRequestDTO.setId(id);
 
-      // Only update fields that are not null
-      if (pedidoRequestDTO.getValorTotal() != null) {
-        pedidoEntity.setValorTotal(pedidoRequestDTO.getValorTotal());
-      }
-      
       if (pedidoRequestDTO.getStatus() != null) {
         pedidoEntity.setStatus(pedidoRequestDTO.getStatus());
       }
@@ -91,13 +112,84 @@ public class PedidoService {
   public List<PedidoResponseDTO> getAllPedidosByCurrentUser() {
     User currentUser = userService.getCurrentUser();
     if (currentUser == null) {
-      throw new RuntimeException("User not authenticated");
+      throw new UnauthorizedException("Usuário não autenticado");
     }
     
     List<Pedido> pedidos = pedidoRepository.findByUsuarioId(currentUser.getId());
     return pedidos.stream()
         .map(PedidoResponseDTO::new)
         .toList();
+  }
+
+  @Transactional
+  public PedidoResponseDTO finalizarCarrinho(FinalizarCarrinhoRequestDTO request) {
+    User currentUser = userService.getCurrentUser();
+    if (currentUser == null) {
+      throw new UnauthorizedException("Usuário não autenticado");
+    }
+
+    logger.info("Finalizando carrinho {} para usuário: {}", request.getCarrinhoId(), currentUser.getName());
+
+    // Busca o carrinho específico pelo ID fornecido
+    Carrinho carrinho = carrinhoRepository.findById(request.getCarrinhoId())
+        .orElseThrow(() -> new ResourceNotFoundException("Carrinho não encontrado"));
+    
+    // Valida se o carrinho pertence ao usuário atual
+    if (!carrinho.getUsuario().getId().equals(currentUser.getId())) {
+      throw new ForbiddenException("O carrinho especificado não pertence ao usuário atual");
+    }
+    
+    // Valida se o carrinho já foi finalizado
+    if (carrinho.getStatus() == CarrinhoStatus.FINALIZADO) {
+      throw new BadRequestException("Este carrinho já foi finalizado e não pode ser reutilizado. Use o carrinho ativo ou adicione novos itens para criar um novo carrinho.");
+    }
+    
+    // Valida se o carrinho não está vazio
+    if (carrinho.getItens() == null || carrinho.getItens().isEmpty()) {
+      throw new BadRequestException("Carrinho vazio. Não é possível finalizar o pedido.");
+    }
+
+    Endereco endereco = enderecoRepository.findById(request.getEnderecoId())
+        .orElseThrow(() -> new ResourceNotFoundException("Endereço não encontrado"));
+
+    if (!endereco.getUsuario().getId().equals(currentUser.getId())) {
+      throw new ForbiddenException("Endereço não pertence ao usuário atual");
+    }
+
+    Pedido pedido = new Pedido();
+    pedido.setUsuario(carrinho.getUsuario());
+    pedido.setEndereco(endereco);
+    pedido.setStatus(PedidoStatus.AGUARDANDO_PAGAMENTO);
+    pedido.setDataPedido(Instant.now());
+
+    BigDecimal valorTotal = BigDecimal.ZERO;
+
+    for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
+      ItemPedido itemPedido = new ItemPedido();
+      itemPedido.setPedido(pedido);
+      itemPedido.setOferta(itemCarrinho.getOfertaProdutor());
+      itemPedido.setProduto(itemCarrinho.getProduto());
+      itemPedido.setQuantidade(itemCarrinho.getQuantidade());
+      itemPedido.setPrecoUnitario(itemCarrinho.getPrecoUnitarioArmazenado());
+
+      pedido.getItens().add(itemPedido);
+
+      BigDecimal subtotal = itemCarrinho.getPrecoUnitarioArmazenado()
+          .multiply(itemCarrinho.getQuantidade());
+      valorTotal = valorTotal.add(subtotal);
+    }
+
+    pedido.setValorTotal(valorTotal);
+
+    Pedido pedidoSalvo = pedidoRepository.save(pedido);
+
+    logger.info("Pedido criado com sucesso. ID: {}", pedidoSalvo.getId());
+
+    carrinhoService.finalizarCarrinho(carrinho);
+
+    logger.info("Carrinho marcado como FINALIZADO. Um novo carrinho será criado na próxima compra.");
+
+    return new PedidoResponseDTO(pedidoSalvo);
   }
 
   @Transactional(propagation = Propagation.SUPPORTS)

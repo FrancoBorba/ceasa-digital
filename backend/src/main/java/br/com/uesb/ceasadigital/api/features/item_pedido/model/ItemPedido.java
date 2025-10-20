@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.Instant;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -44,8 +45,12 @@ public class ItemPedido {
   private Pedido pedido;
 
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "oferta_produtor_id", nullable = false)
+  @JoinColumn(name = "oferta_produtor_id", nullable = true)
   private OfertaProdutor oferta;
+
+  @ManyToOne(fetch = FetchType.LAZY)
+  @JoinColumn(name = "produto_id")
+  private Product produto;
 
   @Digits(integer = 10, fraction = 3)
   @Column(name = "quantidade", columnDefinition = "DECIMAL(10, 3)")
@@ -126,5 +131,13 @@ public class ItemPedido {
 
   public void setPedido(Pedido pedido) {
     this.pedido = pedido;
+  }
+
+  public br.com.uesb.ceasadigital.api.features.product.model.Product getProduto() {
+    return this.produto;
+  }
+
+  public void setProduto(br.com.uesb.ceasadigital.api.features.product.model.Product produto) {
+    this.produto = produto;
   }
 }
