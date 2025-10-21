@@ -1,7 +1,11 @@
 package br.com.uesb.ceasadigital.api.features.oferta_produtor.model;
 
+import br.com.uesb.ceasadigital.api.features.estoque.model.EstoqueVirtual;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 @Entity
@@ -14,8 +18,13 @@ public class OfertaProdutor {
   chave estrangeira a oferta do produto 
   boa implementação
     */
+    
     @Id
     private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "meta_estoque_id")
+    private EstoqueVirtual metaEstoque;
 
     public Long getId() {
         return this.id;

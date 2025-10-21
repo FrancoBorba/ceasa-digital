@@ -106,10 +106,10 @@ public class ResourceServerSecurityConfig {
 					);
 				})
         //Make all endpoints public:
-        .anyRequest().permitAll());
+        //.anyRequest().permitAll());
         //Make all endpoints authenticated:
-				//.anyRequest().authenticated());
-    /* 
+				.anyRequest().authenticated());
+    
     http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 		    .jwt(jwt -> jwt
 		        .decoder(resourceServerJwtDecoder())
@@ -117,7 +117,7 @@ public class ResourceServerSecurityConfig {
 		    .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
     http.exceptionHandling(exceptionHandling -> exceptionHandling
       .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
-    */
+    
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
 	}
