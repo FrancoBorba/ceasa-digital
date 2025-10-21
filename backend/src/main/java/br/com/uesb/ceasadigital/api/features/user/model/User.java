@@ -28,7 +28,7 @@ import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
-//@Profile({"test", "dev"})
+@Profile({"test", "dev"})
 public class User implements UserDetails {
   
   /* Base fiels for User */
@@ -37,7 +37,6 @@ public class User implements UserDetails {
   private Long id;
 
   @Column(nullable = false)
-  
   private String name;
   
   @Column(unique = true)
@@ -62,6 +61,9 @@ public class User implements UserDetails {
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
     
+  @Column(name = "email_confirmado", nullable = false)
+  private boolean emailConfirmado;
+
   @ManyToMany
   @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
@@ -144,7 +146,16 @@ public class User implements UserDetails {
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
+
   
+  public boolean isEmailConfirmado() {
+    return emailConfirmado;
+  }
+
+  public void setEmailConfirmado(boolean emailConfirmado) {
+    this.emailConfirmado = emailConfirmado;
+  }
+
   public List<Pedido> getPedidos() {
     return pedidos;
   }

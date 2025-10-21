@@ -73,7 +73,8 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		} catch (UsernameNotFoundException e) {
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}
-				
+		
+		
 		if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}

@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
 import br.com.uesb.ceasadigital.api.features.role.repository.RoleRepository;
 import br.com.uesb.ceasadigital.api.features.user.dto.request.UserRegisterDTO;
@@ -112,25 +113,13 @@ public class UserService implements UserDetailsService {
 
     Role userRole = roleRepository.findByAuthority("ROLE_USER")
         .orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' não encontrada."));
-    entity.addRole(userRole); // Usando o método da sua entidade
+    entity.addRole(userRole); 
 
     entity.setAtivo(true);
 
-    System.out.println("--- ESTOU TESTANDO O BUILD V3 (TESTE DE REBUILD) ---");
     User savedUser = userRepository.save(entity); 
 
-    if(savedUser == null){
-      System.out.println("--- O BUILD V3 FUNCIONOU. SAVEDUSER É NULO. ---");
-      throw new IllegalStateException("usuario nulo.");
-    }
-
-    System.out.println("--- O BUILD V3 FUNCIONOU. SAVEDUSER NÃO É NULO. ---");
-    var dto = mapper.toResponseDTO(savedUser);
-
-    if(dto == null){
-      throw new IllegalStateException("dto nulo.");
-    }
-    return dto;
+    return new UserResponseDTO(savedUser);
   }
   
   @Transactional
@@ -194,6 +183,19 @@ public class UserService implements UserDetailsService {
     
     return new UserResponseDTO(updatedUser);
   }
+
+  
+  public User findById(Long id){
+    User entity = userRepository.findById(id)
+    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+    return entity;
+  }
+
+  public void confirmarEmail(User user){
+    user.setEmailConfirmado(true);
+  }
+
   
   private boolean isDevOrTestProfile() {
     String[] activeProfiles = environment.getActiveProfiles();

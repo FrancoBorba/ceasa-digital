@@ -9,7 +9,5 @@ import br.com.uesb.ceasadigital.api.features.user.model.User;
 @Mapper(componentModel = "spring")
 public interface UserMapper {
     
-    public UserResponseDTO toResponseDTO(User user);
-
     public User toEntity(UserRegisterDTO user);
 }
