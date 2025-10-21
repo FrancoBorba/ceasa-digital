@@ -48,7 +48,7 @@ function LoginPage() {
         type={"password"}
       />
       <div className="flex flex-col gap-1">
-        <AuthLinkText link={"/"} >Esqueceu o e-mail ou senha?</AuthLinkText>
+        <AuthLinkText link={"/forgot-password"} >Esqueceu o e-mail ou senha?</AuthLinkText>
         <AuthLinkText link={"/register"} >Crie sua conta</AuthLinkText>
       </div>
     </AuthFormBrackground>

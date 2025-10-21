@@ -1,0 +1,61 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+.header {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1D3D1C;
+  margin-bottom: 32px;
+  letter-spacing: 0.025em;
+}
+.fieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.radioGroup {
+  display: flex;
+  gap: 32px;
+  align-items: center;
+  padding-top: 8px;
+  border: none;
+  padding-left: 0;
+}
+.radioLabel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+}
+.radioLabelText {
+  font-size: 0.75rem;
+  font-weight: bold;
+  /* CORRIGIDO: Texto do radio button */
+  color: #333333; 
+  text-transform: uppercase;
+}
+.radioInput {
+  width: 16px;
+  height: 16px;
+  accent-color: #1D3D1C;
+}
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+}
+.emailVerified {
+  font-size: 0.75rem;
+  color: #1D3D1C; 
+  font-weight: bold;
+  margin-top: 4px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 48px;
+}
