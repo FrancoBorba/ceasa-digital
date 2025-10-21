@@ -162,7 +162,7 @@ const Home = () => {
                     <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
                         <div className="text-center">
                             <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-                                Calendário Sazonal - TESTE HOT RELOAD FUNCIONANDO!
+                                Calendário Sazonal
                             </h2>
                             <div className="bg-gray-50 rounded-xl p-12 border-2 border-dashed border-gray-300">
                                 <div className="flex flex-col items-center justify-center space-y-4">
