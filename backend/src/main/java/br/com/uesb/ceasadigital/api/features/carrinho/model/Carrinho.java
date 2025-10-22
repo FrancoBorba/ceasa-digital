@@ -7,11 +7,14 @@ import java.util.List;
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import br.com.uesb.ceasadigital.api.features.carrinho.model.enums.CarrinhoStatus;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
@@ -31,6 +34,10 @@ public class Carrinho {
     @ManyToOne
     @JoinColumn(name = "usuario_id", nullable = false)
     private User usuario;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false, length = 20)
+    private CarrinhoStatus status = CarrinhoStatus.ATIVO;
 
     @CreationTimestamp
     @Column(name = "criado_em", updatable = false)
@@ -89,5 +96,13 @@ public class Carrinho {
 
     public void setItens(List<ItemCarrinho> itens) {
         this.itens = itens;
+    }
+
+    public CarrinhoStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(CarrinhoStatus status) {
+        this.status = status;
     }
 }
