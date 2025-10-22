@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
@@ -36,8 +37,9 @@ public class ProductService {
     return mapper.toProductUserDTOList(allProducts);
   }
 
-  public ProductResponseUserDTO findProductByID(Long id) {
-    logger.info("Find product with id: " + id);
+  @Transactional(readOnly = true)
+  public ProductResponseUserDTO findProductByID(Long id){
+      logger.info("Find product with id: " + id);
 
     // TODO:
     // Throw Excpetions like price negative , Null name , etc
@@ -46,7 +48,9 @@ public class ProductService {
     return mapper.productToProductResponseUserDTO(entity);
   }
 
-  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO) {
+
+  @Transactional
+  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO){
     logger.info("Create a product");
     // TODO:
     // Throw Excpetions like price negative , Null name , etc
@@ -64,8 +68,9 @@ public class ProductService {
     return mapper.productToProductResponseUserDTO(entity);
   }
 
-  public ProductResponseUserDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
-
+  @Transactional
+  public ProductResponseUserDTO updateProduct(Long id , ProductRequestDTO productRequestDTO){
+    
     var entity = repository.findById(id).orElseThrow();
 
     if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
@@ -83,6 +88,7 @@ public class ProductService {
     return mapper.productToProductResponseUserDTO(entity);
   }
 
+  @Transactional
   public void deleteProduct(Long id) {
     logger.info("Deletando o produto com ID: " + id);
 

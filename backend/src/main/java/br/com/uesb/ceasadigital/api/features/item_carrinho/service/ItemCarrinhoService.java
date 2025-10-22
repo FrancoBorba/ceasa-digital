@@ -90,6 +90,7 @@ public class ItemCarrinhoService {
         return carrinhoService.findCarrinho();
     }
 
+    @Transactional
     public CarrinhoItemResponseDTO updateItemInCarrinho(Long idItem , CarrinhoUpdateItemRequestDTO item){
 
       logger.info("Update amount about iten with id " + idItem);
@@ -105,6 +106,7 @@ public class ItemCarrinhoService {
       return mapper.toResponseDTO(itemSalvo);
     }
 
+    @Transactional
     public void deleteItemFromCarrinho(Long idItem){
 
         logger.info("Delete  iten with id " + idItem);
