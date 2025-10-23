@@ -10,6 +10,7 @@ import TurnBackRegistrationButton from "./components/registration/TurnBackRegist
 import RegistrationFormSecondPhase from "./components/registration/form/RegistrationFormSecondPhase";
 import RegistrationFormConfirmationPhase from "./components/registration/form/RegistrationFormConfirmationPhase";
 import SellerProductsSelector from "./components/registration/SellerProductsSelector";
+import { useNavigate } from "react-router";
 
 function SellerRegistrationPage() {
   const [selectedProducts, setSelectedProducts] = useState([]);
@@ -25,6 +26,7 @@ function SellerRegistrationPage() {
     watch,
   } = useForm();
   const password = watch("password");
+  const navigate = useNavigate();
 
   const onSubmitFirstPhase = (data) => {
     setIsPhaseOneCompleted(true);
@@ -52,10 +54,18 @@ function SellerRegistrationPage() {
 
   const handleTurnBackRegistration = () => {
     setRegistrationPhase(registrationPhase - 1);
+
+    if (registrationPhase == 0) {
+      navigate("/select-register");
+      return;
+    }
+
     if (registrationPhase == 1) {
       setIsPhaseOneCompleted(false);
       setHeaderTitle(<RegistrationHeaderTitlePhaseOne userType={"PRODUTOR"} />);
+      return;
     }
+
     if (registrationPhase == 2) {
       setIsPhaseTwoCompleted(false);
       setHeaderTitle(<RegistrationHeaderTitlePhaseTwo userName={formData.current.name.split(/\s+/)[0]} />);

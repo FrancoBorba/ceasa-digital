@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import GenericRegistrationHeader from "./components/registration/header/GenericRegistrationHeader";
+import UserRegistrationInfo from "./components/registration/form/UserRegistrationInfo";
 import RegistrationHeaderTitlePhaseOne from "./components/registration/header/RegistrationHeaderTitlePhaseOne";
 import RegistrationHeaderTitlePhaseTwo from "./components/registration/header/RegistrationHeaderTitlePhaseTwo";
 import RegistrationHeaderTitlePhaseThree from "./components/registration/header/RegistrationHeaderTitlePhaseThree";
@@ -8,13 +9,14 @@ import RegistrationFormFirstPhase from "./components/registration/form/Registrat
 import TurnBackRegistrationButton from "./components/registration/TurnBackRegistrationButton";
 import RegistrationFormSecondPhase from "./components/registration/form/RegistrationFormSecondPhase";
 import RegistrationFormConfirmationPhase from "./components/registration/form/RegistrationFormConfirmationPhase";
+import RegistrationInput from "./components/registration/form/RegistrationInput";
 import { useNavigate } from "react-router";
 
-function ClientRegistrationPage() {
+function DeliveryManRegistrationpage() {
   const [isPhaseOneCompleted, setIsPhaseOneCompleted] = useState(false);
   const [isPhaseTwoCompleted, setIsPhaseTwoCompleted] = useState(false);
   const [registrationPhase, setRegistrationPhase] = useState(0);
-  const [headerTitle, setHeaderTitle] = useState(<RegistrationHeaderTitlePhaseOne userType={"CLIENTE"} />);
+  const [headerTitle, setHeaderTitle] = useState(<RegistrationHeaderTitlePhaseOne userType={"ENTREGADOR"} />);
   const formData = useRef();
   const {
     register,
@@ -54,7 +56,7 @@ function ClientRegistrationPage() {
 
     if (registrationPhase == 1) {
       setIsPhaseOneCompleted(false);
-      setHeaderTitle(<RegistrationHeaderTitlePhaseOne userType={"CLIENTE"} />);
+      setHeaderTitle(<RegistrationHeaderTitlePhaseOne userType={"ENTREGADOR"} />);
       return;
     }
 
@@ -89,14 +91,52 @@ function ClientRegistrationPage() {
           errors={errors}
           register={register}
           formData={formData}
-        />
+        >
+          <RegistrationInput
+            labelName={"CNH"}
+            type={"text"}
+            registration={register("cnh", {
+              required: "É necessário inserir o seu CNH.",
+              pattern: {
+                value: /^[\d]{11}/,
+                message: "Deve ser inserido apenas numeros.",
+              },
+              minLength: {
+                value: 11,
+                message: "Deve ser inserido o CNH completo.",
+              },
+              onChange: (e) => {
+                const value = e.target.value;
+                e.target.value = value.length > 11 ? value.substring(0, 11) : value;
+              },
+            })}
+            errors={errors?.cnh}
+            value={formData?.cnh}
+          />
+          <RegistrationInput
+            labelName={"TIPO DO VEICULO"}
+            type={"text"}
+            registration={register("vehicleType", {
+              required: "É necessário inserir o tipo do seu veículo.",
+              maxLength: {
+                value: 30,
+                message: "O tipo do veículo deve ter no máximo 30 caracteres.",
+              },
+            })}
+            errors={errors?.vehicleType}
+            value={formData?.vehicleType}
+          />
+        </RegistrationFormSecondPhase>
       )}
 
       {registrationPhase == 2 && (
-        <RegistrationFormConfirmationPhase formData={formData} onSubmit={onSubmitConfirmation} />
+        <RegistrationFormConfirmationPhase formData={formData} onSubmit={onSubmitConfirmation}>
+          <UserRegistrationInfo labelName={"CNH"} value={formData?.current?.cnh} />
+          <UserRegistrationInfo labelName={"TIPO DO VEICULO"} value={formData?.current?.vehicleType} />
+        </RegistrationFormConfirmationPhase>
       )}
     </div>
   );
 }
 
-export default ClientRegistrationPage;
+export default DeliveryManRegistrationpage;

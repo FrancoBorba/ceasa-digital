@@ -6,6 +6,8 @@ import LoginPage from "../pages/auth/LoginPage";
 import ProductDetail from "../pages/Product/ProductDetail";
 import ClientRegistrationPage from "../pages/auth/ClientRegistrationPage";
 import SellerRegistrationPage from "../pages/auth/SellerRegistrationPage";
+import DeliveryManRegistrationpage from "../pages/auth/DeliveryManRegistrationPage";
+import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage";
 
 export const router = createBrowserRouter([
   {
@@ -17,7 +19,7 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/register",
+    path: "/client-register",
     element: <ClientRegistrationPage />,
   },
   {
@@ -33,7 +35,15 @@ export const router = createBrowserRouter([
     element: <ProductDetail />,
   },
   {
-    path: "/seller-registration",
+    path: "/seller-register",
     element: <SellerRegistrationPage />
+  },
+  {
+    path: "/delivery-register",
+    element: <DeliveryManRegistrationpage />
+  },
+  {
+    path: "/select-register",
+    element: <SelectRegistrationTypePage />
   }
 ]);
