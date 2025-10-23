@@ -54,10 +54,10 @@ public class CarrinhoController implements CarrinhoControllerDocs {
 
     @Override
     @PostMapping("/itens") 
-    public ResponseEntity<CarrinhoItemResponseDTO> adicionarItemAoCarrinho( @RequestBody @Valid
+    public ResponseEntity<CarrinhoResponseDTO> adicionarItemAoCarrinho( @RequestBody @Valid
       CarrinhoAddItemRequestDTO itemRequest) {
 
-      CarrinhoItemResponseDTO responseDTO = itemCarrinhoService.addItemInCarrinho(itemRequest);
+      CarrinhoResponseDTO responseDTO = itemCarrinhoService.addItemInCarrinho(itemRequest);
 
       return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
     }
