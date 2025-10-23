@@ -31,7 +31,7 @@ public class AuthService {
 
     public void confirmUserEmail(String token){
         ConfirmationToken confirmationToken = confirmationTokenService.getToken(token)
-            .orElseThrow(() -> new ResourceNotFoundException("Token not found"));;
+            .orElseThrow(() -> new ResourceNotFoundException("Token not found"));
         
         User user = confirmationToken.getUser();
         
