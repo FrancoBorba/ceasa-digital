@@ -3,11 +3,16 @@ package br.com.uesb.ceasadigital.api.features.item_carrinho.service;
 import java.math.BigDecimal;
 import java.util.Optional;
 
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
+import br.com.uesb.ceasadigital.api.features.carrinho.dto.response.CarrinhoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
 import br.com.uesb.ceasadigital.api.features.carrinho.repository.CarrinhoRepository;
 import br.com.uesb.ceasadigital.api.features.carrinho.service.CarrinhoService;
@@ -39,11 +44,17 @@ public class ItemCarrinhoService {
 
   @Autowired
   ProductRepository productRepository;
+
+  @PersistenceContext
+  private EntityManager entityManager;
   
   private final Logger logger = LoggerFactory.getLogger(CarrinhoService.class.getName());
 
+  // Removido: não precisamos mais criar ofertas mock
+  // A coluna oferta_produtor_id agora é nullable
+
   @Transactional
-  public CarrinhoItemResponseDTO addItemInCarrinho(CarrinhoAddItemRequestDTO itemToAdd){
+  public CarrinhoResponseDTO addItemInCarrinho(CarrinhoAddItemRequestDTO itemToAdd){
 
     Carrinho carrinho = carrinhoService.getCarrinho();
 
@@ -62,20 +73,24 @@ public class ItemCarrinhoService {
       itemParaSalvar = new ItemCarrinho();
 
       Product produto = productRepository.findById(itemToAdd.getProdutoID())
-                .orElseThrow(() -> new RuntimeException("Produto não encontrado."));
+                .orElseThrow(() -> new ResourceNotFoundException("Produto não encontrado"));
 
       itemParaSalvar.setCarrinho(carrinho);
       itemParaSalvar.setQuantidade(itemToAdd.getQuantidade());
       itemParaSalvar.setProduto(produto);
       itemParaSalvar.setPrecoUnitarioArmazenado(produto.getPreco());
-      itemParaSalvar.setOfertaProdutor(null);
+      itemParaSalvar.setOfertaProdutor(null); // Null permitido agora
         }
 
-        ItemCarrinho itemSalvo = repository.save(itemParaSalvar);
+        repository.save(itemParaSalvar);
+        repository.flush();
+        
+        entityManager.clear();
 
-        return mapper.toResponseDTO(itemSalvo);
+        return carrinhoService.findCarrinho();
     }
 
+    @Transactional
     public CarrinhoItemResponseDTO updateItemInCarrinho(Long idItem , CarrinhoUpdateItemRequestDTO item){
 
       logger.info("Update amount about iten with id " + idItem);
@@ -91,6 +106,7 @@ public class ItemCarrinhoService {
       return mapper.toResponseDTO(itemSalvo);
     }
 
+    @Transactional
     public void deleteItemFromCarrinho(Long idItem){
 
         logger.info("Delete  iten with id " + idItem);

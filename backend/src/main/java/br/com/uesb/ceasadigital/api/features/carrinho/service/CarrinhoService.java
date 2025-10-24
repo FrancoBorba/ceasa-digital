@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.uesb.ceasadigital.api.common.exceptions.CarrinhoNotFoundException;
 import br.com.uesb.ceasadigital.api.common.exceptions.InvalidCarrinhoOperationException;
+import br.com.uesb.ceasadigital.api.common.exceptions.BadRequestException;
 import br.com.uesb.ceasadigital.api.features.carrinho.dto.response.CarrinhoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.carrinho.mapper.CarrinhoMapper;
 import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
+import br.com.uesb.ceasadigital.api.features.carrinho.model.enums.CarrinhoStatus;
 import br.com.uesb.ceasadigital.api.features.carrinho.repository.CarrinhoRepository;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.service.UserService;
@@ -42,26 +43,39 @@ public class CarrinhoService {
         if (carrinho.getItens().isEmpty()) {
             throw new InvalidCarrinhoOperationException("O carrinho já está vazio.");
         }
-
-        carrinho.getItens().clear();
-    }
-
-    public Carrinho getCarrinho() {
-        User currentUser = userService.getCurrentUser();
-
-        if (currentUser == null) {
-            throw new CarrinhoNotFoundException("Usuário não autenticado.");
+        if (carrinho.getStatus() == CarrinhoStatus.FINALIZADO) {
+            throw new BadRequestException("Não é possível limpar um carrinho finalizado");
         }
 
-        logger.info("Find carrinho by usuario: " + currentUser.getName());
-        Carrinho carrinho = carrinhoRepository.findByUsuarioId(currentUser.getId())
-                .orElseGet(() -> criarCarrinhoParaUsuario(currentUser));
-        return carrinho;
+        carrinho.getItens().clear();
+
     }
 
+
+    @Transactional
+    public Carrinho getCarrinho() {
+
+      User currentUser = userService.getCurrentUser();
+      logger.info("Find carrinho ATIVO by usuario: " + currentUser.getName());
+      // Busca apenas carrinhos com status ATIVO
+      Carrinho carrinho = carrinhoRepository.findByUsuarioIdAndStatus(currentUser.getId(), CarrinhoStatus.ATIVO)
+              .orElseGet(() -> criarCarrinhoParaUsuario(currentUser));
+      return carrinho;
+     }
+    
     private Carrinho criarCarrinhoParaUsuario(User usuario) {
-        logger.info("Carrinho não encontrado. Criando um novo para o usuário: {}", usuario.getName());
+        logger.info("Carrinho ATIVO não encontrado. Criando um novo para o usuário: {}", usuario.getName());
         Carrinho novoCarrinho = new Carrinho(usuario);
-        return carrinhoRepository.save(novoCarrinho);
+        novoCarrinho.setStatus(CarrinhoStatus.ATIVO);
+        Carrinho carrinhoSalvo = carrinhoRepository.save(novoCarrinho);
+        carrinhoRepository.flush();
+        return carrinhoSalvo;
+    }
+
+    @Transactional
+    public void finalizarCarrinho(Carrinho carrinho) {
+        logger.info("Marcando carrinho {} como FINALIZADO", carrinho.getId());
+        carrinho.setStatus(CarrinhoStatus.FINALIZADO);
+        carrinhoRepository.save(carrinho);
     }
 }
