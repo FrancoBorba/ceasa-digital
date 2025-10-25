@@ -15,6 +15,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
@@ -69,19 +73,20 @@ class ProductServiceTest {
         // Arrange
         List<Product> productList = new ArrayList<>();
         productList.add(product);
-        List<ProductResponseUserDTO> responseList = List.of(responseDTO);
+        Page<Product> productPage = new PageImpl<>(productList);
+        Pageable pageable = PageRequest.of(0, 10);
 
-        when(repository.findAll()).thenReturn(productList);
-        when(mapper.toProductUserDTOList(productList)).thenReturn(responseList);
+        when(repository.findAll(pageable)).thenReturn(productPage);
+        when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
         // Act
-        List<ProductResponseUserDTO> result = service.findAllProducts();
+        Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
 
         // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Banana", result.get(0).getNome());
-        verify(repository, times(1)).findAll();
+        assertEquals(1, result.getContent().size());
+        assertEquals("Banana", result.getContent().get(0).getNome());
+        verify(repository, times(1)).findAll(pageable);
     }
 
     @Test
