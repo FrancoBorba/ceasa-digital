@@ -45,6 +45,12 @@ public class User implements UserDetails {
   
   @Column(unique = true, nullable = false, length = 14)
   private String cpf;
+
+  @Column(name = "reset_token")
+  private String resetToken;
+
+  @Column(name = "reset_token_expires")
+  private LocalDateTime resetTokenExpires;
   
   @UpdateTimestamp
   @Column(name = "atualizado_em")
@@ -174,6 +180,22 @@ public class User implements UserDetails {
   public boolean isEnabled() {
     // Considerando que o usuário está habilitado por padrão
     return true;
+  }
+
+  public String getResetToken() {
+    return resetToken;
+  }
+
+  public void setResetToken(String resetToken) {
+    this.resetToken = resetToken;
+  }
+
+  public LocalDateTime getResetTokenExpires() {
+    return resetTokenExpires;
+  }
+
+  public void setResetTokenExpires(LocalDateTime resetTokenExpires) {
+    this.resetTokenExpires = resetTokenExpires;
   }
   
 }
