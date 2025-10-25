@@ -75,13 +75,13 @@ class ProductServiceTest {
         when(mapper.toProductUserDTOList(productList)).thenReturn(responseList);
 
         // Act
-        /*List<ProductResponseUserDTO> result = service.findAllProducts();
+        List<ProductResponseUserDTO> result = service.findAllProducts();
 
         // Assert
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals("Banana", result.get(0).getNome());
-        verify(repository, times(1)).findAll();*/
+        verify(repository, times(1)).findAll();
     }
 
     @Test
