@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -15,6 +14,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.PageImpl;
+
 import java.math.BigDecimal;
 
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
@@ -22,6 +23,10 @@ import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
 
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProductService Tests")
@@ -39,6 +44,9 @@ class ProductServiceTest {
     private Product product;
     private ProductRequestDTO requestDTO;
     private ProductResponseUserDTO responseDTO;
+
+    private Pageable pageable;
+
 
     @BeforeEach
     void setUp() {
@@ -65,23 +73,16 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("Should return all products successfully")
-    void findAllProducts_ShouldReturnListOfProducts() {
-        // Arrange
-        List<Product> productList = new ArrayList<>();
-        productList.add(product);
-        List<ProductResponseUserDTO> responseList = List.of(responseDTO);
+    void findAllProducts_ShouldReturnPagedProducts() {
+        Page<Product> productPage = new PageImpl<>(List.of(product));
+        when(repository.findAll(pageable)).thenReturn(productPage);
+        when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
-        when(repository.findAll()).thenReturn(productList);
-        when(mapper.toProductUserDTOList(productList)).thenReturn(responseList);
+        Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
 
-        // Act
-        List<ProductResponseUserDTO> result = service.findAllProducts();
-
-        // Assert
         assertNotNull(result);
-        assertEquals(1, result.size());
-        assertEquals("Banana", result.get(0).getNome());
-        verify(repository, times(1)).findAll();
+        assertEquals(1, result.getTotalElements());
+        assertEquals("Banana", result.getContent().get(0).getNome());
     }
 
     @Test
