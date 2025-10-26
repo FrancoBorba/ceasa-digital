@@ -26,17 +26,20 @@ import br.com.uesb.ceasadigital.api.common.exceptions.UnauthorizedException;
 import br.com.uesb.ceasadigital.api.common.response.ErrorResponse;
 import br.com.uesb.ceasadigital.api.common.response.ValidationError;
 import jakarta.servlet.http.HttpServletRequest;
+import br.com.uesb.ceasadigital.api.common.exceptions.CarrinhoNotFoundException;
+import br.com.uesb.ceasadigital.api.common.exceptions.InvalidCarrinhoOperationException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ItemCarrinhoNotFoundException;
 import br.com.uesb.ceasadigital.api.common.exceptions.InvalidProductException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ProductNotFoundException;
 
 @ControllerAdvice
 public class ControllerExceptionHandler {
-  
+
   @ExceptionHandler(ResourceNotFoundException.class)
   public ResponseEntity<ErrorResponse> ResourceNotFound(ResourceNotFoundException e, HttpServletRequest request) {
 
     HttpStatus status = HttpStatus.NOT_FOUND; // 404
-    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
 
@@ -44,7 +47,7 @@ public class ControllerExceptionHandler {
   public ResponseEntity<ErrorResponse> Database(DatabaseException e, HttpServletRequest request) {
 
     HttpStatus status = HttpStatus.CONFLICT; // 409
-    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage() , request.getRequestURI());
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), e.getMessage(), request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
 
@@ -73,9 +76,11 @@ public class ControllerExceptionHandler {
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<ErrorResponse> methodArgumentNotValid(MethodArgumentNotValidException e, HttpServletRequest request) {
+  public ResponseEntity<ErrorResponse> methodArgumentNotValid(MethodArgumentNotValidException e,
+      HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY; // 422
-    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid request" , request.getRequestURI());
+    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid request",
+        request.getRequestURI());
     for (FieldError fieldError : e.getBindingResult().getFieldErrors()) {
       err.addValidationError(fieldError.getField(), fieldError.getDefaultMessage());
     }
@@ -83,14 +88,16 @@ public class ControllerExceptionHandler {
   }
 
   @ExceptionHandler(HttpMessageNotReadableException.class)
-  public ResponseEntity<ErrorResponse> httpMessageNotReadable(HttpMessageNotReadableException e, HttpServletRequest request) {
+  public ResponseEntity<ErrorResponse> httpMessageNotReadable(HttpMessageNotReadableException e,
+      HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNPROCESSABLE_ENTITY; // 422
-    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid JSON format" , request.getRequestURI());
-    
+    ValidationError err = new ValidationError(Instant.now(), status.value(), "Invalid JSON format",
+        request.getRequestURI());
+
     String errorMessage = e.getMessage();
     String fieldName = "body";
     String customMessage = "Invalid JSON format";
-    
+
     // Check for enum deserialization errors
     if (errorMessage != null && errorMessage.contains("Cannot deserialize value of type")) {
       if (errorMessage.contains("PedidoStatus")) {
@@ -104,11 +111,11 @@ public class ControllerExceptionHandler {
         }
       }
     }
-    
+
     err.addValidationError(fieldName, customMessage);
     return ResponseEntity.status(status).body(err);
   }
-  
+
   private String extractInvalidValue(String errorMessage) {
     // Extract value from: "from String \"PAG\"" -> "PAG"
     try {
@@ -126,7 +133,8 @@ public class ControllerExceptionHandler {
   @ExceptionHandler(Exception.class)
   public ResponseEntity<ErrorResponse> genericError(Exception e, HttpServletRequest request) {
     HttpStatus status = HttpStatus.INTERNAL_SERVER_ERROR; // 500
-    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), "Internal server error", request.getRequestURI(), e.getMessage());
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), "Internal server error",
+        request.getRequestURI(), e.getMessage());
     return ResponseEntity.status(status).body(err);
   }
 
@@ -135,7 +143,8 @@ public class ControllerExceptionHandler {
   @ExceptionHandler(AuthenticationException.class)
   public ResponseEntity<ErrorResponse> authenticationException(AuthenticationException e, HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNAUTHORIZED; // 401
-    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), "Missing or invalid access token", request.getRequestURI());
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), "Missing or invalid access token",
+        request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
 
@@ -143,17 +152,19 @@ public class ControllerExceptionHandler {
   @ExceptionHandler(AccessDeniedException.class)
   public ResponseEntity<ErrorResponse> accessDeniedException(AccessDeniedException e, HttpServletRequest request) {
     HttpStatus status = HttpStatus.FORBIDDEN; // 403
-    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), "Access denied: you don't have permission to access this resource", request.getRequestURI());
+    ErrorResponse err = new ErrorResponse(Instant.now(), status.value(),
+        "Access denied: you don't have permission to access this resource", request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
 
   // JWT Bearer Token errors (401)
   @ExceptionHandler(InvalidBearerTokenException.class)
-  public ResponseEntity<ErrorResponse> invalidBearerTokenException(InvalidBearerTokenException e, HttpServletRequest request) {
+  public ResponseEntity<ErrorResponse> invalidBearerTokenException(InvalidBearerTokenException e,
+      HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNAUTHORIZED; // 401
-    
+
     String customMessage = "Invalid or expired access token";
-    
+
     // Check if the error is specifically about JWT expiration
     if (e.getMessage() != null) {
       if (e.getMessage().contains("Jwt expired")) {
@@ -164,16 +175,17 @@ public class ControllerExceptionHandler {
         customMessage = "Invalid access token signature";
       }
     }
-    
+
     ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), customMessage, request.getRequestURI());
     return ResponseEntity.status(status).body(err);
   }
 
   // Authorization Server errors (401)
   @ExceptionHandler(OAuth2AuthenticationException.class)
-  public ResponseEntity<ErrorResponse> oauth2AuthenticationException(OAuth2AuthenticationException e, HttpServletRequest request) {
+  public ResponseEntity<ErrorResponse> oauth2AuthenticationException(OAuth2AuthenticationException e,
+      HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNAUTHORIZED; // 401
-    
+
     OAuth2Error error = e.getError();
     String customMessage = "OAuth2 authentication error";
     String customPath = "/oauth2/token";
@@ -184,7 +196,7 @@ public class ControllerExceptionHandler {
         break;
       case "invalid_grant":
         // Distinguish between password and refresh token errors
-        if (request.getParameter("grant_type") != null && 
+        if (request.getParameter("grant_type") != null &&
             request.getParameter("grant_type").equals("refresh_token")) {
           customMessage = "Invalid or expired refresh token";
         } else {
@@ -205,16 +217,18 @@ public class ControllerExceptionHandler {
           customMessage = "OAuth2 error: " + error.getDescription();
         }
     }
-    
+
     ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), customMessage, customPath);
     return ResponseEntity.status(status).body(err);
   }
 
-  // Specific handler for refresh token errors - provides more detailed error information
-  public ResponseEntity<ErrorResponse> handleRefreshTokenError(String errorCode, String errorDescription, HttpServletRequest request) {
+  // Specific handler for refresh token errors - provides more detailed error
+  // information
+  public ResponseEntity<ErrorResponse> handleRefreshTokenError(String errorCode, String errorDescription,
+      HttpServletRequest request) {
     HttpStatus status = HttpStatus.UNAUTHORIZED;
     String customMessage;
-    
+
     switch (errorCode) {
       case "invalid_grant":
         customMessage = "Refresh token is invalid, expired, or has been revoked";
@@ -230,11 +244,42 @@ public class ControllerExceptionHandler {
         customMessage = "Refresh token grant type is not supported";
         break;
       default:
-        customMessage = "Refresh token authentication failed: " + (errorDescription != null ? errorDescription : "Unknown error");
+        customMessage = "Refresh token authentication failed: "
+            + (errorDescription != null ? errorDescription : "Unknown error");
     }
-    
+
     ErrorResponse err = new ErrorResponse(Instant.now(), status.value(), customMessage, "/oauth2/token");
     return ResponseEntity.status(status).body(err);
+  }
+
+  @ExceptionHandler(CarrinhoNotFoundException.class)
+  public ResponseEntity<Map<String, Object>> handleCarrinhoNotFound(CarrinhoNotFoundException ex) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("timestamp", LocalDateTime.now());
+    error.put("status", HttpStatus.NOT_FOUND.value());
+    error.put("error", "Carrinho não encontrado");
+    error.put("message", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+  }
+
+  @ExceptionHandler(ItemCarrinhoNotFoundException.class)
+  public ResponseEntity<Map<String, Object>> handleItemCarrinhoNotFound(ItemCarrinhoNotFoundException ex) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("timestamp", LocalDateTime.now());
+    error.put("status", HttpStatus.NOT_FOUND.value());
+    error.put("error", "Item do carrinho não encontrado");
+    error.put("message", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
+  }
+
+  @ExceptionHandler(InvalidCarrinhoOperationException.class)
+  public ResponseEntity<Map<String, Object>> handleInvalidCarrinhoOperation(InvalidCarrinhoOperationException ex) {
+    Map<String, Object> error = new HashMap<>();
+    error.put("timestamp", LocalDateTime.now());
+    error.put("status", HttpStatus.BAD_REQUEST.value());
+    error.put("error", "Operação inválida no carrinho");
+    error.put("message", ex.getMessage());
+    return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
   }
       @ExceptionHandler(ProductNotFoundException.class)
     public ResponseEntity<Map<String, Object>> handleProductNotFound(ProductNotFoundException ex) {

@@ -35,6 +35,11 @@ public class OAuth2ResponseInterceptorFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response,
                                    FilterChain filterChain) throws ServletException, IOException {
 
+        String path = request.getRequestURI();
+        if ("/auth/login".equals(path) || "/auth/register".equals(path)) {
+            filterChain.doFilter(request, response);
+            return;
+        }
         // Check if it's a request for the OAuth2 token endpoint
         if (!"/oauth2/token".equals(request.getServletPath())) {
             filterChain.doFilter(request, response);

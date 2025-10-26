@@ -6,7 +6,6 @@ import static org.mockito.Mockito.*;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.ArrayList;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -27,6 +26,10 @@ import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+
+
 @ExtendWith(MockitoExtension.class)
 @DisplayName("ProductService Tests")
 class ProductServiceTest {
@@ -43,6 +46,9 @@ class ProductServiceTest {
     private Product product;
     private ProductRequestDTO requestDTO;
     private ProductResponseUserDTO responseDTO;
+
+    private Pageable pageable;
+
 
     @BeforeEach
     void setUp() {
