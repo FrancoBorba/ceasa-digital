@@ -4,6 +4,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 
@@ -14,22 +15,19 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 
-import java.math.BigDecimal;
-
+import br.com.uesb.ceasadigital.api.common.exceptions.ProductNotFoundException;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-
-
 @ExtendWith(MockitoExtension.class)
-@DisplayName("ProductService Tests")
+@DisplayName("ProductService Unit Tests")
 class ProductServiceTest {
 
     @Mock
@@ -44,9 +42,7 @@ class ProductServiceTest {
     private Product product;
     private ProductRequestDTO requestDTO;
     private ProductResponseUserDTO responseDTO;
-
     private Pageable pageable;
-
 
     @BeforeEach
     void setUp() {
@@ -72,22 +68,27 @@ class ProductServiceTest {
     }
 
     @Test
-    @DisplayName("Should return all products successfully")
+    @DisplayName("Should return paged products successfully")
     void findAllProducts_ShouldReturnPagedProducts() {
+        // Arrange
         Page<Product> productPage = new PageImpl<>(List.of(product));
         when(repository.findAll(pageable)).thenReturn(productPage);
         when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
+        // Act
         Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
 
-        assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
-        assertEquals("Banana", result.getContent().get(0).getNome());
+        // Assert
+        assertNotNull(result, "Result page should not be null");
+        assertEquals(1, result.getTotalElements(), "Page should contain exactly one product");
+        assertEquals("Banana", result.getContent().get(0).getNome(), "Product name should match");
+        verify(repository, times(1)).findAll(pageable);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
     @DisplayName("Should return product when ID is valid")
-    void findProductByID_WithValidId_ShouldReturnProduct() {
+    void findProductByID_ShouldReturnProduct_WhenIdExists() {
         // Arrange
         when(repository.findById(1L)).thenReturn(Optional.of(product));
         when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
@@ -96,59 +97,82 @@ class ProductServiceTest {
         ProductResponseUserDTO result = service.findProductByID(1L);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("Banana", result.getNome());
-        verify(repository, times(1)).findById(1L);
+        assertNotNull(result, "Response DTO should not be null");
+        assertEquals("Banana", result.getNome(), "Returned product name should be 'Banana'");
+        verify(repository).findById(1L);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
-    @DisplayName("Should throw exception when product ID is not found")
-    void findProductByID_WithInvalidId_ShouldThrowException() {
+    @DisplayName("Should throw exception when product is not found by ID")
+    void findProductByID_ShouldThrowException_WhenIdDoesNotExist() {
         // Arrange
-        when(repository.findById(99L)).thenReturn(Optional.empty());
+        Long nonExistentId = 999L;
+        when(repository.findById(nonExistentId)).thenReturn(Optional.empty());
 
-        // Act & Assert
-        assertThrows(RuntimeException.class, () -> service.findProductByID(99L));
-        verify(repository, times(1)).findById(99L);
+        // Act + Assert
+        assertThrows(ProductNotFoundException.class, () -> {
+            service.findProductByID(nonExistentId);
+        });
+
+        verify(repository, times(1)).findById(nonExistentId);
     }
 
     @Test
     @DisplayName("Should create a new product successfully")
-    void createProduct_ShouldSaveAndReturnResponse() {
+    void createProduct_ShouldReturnResponse_WhenProductIsSaved() {
         // Arrange
         when(mapper.toEntity(requestDTO)).thenReturn(product);
-        when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
         when(repository.save(product)).thenReturn(product);
+        when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
         // Act
         ProductResponseUserDTO result = service.createProduct(requestDTO);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("Banana", result.getNome());
-        verify(repository, times(1)).save(product);
+        assertNotNull(result, "Created product should not be null");
+        assertEquals("Banana", result.getNome(), "Created product name should match");
+        verify(repository).save(product);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
     @DisplayName("Should update an existing product successfully")
-    void updateProduct_ShouldUpdateAndReturnResponse() {
+    void updateProduct_ShouldReturnUpdatedResponse_WhenProductExists() {
         // Arrange
         when(repository.findById(1L)).thenReturn(Optional.of(product));
+        when(repository.save(product)).thenReturn(product);
         when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
         // Act
         ProductResponseUserDTO result = service.updateProduct(1L, requestDTO);
 
         // Assert
-        assertNotNull(result);
-        assertEquals("Banana", result.getNome());
-        verify(repository, times(1)).findById(1L);
-        verify(repository, times(1)).save(product);
+        assertNotNull(result, "Updated product should not be null");
+        assertEquals("Banana", result.getNome(), "Updated product name should match");
+        verify(repository).findById(1L);
+        verify(repository).save(product);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
-    @DisplayName("Should delete a product successfully when ID exists")
-    void deleteProduct_WithValidId_ShouldDeleteProduct() {
+    @DisplayName("Should throw exception when trying to update non-existing product")
+    void updateProduct_ShouldThrowException_WhenProductDoesNotExist() {
+        // Arrange
+        when(repository.findById(99L)).thenReturn(Optional.empty());
+
+        // Act & Assert
+        assertThrows(RuntimeException.class, () -> service.updateProduct(99L, requestDTO),
+                "Expected RuntimeException when updating non-existing product");
+
+        verify(repository).findById(99L);
+        verify(repository, never()).save(any());
+        verifyNoMoreInteractions(repository);
+    }
+
+    @Test
+    @DisplayName("Should delete product successfully when ID exists")
+    void deleteProduct_ShouldDeleteSuccessfully_WhenIdExists() {
         // Arrange
         when(repository.findById(1L)).thenReturn(Optional.of(product));
 
@@ -156,17 +180,23 @@ class ProductServiceTest {
         service.deleteProduct(1L);
 
         // Assert
-        verify(repository, times(1)).delete(product);
+        verify(repository).findById(1L);
+        verify(repository).delete(product);
+        verifyNoMoreInteractions(repository);
     }
 
     @Test
-    @DisplayName("Should throw exception when trying to delete non-existing product")
-    void deleteProduct_WithInvalidId_ShouldThrowException() {
+    @DisplayName("Should throw exception when deleting non-existing product")
+    void deleteProduct_ShouldThrowException_WhenIdDoesNotExist() {
         // Arrange
         when(repository.findById(99L)).thenReturn(Optional.empty());
 
         // Act & Assert
-        assertThrows(RuntimeException.class, () -> service.deleteProduct(99L));
+        assertThrows(RuntimeException.class, () -> service.deleteProduct(99L),
+                "Expected RuntimeException when deleting non-existing product");
+
+        verify(repository).findById(99L);
         verify(repository, never()).delete(any());
+        verifyNoMoreInteractions(repository);
     }
 }
