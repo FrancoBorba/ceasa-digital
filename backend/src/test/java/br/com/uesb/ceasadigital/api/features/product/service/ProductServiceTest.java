@@ -14,8 +14,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import java.math.BigDecimal;
 
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
@@ -73,16 +75,24 @@ class ProductServiceTest {
 
     @Test
     @DisplayName("Should return all products successfully")
-    void findAllProducts_ShouldReturnPagedProducts() {
-        Page<Product> productPage = new PageImpl<>(List.of(product));
+    void findAllProducts_ShouldReturnListOfProducts() {
+        // Arrange
+        List<Product> productList = new ArrayList<>();
+        productList.add(product);
+        Page<Product> productPage = new PageImpl<>(productList);
+        Pageable pageable = PageRequest.of(0, 10);
+
         when(repository.findAll(pageable)).thenReturn(productPage);
         when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
+        // Act
         Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
 
+        // Assert
         assertNotNull(result);
-        assertEquals(1, result.getTotalElements());
+        assertEquals(1, result.getContent().size());
         assertEquals("Banana", result.getContent().get(0).getNome());
+        verify(repository, times(1)).findAll(pageable);
     }
 
     @Test
