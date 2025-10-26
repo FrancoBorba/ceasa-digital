@@ -7,6 +7,10 @@ import java.util.List;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,8 +29,10 @@ import br.com.uesb.ceasadigital.api.features.endereco.repository.EnderecoReposit
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPageRequestDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPostRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoPageResponseDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
 import br.com.uesb.ceasadigital.api.features.pedido.model.enums.PedidoStatus;
@@ -202,6 +208,65 @@ public class PedidoService {
     } catch (Exception e) {
       throw new DatabaseException("Constraint violation error");
     }
+  }
+
+  /**
+   * Busca pedidos do usuário atual com paginação baseada em tempo
+   * Permite ordenação ascendente (mais antigo para mais novo) ou descendente (mais novo para mais antigo)
+   */
+  @Transactional(readOnly = true)
+  public PedidoPageResponseDto getAllPedidosByCurrentUserPaginated(PedidoPageRequestDto pageRequest) {
+    User currentUser = userService.getCurrentUser();
+    if (currentUser == null) {
+      throw new UnauthorizedException("Usuário não autenticado");
+    }
+
+    logger.info("Buscando pedidos paginados para usuário: {} - Página: {}, Tamanho: {}, Ordenação: {} {}", 
+                currentUser.getName(), pageRequest.getPage(), pageRequest.getSize(), 
+                pageRequest.getSortBy(), pageRequest.getDirection());
+
+    // Configurar ordenação baseada em tempo
+    Sort.Direction sortDirection = "desc".equalsIgnoreCase(pageRequest.getDirection()) 
+                                     ? Sort.Direction.DESC 
+                                     : Sort.Direction.ASC;
+
+    Sort sort = Sort.by(sortDirection, pageRequest.getSortBy());
+    Pageable pageable = PageRequest.of(pageRequest.getPage(), pageRequest.getSize(), sort);
+
+    // Buscar pedidos paginados do usuário
+    Page<Pedido> pedidosPage = pedidoRepository.findByUsuarioId(currentUser.getId(), pageable);
+    
+    // Converter para DTOs
+    Page<PedidoResponseDTO> pedidosResponsePage = pedidosPage.map(PedidoResponseDTO::new);
+    
+    return new PedidoPageResponseDto(pedidosResponsePage);
+  }
+
+  /**
+   * Busca todos os pedidos com paginação baseada em tempo (para administradores)
+   * Permite ordenação ascendente (mais antigo para mais novo) ou descendente (mais novo para mais antigo)
+   */
+  @Transactional(readOnly = true)
+  public PedidoPageResponseDto getAllPedidosPaginated(PedidoPageRequestDto pageRequest) {
+    logger.info("Buscando todos os pedidos paginados - Página: {}, Tamanho: {}, Ordenação: {} {}", 
+                pageRequest.getPage(), pageRequest.getSize(), 
+                pageRequest.getSortBy(), pageRequest.getDirection());
+
+    // Configurar ordenação baseada em tempo
+    Sort.Direction sortDirection = "desc".equalsIgnoreCase(pageRequest.getDirection()) 
+                                     ? Sort.Direction.DESC 
+                                     : Sort.Direction.ASC;
+
+    Sort sort = Sort.by(sortDirection, pageRequest.getSortBy());
+    Pageable pageable = PageRequest.of(pageRequest.getPage(), pageRequest.getSize(), sort);
+
+    // Buscar todos os pedidos paginados
+    Page<Pedido> pedidosPage = pedidoRepository.findAll(pageable);
+    
+    // Converter para DTOs
+    Page<PedidoResponseDTO> pedidosResponsePage = pedidosPage.map(PedidoResponseDTO::new);
+    
+    return new PedidoPageResponseDto(pedidosResponsePage);
   }
   
 }
