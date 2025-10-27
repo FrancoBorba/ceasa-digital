@@ -86,7 +86,7 @@ public class ResourceServerSecurityConfig {
         .requestMatchers("/api/v1/products").permitAll()
         .requestMatchers("/api/v1/products/{id}").permitAll()
 		.requestMatchers("/auth/**").permitAll()
-		.requestMatchers("/produtor/**").permitAll();
+		//.requestMatchers("/produtor/**").permitAll()
 
 		
         // Docker Health Check Endpoints
