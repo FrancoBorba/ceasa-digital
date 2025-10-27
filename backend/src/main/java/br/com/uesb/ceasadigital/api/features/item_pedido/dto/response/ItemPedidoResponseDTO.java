@@ -18,6 +18,9 @@ public class ItemPedidoResponseDTO {
   @JsonProperty("oferta_id")
   private Long oferta_id;
 
+  @JsonProperty("nome_produtor")
+  private String nomeProdutor;
+
   @JsonProperty("quantidade")
   private BigDecimal quantidade;
 
@@ -49,6 +52,14 @@ public class ItemPedidoResponseDTO {
 
   public void setOferta_id(Long oferta_id) {
     this.oferta_id = oferta_id;
+  }
+
+  public String getNomeProdutor() {
+    return nomeProdutor;
+  }
+
+  public void setNomeProdutor(String nomeProdutor) {
+    this.nomeProdutor = nomeProdutor;
   }
 
   public BigDecimal getQuantidade() {
