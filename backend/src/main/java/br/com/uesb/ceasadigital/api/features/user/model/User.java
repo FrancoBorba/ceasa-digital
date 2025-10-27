@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
@@ -34,15 +35,19 @@ public class User implements UserDetails {
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
-  
+
+  @Column(nullable = false)
   private String name;
   
   @Column(unique = true)
   private String email;
-  
+
+  @Column(nullable = false)
   private String password;
-  private String telefone;
-  
+
+  @Column(length=20)
+  private String telefone; 
+
   @Column(unique = true, nullable = false, length = 14)
   private String cpf;
 
@@ -52,10 +57,19 @@ public class User implements UserDetails {
   @Column(name = "reset_token_expires")
   private LocalDateTime resetTokenExpires;
   
+  private boolean ativo;
+
+  @CreationTimestamp
+  @Column(name = "criado_em")
+  private LocalDateTime criadoEm;
+
   @UpdateTimestamp
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
-  
+    
+  @Column(name = "email_confirmado", nullable = false)
+  private boolean emailConfirmado;
+
   @ManyToMany
   @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
   private Set<Role> roles = new HashSet<>();
@@ -98,31 +112,56 @@ public class User implements UserDetails {
   public void setPassword(String password) {
     this.password = password;
   }
-  
+
   public String getTelefone() {
     return telefone;
   }
-  
+
   public void setTelefone(String telefone) {
     this.telefone = telefone;
   }
-  
+
   public String getCpf() {
     return cpf;
   }
-  
+
   public void setCpf(String cpf) {
     this.cpf = cpf;
   }
-  
+
+  public boolean isAtivo() {
+    return ativo;
+  }
+
+  public void setAtivo(boolean ativo) {
+    this.ativo = ativo;
+  }
+
+  public LocalDateTime getCriadoEm() {
+    return criadoEm;
+  }
+
+  public void setCriadoEm(LocalDateTime criadoEm) {
+    this.criadoEm = criadoEm;
+  }
+
   public LocalDateTime getAtualizadoEm() {
     return atualizadoEm;
   }
-  
+
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
+
   
+  public boolean isEmailConfirmado() {
+    return emailConfirmado;
+  }
+
+  public void setEmailConfirmado(boolean emailConfirmado) {
+    this.emailConfirmado = emailConfirmado;
+  }
+
   public List<Pedido> getPedidos() {
     return pedidos;
   }

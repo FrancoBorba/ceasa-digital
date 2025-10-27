@@ -23,3 +23,12 @@ security:
 
 cors:
   origins: ${OAUTH2_CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
+
+
+
+spring.mail.host: smtp.gmail.com
+spring.mail.port: 587
+spring.mail.username: ${EMAIL_USERNAME} # VARIÁVEL DE AMBIENTE
+spring.mail.password: ${EMAIL_PASSWORD} # VARIÁVEL DE AMBIENTE
+spring.mail.properties.mail.smtp.auth: true
+spring.mail.properties.mail.smtp.starttls.enable: true
