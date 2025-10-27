@@ -11,7 +11,9 @@ COPY pom.xml .
 COPY src ./src
 
 # Roda o maven sem testes
-RUN mvn clean package -DskipTests
+#RUN mvn clean package -DskipTests
+RUN mvn clean package -Dmaven.test.skip=true
+
 
 
 # Usando uma imagem padrão mais leve para rodar depois de buildar

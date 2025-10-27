@@ -27,8 +27,16 @@ cors:
 
 
 spring.mail.host: smtp.gmail.com
-spring.mail.port: 587
+spring.mail.port: 456
 spring.mail.username: ${EMAIL_USERNAME} # VARIÁVEL DE AMBIENTE
 spring.mail.password: ${EMAIL_PASSWORD} # VARIÁVEL DE AMBIENTE
 spring.mail.properties.mail.smtp.auth: true
 spring.mail.properties.mail.smtp.starttls.enable: true
+properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: false      
+      mail.smtp.ssl.enable: true            
+      mail.smtps.ssl.checkserveridentity: true
+      mail.smtps.ssl.trust: smtp.gmail.com
+      mail.smtps.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtps.socketFactory.port: 465
