@@ -8,6 +8,9 @@ import ClientRegistrationPage from "../pages/auth/ClientRegistrationPage";
 import SellerRegistrationPage from "../pages/auth/SellerRegistrationPage";
 import DeliveryManRegistrationpage from "../pages/auth/DeliveryManRegistrationPage";
 import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage";
+import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
+import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
+import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
 
 export const router = createBrowserRouter([
   {
@@ -36,14 +39,26 @@ export const router = createBrowserRouter([
   },
   {
     path: "/seller-register",
-    element: <SellerRegistrationPage />
+    element: <SellerRegistrationPage />,
   },
   {
     path: "/delivery-register",
-    element: <DeliveryManRegistrationpage />
+    element: <DeliveryManRegistrationpage />,
   },
   {
     path: "/select-register",
-    element: <SelectRegistrationTypePage />
-  }
+    element: <SelectRegistrationTypePage />,
+  },
+  {
+    path: "/changepassword",
+    element: <ChangePasswordPage />,
+  },
+  {
+    path: "/emailverified",
+    element: <EmailVerifiedPage />,
+  },
+  {
+    path: "/emailverifiedfail",
+    element: <EmailVerifiedFailPage />,
+  },
 ]);

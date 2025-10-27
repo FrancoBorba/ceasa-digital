@@ -78,9 +78,9 @@ public class AuthorizationServerSecurityConfig {
 
 	@Autowired
 	private OAuth2ResponseInterceptorFilter oauth2ResponseInterceptorFilter;
-	
+
 	@Autowired
-  private PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
 
 	@Bean
 	@Order(2)

@@ -14,10 +14,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import br.com.uesb.ceasadigital.api.common.exceptions.DatabaseException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
+import br.com.uesb.ceasadigital.api.features.role.repository.RoleRepository;
+import br.com.uesb.ceasadigital.api.features.user.dto.request.UserRegisterDTO;
+import br.com.uesb.ceasadigital.api.features.user.dto.response.UserResponseDTO;
+import br.com.uesb.ceasadigital.api.features.user.mapper.UserMapper;
 import br.com.uesb.ceasadigital.api.features.user.dto.request.UserUpdatePasswordRequestDTO;
 import br.com.uesb.ceasadigital.api.features.user.dto.request.UserUpdateRequestDTO;
-import br.com.uesb.ceasadigital.api.features.user.dto.response.UserResponseDTO;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.repository.UserRepository;
 import br.com.uesb.ceasadigital.api.features.user.repository.projections.UserDetailsProjection;
@@ -27,12 +31,18 @@ public class UserService implements UserDetailsService {
   
   @Autowired
   private UserRepository userRepository;
+
+  @Autowired 
+  private UserMapper mapper;
   
   @Autowired
   private PasswordEncoder passwordEncoder;
   
   @Autowired
   private Environment environment;
+
+  @Autowired
+  private RoleRepository roleRepository;
   
   public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, Environment environment) {
     this.userRepository = userRepository;
@@ -50,6 +60,8 @@ public class UserService implements UserDetailsService {
     User user = new User();
     user.setEmail(result.get(0).getUsername());
     user.setPassword(result.get(0).getPassword());
+    Boolean isEmailConfirmado = result.get(0).getEmailConfirmado();
+    user.setEmailConfirmado(isEmailConfirmado != null ? isEmailConfirmado : false); 
     for (UserDetailsProjection projection : result) {
       user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
     }
@@ -73,6 +85,43 @@ public class UserService implements UserDetailsService {
       return createMockUser();
     }
     return null;
+  }
+
+  public UserResponseDTO create(UserRegisterDTO user){
+    if (user == null) {
+        throw new IllegalStateException("User cannot be null.");
+    }
+    if (user.getName() == null || user.getName().isBlank()) {
+      throw new IllegalStateException("User name cannot be null or empty.");
+    }
+    if (user.getEmail() == null || user.getEmail().isBlank()) {
+        throw new IllegalStateException("User email cannot be null or empty.");
+    }
+    if (user.getPassword() == null || user.getPassword().isBlank()) {
+        throw new IllegalStateException("User password cannot be null or empty.");
+    }
+    if (user.getCpf() == null || user.getCpf().isBlank()){
+      throw new IllegalStateException("User cpf cannot be null or empty.");
+    }
+    if (userRepository.findByEmail(user.getEmail()).isPresent()){
+       throw new IllegalStateException("Email already in use.");
+    }
+
+    var entity = mapper.toEntity(user);
+    
+    // encrypting the password before saving the entity 
+    String encryptedPassword = passwordEncoder.encode(entity.getPassword());
+    entity.setPassword(encryptedPassword);
+
+    Role userRole = roleRepository.findByAuthority("ROLE_USER")
+        .orElseThrow(() -> new IllegalStateException("Role 'ROLE_USER' não encontrada."));
+    entity.addRole(userRole); 
+
+    entity.setAtivo(true);
+
+    User savedUser = userRepository.save(entity); 
+
+    return new UserResponseDTO(savedUser);
   }
   
   @Transactional
@@ -136,6 +185,20 @@ public class UserService implements UserDetailsService {
     
     return new UserResponseDTO(updatedUser);
   }
+
+  
+  public User findById(Long id){
+    User entity = userRepository.findById(id)
+    .orElseThrow(() -> new ResourceNotFoundException("User not found with id: " + id));
+
+    return entity;
+  }
+
+  public void confirmarEmail(User user){
+    user.setEmailConfirmado(true);
+    userRepository.save(user);
+  }
+
   
   private boolean isDevOrTestProfile() {
     String[] activeProfiles = environment.getActiveProfiles();

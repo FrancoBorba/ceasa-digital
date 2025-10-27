@@ -54,6 +54,10 @@ services:
       - OAUTH2_CORS_ORIGINS=${OAUTH2_CORS_ORIGINS}
       - OAUTH2_JWK_SET_URI=${OAUTH2_JWK_SET_URI}
       - OAUTH2_ISSUER_URI=${OAUTH2_ISSUER_URI}
+   
+      # Email configuration
+      - EMAIL_USERNAME=${EMAIL_USERNAME}
+      - EMAIL_PASSWORD=${EMAIL_PASSWORD}
     ports:
       - "${SERVER_EXTERNAL_PORT}:${SERVER_INTERNAL_PORT}"
     depends_on:
