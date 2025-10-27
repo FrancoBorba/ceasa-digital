@@ -1,6 +1,7 @@
 package br.com.uesb.ceasadigital.api.features.item_pedido.repository;
 
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
@@ -13,8 +14,8 @@ import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 @Repository
 public interface ItemPedidoRepository extends JpaRepository<ItemPedido, Long> {
 
-  List<ItemPedido> findAllByPedidoUsuarioId(Long usuarioId);
+  Page<ItemPedido> findAllByPedidoUsuarioId(Long usuarioId, Pageable pageable);
 
-  List<ItemPedido> findAllByPedidoId(Long pedidoId);
+  Page<ItemPedido> findAllByPedidoId(Long pedidoId, Pageable pageable);
 
 }
