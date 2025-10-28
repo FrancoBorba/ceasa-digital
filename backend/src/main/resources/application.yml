@@ -38,5 +38,3 @@ security:
 
 cors:
   origins: ${OAUTH2_CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
-
-

@@ -8,7 +8,8 @@ export default function Products() {
 
   useEffect(() => {
     getProducts().then(data => {
-      setProducts(data);
+      //console.log("Resposta da API:", data);    // Debugging line for API response
+      setProducts(data.content || []);
       setLoading(false);
     });
   }, []);

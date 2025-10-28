@@ -1,15 +1,12 @@
-import {useEffect, useState } from "react";
-import AuthFormBrackground from "./components/AuthFormBrackground";
-import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
+import {useState } from "react";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
 import useUserLoginAuthentication from "./hooks/useUserLoginAuthentication";
-import AuthLinkText from "./components/AuthLinkText";
-import useTryToRefreshAccessToken from "./hooks/useTryToRefreshAccessToken";
+import AuthLinkText from "./components/login/AuthLinkText";
+import useEffectTryToRefreshAccessToken from "./hooks/useEffectTryToRefreshAccessToken";
 
 function LoginPage() {
-  const tryToRefreshAccessToken = useTryToRefreshAccessToken();
-  useEffect(() => {
-    tryToRefreshAccessToken();
-  }, [tryToRefreshAccessToken]);
+  useEffectTryToRefreshAccessToken();
 
   const { tryToAuthenticateUser } = useUserLoginAuthentication();
   const [formData, setFormData] = useState({
@@ -47,10 +44,10 @@ function LoginPage() {
         onTextChanged={handleLoginFormInputChange}
         type={"password"}
       />
-      <div className="flex flex-col gap-1">
+      <nav className="flex flex-col gap-1">
         <AuthLinkText link={"/"} >Esqueceu o e-mail ou senha?</AuthLinkText>
-        <AuthLinkText link={"/register"} >Crie sua conta</AuthLinkText>
-      </div>
+        <AuthLinkText link={"/select-register"} >Crie sua conta</AuthLinkText>
+      </nav>
     </AuthFormBrackground>
   );
 }
