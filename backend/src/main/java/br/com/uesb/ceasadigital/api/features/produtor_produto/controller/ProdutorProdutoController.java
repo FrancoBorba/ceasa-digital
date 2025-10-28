@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
 import br.com.uesb.ceasadigital.api.features.produtor_produto.dto.request.ProdutorProdutoRequestVendaDTO;
 import br.com.uesb.ceasadigital.api.features.produtor_produto.dto.response.ProdutorProdutoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.produtor_produto.dto.response.ProdutorProdutoResponseVendaDTO;
@@ -27,14 +26,14 @@ import jakarta.validation.Valid;
 @RequestMapping("api/v1/produtor-produtos")
 @Tag(name = "Produtor-Produto", description = "Endpoints para gerenciar as permissões de venda de produtos pelos produtores.")
 public class ProdutorProdutoController {
-
+    
     @Autowired
     ProdutorProdutoService produtorProdutoService;
-
+    
     @PostMapping(
-        value = "/solicitar-venda",
-        produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
+    value = "/solicitar-venda",
+    produces = MediaType.APPLICATION_JSON_VALUE,
+    consumes = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("hasRole('ROLE_PRODUTOR')")
     public ResponseEntity<ProdutorProdutoResponseVendaDTO> requestVenda(@Valid @RequestBody ProdutorProdutoRequestVendaDTO requestDTO) {
@@ -42,28 +41,38 @@ public class ProdutorProdutoController {
         ProdutorProdutoResponseVendaDTO response = new ProdutorProdutoResponseVendaDTO(results);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
-
+    
     @GetMapping(
-        value = "/me",
-        produces = MediaType.APPLICATION_JSON_VALUE
+    value = "/me",
+    produces = MediaType.APPLICATION_JSON_VALUE
     )
     @PreAuthorize("hasRole('ROLE_PRODUTOR')")
     public ResponseEntity<List<ProdutorProdutoResponseDTO>> listMySolicitacoesVenda(@RequestParam(required = false) String status) {
         List<ProdutorProdutoResponseDTO> response = produtorProdutoService.findMySolicitacoesVenda(status);
         return ResponseEntity.ok(response);
     }
-
+    
     @PutMapping(value = "/desativar/{id}") 
     @PreAuthorize("hasRole('ROLE_PRODUTOR')")
     public ResponseEntity<ProdutorProdutoResponseDTO> deactivateMySolicitacaoVenda(@PathVariable Long id) {
         ProdutorProdutoResponseDTO response = produtorProdutoService.desativarMinhaSolicitacaoVenda(id);
         return ResponseEntity.ok(response);
     }
-
+    
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE) 
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<ProdutorProdutoResponseDTO>> listAll(@RequestParam(required = false) String status) { 
         List<ProdutorProdutoResponseDTO> response = produtorProdutoService.findAll(status); 
+        return ResponseEntity.ok(response);
+    }
+    
+    @PutMapping("/admin/avaliar/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<ProdutorProdutoResponseDTO> avaliarSolicitacaoVenda(
+    @PathVariable Long id,
+    @RequestParam String status
+    ) {
+        ProdutorProdutoResponseDTO response = produtorProdutoService.approveOrRejectVenda(id, status);
         return ResponseEntity.ok(response);
     }
 }

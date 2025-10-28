@@ -1,10 +1,6 @@
 package br.com.uesb.ceasadigital.api.features.produtor_produto.dto.response;
 
 import java.time.LocalDateTime;
-
-import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
-import br.com.uesb.ceasadigital.api.features.produtor.dto.response.ProdutorResponseDTO;
-import br.com.uesb.ceasadigital.api.features.user.dto.response.UserMinDTO;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "DTO de resposta para a permissão de venda de um produto por um produtor.")
