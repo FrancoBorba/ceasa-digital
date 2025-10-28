@@ -3,9 +3,12 @@ import App from "../App";
 import Cart from "../pages/Cart/Cart";
 import PurchaseConfirmation from "../pages/Purchase/Purchase";
 import LoginPage from "../pages/auth/LoginPage";
-import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
-import RegistrationPage from "../pages/auth/RegistrationPage";
 import ProductDetail from "../pages/Product/ProductDetail";
+import ClientRegistrationPage from "../pages/auth/ClientRegistrationPage";
+import SellerRegistrationPage from "../pages/auth/SellerRegistrationPage";
+import DeliveryManRegistrationpage from "../pages/auth/DeliveryManRegistrationPage";
+import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage";
+import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
 
@@ -19,8 +22,8 @@ export const router = createBrowserRouter([
     element: <LoginPage />,
   },
   {
-    path: "/register",
-    element: <RegistrationPage />,
+    path: "/client-register",
+    element: <ClientRegistrationPage />,
   },
   {
     path: "/cart",
@@ -33,6 +36,18 @@ export const router = createBrowserRouter([
   {
     path: "/productDetail/:id",
     element: <ProductDetail />,
+  },
+  {
+    path: "/seller-register",
+    element: <SellerRegistrationPage />,
+  },
+  {
+    path: "/delivery-register",
+    element: <DeliveryManRegistrationpage />,
+  },
+  {
+    path: "/select-register",
+    element: <SelectRegistrationTypePage />,
   },
   {
     path: "/changepassword",
