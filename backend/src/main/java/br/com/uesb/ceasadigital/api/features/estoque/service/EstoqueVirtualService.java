@@ -77,11 +77,13 @@ public class EstoqueVirtualService {
   }
   
   @Transactional
-  public void delete(Long id) {
-    //TODO: Avisar para o admin caso ja tenha um oferta de algum produtor vinculada a essa meta de estoque
-    if (!estoqueRepository.existsById(id)) {
-      throw new ResourceNotFoundException("Meta de estoque com id " + id + " não encontrada.");
-    }
+  public EstoqueVirtualResponseDTO delete(Long id) {
+    EstoqueVirtual meta = estoqueRepository.findById(id)
+    .orElseThrow(() -> new ResourceNotFoundException("Meta de estoque com id " + id + " não encontrada."));
+    EstoqueVirtualResponseDTO responseDTO = estoqueMapper.toResponseDTO(meta);
+
+    // TODO: Avisar para o admin caso ja tenha um oferta de algum produtor vinculada a essa meta de estoque
     estoqueRepository.deleteById(id);
+    return responseDTO;
   }
 }

@@ -46,8 +46,8 @@ public class EstoqueVirtualController {
   }
   
   @DeleteMapping("/{id}")
-  public ResponseEntity<Void> delete(@PathVariable Long id) {
-    estoqueService.delete(id);
-    return ResponseEntity.noContent().build();
+  public ResponseEntity<EstoqueVirtualResponseDTO> delete(@PathVariable Long id) {
+    EstoqueVirtualResponseDTO deletedDTO = estoqueService.delete(id);
+    return ResponseEntity.ok(deletedDTO);
   }
 }
