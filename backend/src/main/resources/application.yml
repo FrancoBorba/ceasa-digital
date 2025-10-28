@@ -9,6 +9,21 @@ spring:
   jpa:
     open-in-view: false
 
+  mail:
+    host: smtp.gmail.com
+    port: 465 # Verifique se ainda está 465
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
+    protocol: smtps # Adicionado para forçar SSL
+    properties:
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: false # Deve ser false para SSL
+      mail.smtp.ssl.enable: true      # Deve ser true para SSL
+      mail.smtps.ssl.checkserveridentity: true
+      mail.smtps.ssl.trust: smtp.gmail.com
+      mail.smtps.socketFactory.class: javax.net.ssl.SSLSocketFactory
+      mail.smtps.socketFactory.port: 465
+
 security:
   client-id: ${OAUTH2_CLIENT_ID:myclientid}
   client-secret: ${OAUTH2_CLIENT_SECRET:myclientsecret}
@@ -23,20 +38,3 @@ security:
 
 cors:
   origins: ${OAUTH2_CORS_ORIGINS:http://localhost:3000,http://localhost:5173}
-
-
-
-spring.mail.host: smtp.gmail.com
-spring.mail.port: 456
-spring.mail.username: ${EMAIL_USERNAME} # VARIÁVEL DE AMBIENTE
-spring.mail.password: ${EMAIL_PASSWORD} # VARIÁVEL DE AMBIENTE
-spring.mail.properties.mail.smtp.auth: true
-spring.mail.properties.mail.smtp.starttls.enable: true
-properties:
-      mail.smtp.auth: true
-      mail.smtp.starttls.enable: false      
-      mail.smtp.ssl.enable: true            
-      mail.smtps.ssl.checkserveridentity: true
-      mail.smtps.ssl.trust: smtp.gmail.com
-      mail.smtps.socketFactory.class: javax.net.ssl.SSLSocketFactory
-      mail.smtps.socketFactory.port: 465
