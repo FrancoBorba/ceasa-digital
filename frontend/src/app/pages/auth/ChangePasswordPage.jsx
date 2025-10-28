@@ -1,6 +1,6 @@
 import { useState } from "react";
-import AuthFormBrackground from "./components/AuthFormBrackground";
-import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
 import useChangePassword from "./hooks/useChangePassword";
 
 function ChangePasswordPage() {

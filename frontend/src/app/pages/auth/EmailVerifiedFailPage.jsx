@@ -1,5 +1,5 @@
 import { useNavigate } from "react-router-dom";
-import AuthFormBrackground from "./components/AuthFormBrackground";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
 
 function EmailVerificationFailedPage() {
   const navigate = useNavigate();
