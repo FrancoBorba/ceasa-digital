@@ -8,6 +8,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional; // Import Transactional
 
+import br.com.uesb.ceasadigital.api.common.notification.EmailService;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -53,7 +55,7 @@ public class PasswordResetService {
                          + "O link expirará em 1 hora.\n\n"
                          + "Atenciosamente,\nEquipe CEASA Digital";
 
-        emailService.sendEmail(user.getEmail(), emailSubject, emailBody);
+        emailService.sendSimpleMail(user.getEmail(), emailSubject, emailBody); 
     }
 
     @Transactional // Adiciona transação

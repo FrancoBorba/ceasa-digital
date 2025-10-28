@@ -3,6 +3,7 @@ package br.com.uesb.ceasadigital.api.features.auth.service;
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.repository.UserRepository;
+import br.com.uesb.ceasadigital.api.common.notification.EmailService; 
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -19,7 +20,11 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.*; // Import static methods like assertThrows, assertNotNull, etc.
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.ArgumentMatchers.contains;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*; // Import static methods like verify, when, etc.
+
+
 
 @ExtendWith(MockitoExtension.class) // Habilita as anotações do Mockito
 @DisplayName("PasswordResetService Tests")
@@ -71,7 +76,7 @@ public class PasswordResetServiceTest {
         assertNotNull(testUser.getResetTokenExpires());
         assertTrue(testUser.getResetTokenExpires().isAfter(LocalDateTime.now())); // Verifica se a expiração é no futuro
         // 3. Verifica se o método sendEmail foi chamado no EmailService
-        verify(emailService).sendEmail(eq(userEmail), anyString(), contains(testUser.getResetToken()));
+        verify(emailService).sendSimpleMail(eq(userEmail), anyString(), contains(testUser.getResetToken())); 
     }
 
     @Test
@@ -89,7 +94,7 @@ public class PasswordResetServiceTest {
         assertTrue(exception.getMessage().contains("Usuário não encontrado com o e-mail:"));
         // Verifica que save e sendEmail NÃO foram chamados
         verify(userRepository, never()).save(any(User.class));
-        verify(emailService, never()).sendEmail(anyString(), anyString(), anyString());
+        verify(emailService, never()).sendSimpleMail(anyString(), anyString(), anyString());
     }
 
     @Test
