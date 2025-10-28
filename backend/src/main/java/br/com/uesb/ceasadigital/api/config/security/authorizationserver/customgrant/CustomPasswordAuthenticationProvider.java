@@ -33,6 +33,8 @@ import org.springframework.security.oauth2.server.authorization.token.OAuth2Toke
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenGenerator;
 import org.springframework.util.Assert;
 
+import br.com.uesb.ceasadigital.api.features.user.model.User;
+
 public class CustomPasswordAuthenticationProvider implements AuthenticationProvider {
 
 	private static final String ERROR_URI = "https://datatracker.ietf.org/doc/html/rfc6749#section-5.2";
@@ -67,25 +69,38 @@ public class CustomPasswordAuthenticationProvider implements AuthenticationProvi
 		username = customPasswordAuthenticationToken.getUsername();
 		password = customPasswordAuthenticationToken.getPassword();	
 		
-		UserDetails user = null;
+		UserDetails userDetails = null;
+		User user = null;
 		try {
-			user = userDetailsService.loadUserByUsername(username);
+			userDetails = userDetailsService.loadUserByUsername(username);
 		} catch (UsernameNotFoundException e) {
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}
-				
-		if (!passwordEncoder.matches(password, user.getPassword()) || !user.getUsername().equals(username)) {
+		
+		if (!passwordEncoder.matches(password, userDetails.getPassword()) || !userDetails.getUsername().equals(username)) {
 			throw new OAuth2AuthenticationException("Invalid credentials");
 		}
+
+		if (userDetails instanceof User) {
+			user = (User) userDetails;
+		} else {
+			 // Caso a conversão falhe (improvável se UserService estiver correto)
+			throw new OAuth2AuthenticationException("Invalid credentials");
+		}
+
+		if (!user.isEmailConfirmado()) {
+            OAuth2Error error = new OAuth2Error("unverified_email", "Email must be verified before login", null);
+            throw new OAuth2AuthenticationException(error);
+        }
 		
-		authorizedScopes = user.getAuthorities().stream()
+		authorizedScopes = userDetails.getAuthorities().stream()
 				.map(scope -> scope.getAuthority())
 				.filter(scope -> registeredClient.getScopes().contains(scope))
 				.collect(Collectors.toSet());
 		
 		//-----------Create a new Security Context Holder Context----------
 		OAuth2ClientAuthenticationToken oAuth2ClientAuthenticationToken = (OAuth2ClientAuthenticationToken) SecurityContextHolder.getContext().getAuthentication();
-		CustomUserAuthorities customPasswordUser = new CustomUserAuthorities(username, user.getAuthorities());
+		CustomUserAuthorities customPasswordUser = new CustomUserAuthorities(username, userDetails.getAuthorities());
 		oAuth2ClientAuthenticationToken.setDetails(customPasswordUser);
 		
 		var newcontext = SecurityContextHolder.createEmptyContext();

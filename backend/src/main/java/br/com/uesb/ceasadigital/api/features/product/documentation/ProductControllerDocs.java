@@ -1,10 +1,11 @@
 package br.com.uesb.ceasadigital.api.features.product.documentation;
 
-import java.util.List;
 
 
+import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
@@ -32,7 +33,12 @@ public interface ProductControllerDocs {
       @ApiResponse(description = "Internal server error" , responseCode = "500", content = @Content)
     }
   )
-  public ResponseEntity<List<ProductResponseUserDTO>> findAll();
+  public ResponseEntity<Page<ProductResponseUserDTO>> findAll(
+    @RequestParam(value = "page" , defaultValue = "0") Integer page ,
+    @RequestParam(value = "size" , defaultValue = "10") Integer size ,
+    @RequestParam(value = "direction" , defaultValue = "asc") String direction,
+    @RequestParam(value = "type" , defaultValue = "nome") String type
+  );
 
    @Operation(
     summary = "Find a single product" ,

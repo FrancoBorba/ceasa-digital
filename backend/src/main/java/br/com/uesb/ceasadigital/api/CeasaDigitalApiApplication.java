@@ -3,6 +3,7 @@ package br.com.uesb.ceasadigital.api;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.web.client.RestTemplate;
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;
@@ -14,6 +15,7 @@ import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import io.swagger.v3.oas.annotations.security.SecuritySchemes;
 
 @SpringBootApplication
+@EnableAsync
 @OpenAPIDefinition(
     info = @Info(title = "CEASA Digital API", version = "v1", description = "API para a plataforma CEASA Digital"),
     security = @SecurityRequirement(name = "bearerAuth")
