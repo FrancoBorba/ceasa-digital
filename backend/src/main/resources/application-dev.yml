@@ -2,6 +2,14 @@
 spring:
   config:
     import: optional:file:../.env[.properties]
+  mail:
+    host: 
+    port: 
+    username: 
+    password: 
+    properties:
+      mail.smtp.auth: false
+      mail.smtp.starttls.enable: false
 
   datasource:
     url: ${DATASOURCE_URL}

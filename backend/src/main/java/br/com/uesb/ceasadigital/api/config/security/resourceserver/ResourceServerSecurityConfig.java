@@ -82,7 +82,7 @@ public class ResourceServerSecurityConfig {
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
 				.requestMatchers("/oauth2-docs/**").permitAll()
-
+				.requestMatchers("/auth/**").permitAll()
         .requestMatchers("/api/v1/products").permitAll()
         .requestMatchers("/api/v1/products/{id}").permitAll()
 		.requestMatchers("/auth/**").permitAll()
