@@ -1,8 +1,11 @@
 package br.com.uesb.ceasadigital.api.features.autenticacao.controller;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -46,8 +49,26 @@ public class AuthController {
 
     @GetMapping("/confirmToken")
     public ResponseEntity<?> confirmToken(@RequestParam("token") String token){
-        authService.confirmUserEmail(token);
-        return ResponseEntity.ok(Map.of("message", "Email is confirmed sucessfully!"));
+        try {
+            authService.confirmUserEmail(token);
+
+            // Define a URL de redirecionamento para o frontend
+            URI successUri = URI.create("http://localhost:5173/emailverified"); // URL da sua tela de sucesso
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(successUri);
+
+            // Retorna um status 302 Found para redirecionar o navegador
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+            
+        } catch (Exception e) {
+
+            // Em caso de erro (token inválido, expirado, etc.), redireciona para a tela de falha
+            URI failUri = URI.create("http://localhost:5173/emailverifiedfail"); // URL da sua tela de falha
+            HttpHeaders headers = new HttpHeaders();
+            headers.setLocation(failUri);
+            return new ResponseEntity<>(headers, HttpStatus.FOUND);
+        }
+        
     }
   
 }

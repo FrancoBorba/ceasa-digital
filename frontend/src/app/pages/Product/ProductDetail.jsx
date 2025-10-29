@@ -34,7 +34,7 @@ export default function ProductDetail() {
 
         await addItemToCart(itemRequest);
         setMessage("Produto adicionado ao carrinho!");
-        setTimeout(() => setMessage(""), 2000); 
+        setTimeout(() => setMessage(""), 1000); 
     } catch (error) {
         console.error("Erro ao adicionar produto ao carrinho:", error);
         setMessage("Produto adicionado ao carrinho!");

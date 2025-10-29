@@ -57,14 +57,14 @@ function Cart() {
 
   if (!cart.itens || cart.itens.length === 0) {
     return (
-      <div className="p-8">
-        <h1 className="text-3xl font-bold mb-4">Carrinho de Compras</h1>
+      <div className="p-8 flex flex-col items-center">
+        <h1 className="text-3xl font-bold mb-4">Seu Carrinho de Compras</h1>
         <p>Seu carrinho está vazio por enquanto...</p>
         <button
           onClick={() => navigate("/")}
-          className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-800 transition-all"
+          className="mb-6 mt-6 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
         >
-          Voltar
+          Ir às compras
         </button>
       </div>
     );
@@ -72,10 +72,10 @@ function Cart() {
 
   return (
     <div className="p-8">
-      <h1 className="text-3xl font-bold mb-4">Carrinho de Compras</h1>
+      <h1 className="text-3xl text-center font-bold mb-4">Seu Carrinho de Compras</h1>
       <button
         onClick={() => navigate("/")}
-        className="mb-4 px-4 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-800 transition-all"
+        className="mb-6 bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
       >
         Voltar
       </button>
@@ -83,18 +83,31 @@ function Cart() {
         {cart.itens.map((item) => (
           <li
             key={item.id}
-            className="border p-4 rounded-lg flex justify-between items-center"
+            className="border p-4 rounded-xl flex flex-col sm:flex-row sm:items-center gap-4 bg-white shadow-sm hover:shadow-md transition-all"
           >
-            <div>
-              <img className="w-full h-40 object-cover rounded-xl mb-3" src={`http://localhost:8080${item.fotoUrl}`}/>
-              <h2 className="font-semibold">{item.nomeDoProduto}</h2>
-              <p>Quantidade: {item.quantidade}</p>
-              <p>Preço unitário: R$ {item.precoUnitario.toFixed(2)}</p>
-              <p>Subtotal: R$ {(item.quantidade * item.precoUnitario).toFixed(2)}</p>
+
+            <img className="w-full sm:w-32 h-32 object-cover rounded-lg" src={`http://localhost:8080${item.fotoUrl}`} />
+            <div className="flex-1">
+              <h2 className="font-semibold text-lg text-gray-900 mb-1">
+                {item.nomeDoProduto}
+              </h2>
+              <p className="text-gray-600 text-sm mb-1">
+                Quantidade: <span className="font-medium">{item.quantidade}</span>
+              </p>
+              <p className="text-gray-600 text-sm mb-1">
+                Preço unitário:{" "}
+                <span className="font-medium">
+                  R$ {item.precoUnitario.toFixed(2)}
+                </span>
+              </p>
+              <p className="text-gray-800 font-semibold mt-1">
+                Subtotal: R$ {(item.quantidade * item.precoUnitario).toFixed(2)}
+              </p>
             </div>
+
             <button
               onClick={() => handleRemoveItem(item.id)}
-              className="bg-red-500 text-white px-3 py-1 rounded-lg hover:bg-red-600"
+              className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 self-end sm:self-auto"
             >
               Remover
             </button>
@@ -102,20 +115,24 @@ function Cart() {
         ))}
       </ul>
 
-      <div className="mt-6 flex justify-between items-center">
-        <h2 className="text-xl font-bold">
+      <div className="mt-8 bg-gray-100 p-4 rounded-xl flex flex-col sm:flex-row justify-between items-center gap-3">
+        <h2 className="text-xl font-bold text-gray-900">
           Total: R$ {cart.total.toFixed(2)}
         </h2>
-        <button
-          onClick={handleCleanCart}
-          className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800">
-          Limpar Carrinho
-        </button>
-        <button
-          onClick={handleConfirmPurchase}
-          className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-gray-800">
-          Confirmar Compra
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={handleCleanCart}
+            className="bg-gray-700 text-white px-4 py-2 rounded-lg hover:bg-gray-800 transition"
+          >
+            Limpar Carrinho
+          </button>
+          <button
+            onClick={handleConfirmPurchase}
+            className="bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition"
+          >
+            Confirmar Compra
+          </button>
+        </div>
       </div>
     </div>
   );

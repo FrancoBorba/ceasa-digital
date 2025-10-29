@@ -1,14 +1,16 @@
 package br.com.uesb.ceasadigital.api.features.auth.service;
 
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
+import br.com.uesb.ceasadigital.api.features.auth.model.PasswordResetToken; 
+import br.com.uesb.ceasadigital.api.features.auth.repository.PasswordResetTokenRepository; 
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.repository.UserRepository;
+import br.com.uesb.ceasadigital.api.common.notification.EmailService; 
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional; // Import Transactional
-
-import br.com.uesb.ceasadigital.api.common.notification.EmailService;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -20,72 +22,72 @@ public class PasswordResetService {
     private UserRepository userRepository;
 
     @Autowired
-    private EmailService emailService; // Assume EmailService.java foi criado como no passo anterior
+    private PasswordResetTokenRepository tokenRepository; 
 
     @Autowired
-    private PasswordEncoder passwordEncoder; // Injeta o PasswordEncoder (já deve estar configurado no seu projeto Spring Security)
+    private EmailService emailService;
 
-    @Transactional // Adiciona transação para garantir atomicidade
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Transactional
     public void forgotPassword(String email) {
-        // 1. Busca o usuário pelo e-mail
         User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail: " + email)); // Mensagem mais específica
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com o e-mail: " + email));
 
-        // 2. Gera um token único
-        String token = UUID.randomUUID().toString();
+        // Limpa tokens antigos do usuário (opcional, mas bom para evitar acúmulo)
+        tokenRepository.deleteByUser(user);
 
-        // 3. Define o token e a data de expiração (ex: 1 hora a partir de agora)
-        user.setResetToken(token);
-        user.setResetTokenExpires(LocalDateTime.now().plusHours(1));
+        String tokenValue = UUID.randomUUID().toString();
+        LocalDateTime expiresAt = LocalDateTime.now().plusHours(1);
 
-        // 4. Salva as alterações no usuário (token e expiração)
-        userRepository.save(user);
+        // Cria e salva a entidade PasswordResetToken
+        PasswordResetToken resetToken = new PasswordResetToken(tokenValue, expiresAt, user);
+        tokenRepository.save(resetToken);
 
-        // 5. Cria o link de redefinição (ajuste a URL base conforme necessário)
-        // TODO: Idealmente, a URL base deveria vir de uma configuração (application.yml ou .env)
-        String resetLink = "http://localhost:3000/reset-password?token=" + token; // Exemplo para frontend rodando na porta 3000
-
-        // 6. Envia o e-mail (ou loga no console, dependendo da configuração)
+        // Cria o link e envia o e-mail (usando sendSimpleMail)
+        String resetLink = "http://localhost:3000/reset-password?token=" + tokenValue; // Ajuste a URL base se necessário
         String emailSubject = "CEASA Digital - Redefinição de Senha";
-        String emailBody = "Olá " + user.getName() + ",\n\n"
-                         + "Você solicitou a redefinição de sua senha.\n"
-                         + "Clique no link abaixo para criar uma nova senha:\n"
-                         + resetLink + "\n\n"
-                         + "Se você não solicitou isso, por favor ignore este e-mail.\n"
-                         + "O link expirará em 1 hora.\n\n"
-                         + "Atenciosamente,\nEquipe CEASA Digital";
-
-        emailService.sendSimpleMail(user.getEmail(), emailSubject, emailBody); 
+         String emailBody = "Olá " + user.getName() + ",\n\n"
+                          + "Você solicitou a redefinição de sua senha.\n"
+                          + "Clique no link abaixo para criar uma nova senha:\n"
+                          + resetLink + "\n\n"
+                          + "Se você não solicitou isso, por favor ignore este e-mail.\n"
+                          + "O link expirará em 1 hora.\n\n"
+                          + "Atenciosamente,\nEquipe CEASA Digital";
+        emailService.sendSimpleMail(user.getEmail(), emailSubject, emailBody);
     }
 
-    @Transactional // Adiciona transação
-    public void resetPassword(String token, String newPassword) {
-        // 1. Busca o usuário pelo token
-        User user = userRepository.findByResetToken(token)
+    @Transactional
+    public void resetPassword(String tokenValue, String newPassword) {
+        // Busca o token na nova tabela
+        PasswordResetToken resetToken = tokenRepository.findByToken(tokenValue)
                 .orElseThrow(() -> new ResourceNotFoundException("Token de redefinição inválido ou não encontrado."));
 
-        // 2. Verifica se o token expirou
-        if (user.getResetTokenExpires() == null || user.getResetTokenExpires().isBefore(LocalDateTime.now())) {
-            // Invalida o token expirado para segurança
-            user.setResetToken(null);
-            user.setResetTokenExpires(null);
-            userRepository.save(user);
-            throw new RuntimeException("Token expirado. Por favor, solicite a redefinição novamente."); // Mensagem mais clara
+        // Verifica se o token expirou
+        if (resetToken.getExpiresAt() == null || resetToken.getExpiresAt().isBefore(LocalDateTime.now())) {
+            tokenRepository.delete(resetToken); // Remove o token expirado
+            throw new RuntimeException("Token expirado. Por favor, solicite a redefinição novamente.");
         }
 
-        // 3. Verifica se a nova senha é válida (adicione mais validações se necessário)
-        if (newPassword == null || newPassword.length() < 6) {
+        // Verifica a nova senha
+         if (newPassword == null || newPassword.length() < 6) {
              throw new IllegalArgumentException("A nova senha deve ter pelo menos 6 caracteres.");
+         }
+
+        // Obtém o usuário associado ao token
+        User user = resetToken.getUser();
+        if (user == null) {
+             // Segurança extra: se o usuário associado não existir mais
+             tokenRepository.delete(resetToken);
+             throw new ResourceNotFoundException("Usuário associado ao token não encontrado.");
         }
 
-        // 4. Atualiza a senha (com hash)
+        // Atualiza a senha do usuário
         user.setPassword(passwordEncoder.encode(newPassword));
-
-        // 5. Invalida o token após o uso
-        user.setResetToken(null);
-        user.setResetTokenExpires(null);
-
-        // 6. Salva o usuário com a nova senha e token invalidado
         userRepository.save(user);
+
+        // Remove o token da tabela após o uso bem-sucedido
+        tokenRepository.delete(resetToken);
     }
 }
