@@ -9,6 +9,7 @@ import TurnBackRegistrationButton from "./components/registration/TurnBackRegist
 import RegistrationFormSecondPhase from "./components/registration/form/RegistrationFormSecondPhase";
 import RegistrationFormConfirmationPhase from "./components/registration/form/RegistrationFormConfirmationPhase";
 import { useNavigate } from "react-router";
+import apiRequester from "./services/apiRequester";
 
 function ClientRegistrationPage() {
   const [isPhaseOneCompleted, setIsPhaseOneCompleted] = useState(false);
@@ -38,10 +39,25 @@ function ClientRegistrationPage() {
     formData.current = { ...data };
   };
 
-  const onSubmitConfirmation = (e) => {
-    // TODO: Integration
+  const onSubmitConfirmation = async (e) => {
+    const requestBody = {
+      name: formData.current.name,
+      email: formData.current.email,
+      password: formData.current.password,
+      telefone: formData.current.phoneNumber,
+      cpf: formData.current.cpf
+    }
+
     e.preventDefault();
-    console.log(formData);
+    try {
+      console.log(await apiRequester.post("/auth/register", requestBody));
+      //TODO: Page or better register warning to user
+      alert("Requisição de registro feita com sucesso!");
+    }
+    catch (err) {
+      //TODO: Page or better register warning error to user
+      alert(err.response.data.details);
+    }
   };
 
   const handleTurnBackRegistration = () => {
