@@ -109,9 +109,9 @@ public class ResourceServerSecurityConfig {
 					);
 				})
         //Make all endpoints public:
-        //.anyRequest().permitAll());
+        .anyRequest().permitAll());
         //Make all endpoints authenticated:
-				.anyRequest().authenticated());
+				//.anyRequest().authenticated());
     
     http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 		    .jwt(jwt -> jwt
