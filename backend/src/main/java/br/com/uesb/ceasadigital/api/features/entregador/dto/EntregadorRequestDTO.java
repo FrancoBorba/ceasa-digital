@@ -10,7 +10,7 @@ public class EntregadorRequestDTO {
 
     @NotBlank(message = "O número da CNH é obrigatório")
     @CNH // Usa a sua validação customizada
-    @Schema(description = "Número da CNH (apenas números)", example = "12345678901", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(description = "Número da CNH (apenas números)", example = "12345678900", requiredMode = Schema.RequiredMode.REQUIRED)
     private String cnh;
 
     @NotBlank(message = "O tipo de veículo é obrigatório")
