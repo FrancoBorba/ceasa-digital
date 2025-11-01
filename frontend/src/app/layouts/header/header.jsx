@@ -56,7 +56,7 @@ const Header = () => {
   // Profile functionality
   const handleProfileClick = () => {
     console.log('Profile button clicked');
-    navigate("edit-profile/info");
+    navigate('/user/edit-profile');
   };
 
   // Utility methods

@@ -2,12 +2,17 @@ package br.com.uesb.ceasadigital.api.features.pedido.documentation;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoPageResponseDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
@@ -17,16 +22,70 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public interface PedidoControllerDocs {
 
   @Operation(
-    summary = "Listar todos os pedidos do usuário",
-    description = "Retorna todos os pedidos do usuário autenticado",
+    summary = "Listar pedidos do usuário",
+    description = """
+        Retorna pedidos do usuário autenticado com paginação opcional baseada em tempo.
+        
+        **Parâmetros de Paginação (Opcionais):**
+        - **page**: Número da página (padrão: 0)
+        - **size**: Tamanho da página (padrão: 10)
+        - **direction**: 'asc' (ascendente - do mais antigo para o mais novo) ou 'desc' (descendente - do mais novo para o mais antigo, padrão)
+        - **sortBy**: Campo para ordenação - 'dataPedido', 'criadoEm' ou 'atualizadoEm' (padrão: 'dataPedido')
+        
+        **Exemplo:** Para obter pedidos mais recentes primeiro: ?direction=desc&sortBy=dataPedido
+        **Sem parâmetros:** Retorna primeira página com 10 itens ordenados por data (mais recentes primeiro)
+        """,
+    tags = {"Pedidos"},
     responses = {
       @ApiResponse(description = "Sucesso", responseCode = "200", 
-        content = @Content(schema = @Schema(implementation = PedidoResponseDTO.class))),
+        content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = PedidoPageResponseDto.class)
+        )),
+      @ApiResponse(description = "Requisição inválida", responseCode = "400", content = @Content),
       @ApiResponse(description = "Não Autorizado", responseCode = "401", content = @Content),
       @ApiResponse(description = "Erro Interno do Servidor", responseCode = "500", content = @Content)
     }
   )
-  ResponseEntity<List<PedidoResponseDTO>> getAllPedidosByCurrentUser();
+  ResponseEntity<PedidoPageResponseDto> getAllPedidosByCurrentUser(
+    @RequestParam(value = "page", required = false) Integer page,
+    @RequestParam(value = "size", required = false) Integer size,
+    @RequestParam(value = "direction", required = false) String direction,
+    @RequestParam(value = "sortBy", required = false) String sortBy
+  );
+
+  @Operation(
+    summary = "Listar todos os pedidos (Admin)",
+    description = """
+        Retorna todos os pedidos do sistema com paginação e ordenação (apenas para administradores).
+        
+        **Parâmetros de Ordenação:**
+        - **page**: Número da página (padrão: 0)
+        - **size**: Tamanho da página (padrão: 10)
+        - **direction**: 'asc' (ascendente - do mais antigo para o mais novo) ou 'desc' (descendente - do mais novo para o mais antigo, padrão)
+        - **sortBy**: Campo para ordenação - 'dataPedido', 'criadoEm' ou 'atualizadoEm' (padrão: 'dataPedido')
+        
+        **Exemplo:** Para obter pedidos mais recentes primeiro: ?direction=desc&sortBy=dataPedido
+        """,
+    tags = {"Pedidos"},
+    responses = {
+      @ApiResponse(description = "Sucesso", responseCode = "200", 
+        content = @Content(
+          mediaType = MediaType.APPLICATION_JSON_VALUE,
+          schema = @Schema(implementation = PedidoPageResponseDto.class)
+        )),
+      @ApiResponse(description = "Requisição inválida", responseCode = "400", content = @Content),
+      @ApiResponse(description = "Não Autorizado", responseCode = "401", content = @Content),
+      @ApiResponse(description = "Acesso Negado", responseCode = "403", content = @Content),
+      @ApiResponse(description = "Erro Interno do Servidor", responseCode = "500", content = @Content)
+    }
+  )
+  ResponseEntity<PedidoPageResponseDto> getAllPedidosPaginated(
+    @RequestParam(value = "page", defaultValue = "0") Integer page,
+    @RequestParam(value = "size", defaultValue = "10") Integer size,
+    @RequestParam(value = "direction", defaultValue = "desc") String direction,
+    @RequestParam(value = "sortBy", defaultValue = "dataPedido") String sortBy
+  );
 
   @Operation(
     summary = "Buscar pedido por ID",

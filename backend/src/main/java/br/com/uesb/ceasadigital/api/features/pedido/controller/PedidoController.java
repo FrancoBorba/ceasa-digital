@@ -1,12 +1,15 @@
 package br.com.uesb.ceasadigital.api.features.pedido.controller;
 
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import br.com.uesb.ceasadigital.api.features.pedido.documentation.PedidoControllerDocs;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPageRequestDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
+import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoPageResponseDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.service.PedidoService;
 
@@ -35,8 +38,40 @@ public class PedidoController implements PedidoControllerDocs {
   @Override
   @GetMapping()
   //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
-  public ResponseEntity<List<PedidoResponseDTO>> getAllPedidosByCurrentUser() {
-    return ResponseEntity.ok(pedidoService.getAllPedidosByCurrentUser());
+  public ResponseEntity<PedidoPageResponseDto> getAllPedidosByCurrentUser(
+      @RequestParam(value = "page", required = false) Integer page,
+      @RequestParam(value = "size", required = false) Integer size,
+      @RequestParam(value = "direction", required = false) String direction,
+      @RequestParam(value = "sortBy", required = false) String sortBy) {
+    
+    // Se não foram fornecidos parâmetros de paginação, usar valores padrão
+    if (page == null) page = 0;
+    if (size == null) size = 10;
+    if (direction == null) direction = "desc";
+    if (sortBy == null) sortBy = "dataPedido";
+    
+    PedidoPageRequestDto pageRequest = new PedidoPageRequestDto(page, size, direction, sortBy);
+    PedidoPageResponseDto response = pedidoService.getAllPedidosByCurrentUserPaginated(pageRequest);
+    
+    return ResponseEntity.ok(response);
+  }
+
+  /**
+   * Endpoint para buscar todos os pedidos com paginação (Admin)
+   * Permite ordenação ascendente (mais antigo para mais novo) ou descendente (mais novo para mais antigo)
+   */
+  @GetMapping("/admin")
+  //@PreAuthorize("hasRole('ROLE_ADMIN')")
+  public ResponseEntity<PedidoPageResponseDto> getAllPedidosPaginated(
+      @RequestParam(value = "page", defaultValue = "0") Integer page,
+      @RequestParam(value = "size", defaultValue = "10") Integer size,
+      @RequestParam(value = "direction", defaultValue = "desc") String direction,
+      @RequestParam(value = "sortBy", defaultValue = "dataPedido") String sortBy) {
+    
+    PedidoPageRequestDto pageRequest = new PedidoPageRequestDto(page, size, direction, sortBy);
+    PedidoPageResponseDto response = pedidoService.getAllPedidosPaginated(pageRequest);
+    
+    return ResponseEntity.ok(response);
   }
 
   @Override

@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import AuthFormBrackground from "./components/AuthFormBrackground";
-import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
-import AuthLinkText from "./components/AuthLinkText";
-import useResetPassword from "./hooks/useResetPassword"; // Importe o hook
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
+import AuthLinkText from "./components/login/AuthLinkText";
+import useResetPassword from "./hooks/useResetPassword"; 
 
 function ResetPasswordPage() {
   const navigate = useNavigate();

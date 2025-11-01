@@ -1,7 +1,7 @@
 import { useState } from "react";
-import AuthFormBrackground from "./components/AuthFormBrackground";
-import AuthUnderlineInputText from "./components/AuthUnderlineInputText";
-import AuthLinkText from "./components/AuthLinkText";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
+import AuthLinkText from "./components/login/AuthLinkText";
 import useForgotPassword from "./hooks/useForgotPassword"; 
 
 function ForgotPasswordPage() {

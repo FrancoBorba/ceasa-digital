@@ -1,0 +1,1 @@
+SELECT setval(pg_get_serial_sequence('tb_metas_estoque', 'id'), (SELECT MAX(id) FROM tb_metas_estoque));

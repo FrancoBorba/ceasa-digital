@@ -6,18 +6,22 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.NotBlank;
 
 public class UserResponseDTO {
-  
+  @NotBlank(message = "O  ID é obrigatório")
   @Schema(description = "ID único do usuário", example = "1")
   private Long id;
-  
+
+  @NotBlank(message = "O nome é obrigatório")
   @Schema(description = "Nome do usuário", example = "Maria da Silva")
   private String name;
-  
+
+  @NotBlank(message = "O email é obrigatório")
   @Schema(description = "Email do usuário", example = "maria@gmail.com")
   private String email;
   
+  @NotBlank(message = "O CPF é obrigatório")
   @Schema(description = "CPF do usuário", example = "123.456.789-00")
   private String cpf;
   

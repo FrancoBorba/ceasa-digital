@@ -156,6 +156,41 @@ const Home = () => {
                         </div>
                     </div>
                 </section>
+
+                {/* Espaço reservado para Calendário Sazonal */}
+                <section className="w-full max-w-none m-0 mt-8 mb-8">
+                    <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
+                        <div className="text-center">
+                            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+                                Calendário Sazonal
+                            </h2>
+                            <div className="bg-gray-50 rounded-xl p-12 border-2 border-dashed border-gray-300">
+                                <div className="flex flex-col items-center justify-center space-y-4">
+                                    <svg 
+                                        className="w-16 h-16 text-gray-400" 
+                                        fill="none" 
+                                        stroke="currentColor" 
+                                        viewBox="0 0 24 24"
+                                    >
+                                        <path 
+                                            strokeLinecap="round" 
+                                            strokeLinejoin="round" 
+                                            strokeWidth={2} 
+                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
+                                        />
+                                    </svg>
+                                    <p className="text-gray-500 font-medium">
+                                        Calendário em desenvolvimento
+                                    </p>
+                                    <p className="text-sm text-gray-400 max-w-md">
+                                        Em breve você poderá visualizar quais produtos estão na época ideal para consumo
+                                    </p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
                 {/* Produtos em destaque */}
                 <Products />
                 
