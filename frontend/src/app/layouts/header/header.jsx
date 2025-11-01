@@ -56,7 +56,7 @@ const Header = () => {
   // Profile functionality
   const handleProfileClick = () => {
     console.log('Profile button clicked');
-    alert('Perfil do usuário - Funcionalidade em desenvolvimento');
+    navigate('/user/edit-profile');
   };
 
   // Utility methods

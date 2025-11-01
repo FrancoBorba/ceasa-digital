@@ -1,0 +1,24 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  justify-content: space-between;
+}
+.header {
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: #1D3D1C;
+  margin-bottom: 32px;
+  letter-spacing: 0.025em;
+}
+.fieldsContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+.buttonContainer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 16px;
+  margin-top: 65px;
+}

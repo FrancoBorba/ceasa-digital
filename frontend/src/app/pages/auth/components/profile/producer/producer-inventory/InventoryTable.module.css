@@ -1,0 +1,136 @@
+.tabelaContainer {
+  overflow-x: auto;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+}
+
+.tabela {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tabela th,
+.tabela td {
+  padding: 1rem;
+  text-align: left;
+  font-size: 0.9rem;
+  border-bottom: 1px solid #eaeaea;
+  vertical-align: middle;
+}
+
+.tabela th {
+  color: #888;
+  font-weight: 500;
+  background-color: #fcfcfc;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+}
+
+.tabela td {
+  color: #333;
+  font-weight: 500;
+}
+
+.tabela tr:last-child td {
+  border-bottom: none;
+}
+
+.categoriaTag {
+  background-color: #f5f5f5;
+  color: #888;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.actionButtons {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.btnIcon {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.25rem;
+  border-radius: 4px;
+  display: flex; /* Para centralizar o ícone */
+  align-items: center;
+  justify-content: center;
+}
+
+/* Classe para dimensionar os ícones */
+.icon {
+  width: 16px;
+  height: 16px;
+}
+
+.btnEdit {
+  color: #2196F3; /* Azul */
+}
+.btnEdit:hover {
+  color: #1976D2;
+}
+
+.btnDelete {
+  color: #F44336; /* Vermelho */
+}
+.btnDelete:hover {
+  color: #D32F2F;
+}
+
+/* Footer Tabela */
+.tabelaFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.5rem;
+  font-size: 0.9rem;
+  color: #888;
+}
+
+.footerMostrar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footerMostrar select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination button {
+  background: none;
+  border: 1px solid transparent;
+  color: #888;
+  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.pagination button:hover {
+  border-color: #eaeaea;
+}
+
+.pagination .pageActive {
+  background-color: #4CAF50; /* Verde */
+  color: white;
+  border-color: #4CAF50;
+}
