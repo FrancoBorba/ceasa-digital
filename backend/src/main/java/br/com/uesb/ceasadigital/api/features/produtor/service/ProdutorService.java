@@ -41,14 +41,16 @@ public class ProdutorService {
     @Transactional
     public ProdutorResponseDTO create(ProdutorRequestDTO requestDTO) {
        
-        // obtendo o usuário autenticado
-        User currentUser = userService.getCurrentUser();
-        if (currentUser == null) {
-            throw new ResourceNotFoundException("Usuário não autenticado.");
+        // obtendo o usuário 
+        if(!userRepository.existsById(requestDTO.getIdUser())){
+            throw new IllegalStateException("Usuario informado nao existe");
         }
+        
+        User currentUser = userRepository.findById(requestDTO.getIdUser())
+            .orElseThrow(() -> new ResourceNotFoundException("Usuário com ID " + requestDTO.getIdUser() + " não encontrado."));
 
-        // verificando se o usuario ja possui perfil de produtor ?????????
-        Optional<Produtor> existingProfile = produtorRepository.findByUsuarioId(currentUser.getId());
+        // verificando se o usuario ja possui perfil de produtor 
+        Optional<Produtor> existingProfile = produtorRepository.findByUsuarioId(requestDTO.getIdUser());
         if (existingProfile.isPresent()) {
             throw new IllegalStateException("O usuário já possui um perfil de produtor cadastrado.");
         }

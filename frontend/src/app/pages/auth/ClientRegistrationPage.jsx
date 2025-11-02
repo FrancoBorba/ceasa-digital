@@ -109,7 +109,7 @@ function ClientRegistrationPage() {
       )}
 
       {registrationPhase == 2 && (
-        <RegistrationFormConfirmationPhase formData={formData} onSubmit={onSubmitConfirmation} />
+        <RegistrationFormConfirmationPhase formData={formData} onSubmit={onSubmitConfirmation} userType="CLIENTE" />
       )}
     </div>
   );

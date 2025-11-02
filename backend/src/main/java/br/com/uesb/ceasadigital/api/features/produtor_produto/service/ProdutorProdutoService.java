@@ -16,6 +16,7 @@ import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 import br.com.uesb.ceasadigital.api.features.produtor.model.Produtor;
 import br.com.uesb.ceasadigital.api.features.produtor.repository.ProdutorRepository;
+import br.com.uesb.ceasadigital.api.features.produtor_produto.dto.request.ProdutorProdutoRequestVendaDTO;
 import br.com.uesb.ceasadigital.api.features.produtor_produto.dto.response.ProdutorProdutoResponseDTO;
 import br.com.uesb.ceasadigital.api.features.produtor_produto.mapper.ProdutorProdutoMapper;
 import br.com.uesb.ceasadigital.api.features.produtor_produto.model.ProdutorProduto;
@@ -46,21 +47,17 @@ public class ProdutorProdutoService {
     private EmailService emailService;
     
     @Transactional
-    public List<ProdutorProdutoResponseDTO> requestVenda(List<Long> produtosIds) {
+    public List<ProdutorProdutoResponseDTO> requestVenda(ProdutorProdutoRequestVendaDTO requestVendaDTO) {
         
-        // obtendo o Usuário e Perfil de Produtor Autenticado
-        User currentUser = userService.getCurrentUser(); 
-        if (currentUser == null) {
-            throw new ResourceNotFoundException("Usuário não autenticado.");
-        }
-        
-        // verifica se o usuário tem perfil de produtor
-        Produtor produtor = produtorRepository.findByUsuarioId(currentUser.getId()) //
-        .orElseThrow(() -> new IllegalStateException("O usuário autenticado não possui um perfil de produtor cadastrado."));
-        
+        // pega o produtor 
+        Produtor produtor = produtorRepository.findById(requestVendaDTO.getIdProdutor())
+        .orElseThrow(() -> new ResourceNotFoundException(
+                "Produtor com ID " + requestVendaDTO.getIdProdutor() + " não encontrado."));
+
         // processa a lista de IDs
+        List<Long> produtosIds = requestVendaDTO.getProdutosIds();
         List<ProdutorProdutoResponseDTO> results = new ArrayList<>();
-        
+
         for (Long produtoId : produtosIds) {
             // verifica se o produto existe
             Product produto = productRepository.findById(produtoId) 

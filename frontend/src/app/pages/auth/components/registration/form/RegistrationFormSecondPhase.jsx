@@ -7,26 +7,10 @@ function RegistrationFormSecondPhase({
   register,
   errors,
   formData,
+  userType,
 }) {
   return (
     <RegistrationFormBackground onSubmit={onSubmit} buttonName={"Continuar"}>
-      <RegistrationInput
-        labelName={"ENDEREÇO "}
-        type={"text"}
-        registration={register("address", {
-          required: "É necessário inserir o seu endereço.",
-          minLength: {
-            value: 5,
-            message: "O endereço precisa ter pelomenos 5 caractéres.",
-          },
-          maxLength: {
-            value: 255,
-            message: "O endereço pode ter no máximo 255 caractéres.",
-          },
-        })}
-        errors={errors?.address}
-        value={formData?.address}
-      />
       <RegistrationInput
         labelName={"TELEFONE"}
         type={"text"}
@@ -69,7 +53,68 @@ function RegistrationFormSecondPhase({
         errors={errors?.cpf}
         value={formData?.cpf}
       />
-      {children}
+      {userType === "PRODUTOR" && (
+        <>
+          {/* CAMPO DE SELECT ATUALIZADO 
+          */}
+          <div className="flex flex-col w-[30vw] min-w-[280px]">
+            <label className="text-black text-sm font-stretch-expanded font-bold">
+              TIPO DE IDENTIFICAÇÃO
+              {/* Adiciona o asterisco para combinar com os outros campos obrigatórios */}
+              <span className="text-red-500"> *</span>
+            </label>
+
+            {/* Div 'relative' para posicionar a seta customizada */}
+            <div className="relative w-full">
+              <select
+                className="w-full h-fit p-0 py-1 text-base font-stretch-condensed
+                           border-b border-b-gray-600 outline-none 
+                           focus:border-b-green-600 bg-transparent
+                           appearance-none" // <-- 1. REMOVE O ESTILO PADRÃO
+                {...register("tipoDeIdentificacao", {
+                  required: "É necessário selecionar um tipo.",
+                })}
+              >
+                <option value="">Selecione um tipo...</option>
+                <option value="DAP">DAP (Declaração de Aptidão ao PRONAF)</option>
+                <option value="CNPJ">CNPJ</option>
+                <option value="RG">RG (Identidade)</option>
+                <option value="OUTRO">Outro</option>
+              </select>
+
+              {/* 2. ADICIONA A SETA CUSTOMIZADA */}
+              <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-2 text-gray-700">
+                <svg
+                  className="fill-current h-4 w-4"
+                  xmlns="http://www.w3.org/2000/svg"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M9.293 12.95l.707.707L15.657 8l-1.414-1.414L10 10.828 5.757 6.586 4.343 8z" />
+                </svg>
+              </div>
+            </div>
+
+            {errors.tipoDeIdentificacao && (
+              <p className="text-red-500 text-xs mt-1">
+                {errors.tipoDeIdentificacao.message}
+              </p>
+            )}
+          </div>
+          {/* --- Fim da Alteração --- */}
+
+          {/* Reutilizando seu componente RegistrationInput */}
+          <RegistrationInput
+            labelName={"NÚMERO DE IDENTIFICAÇÃO"}
+            type={"text"}
+            registration={register("numeroDeIdentificacao", {
+              required: "É necessário inserir o número de identificação.",
+            })}
+            errors={errors?.numeroDeIdentificacao}
+            value={formData?.numeroDeIdentificacao}
+          />
+          {children}
+        </>
+      )}
     </RegistrationFormBackground>
   );
 }
