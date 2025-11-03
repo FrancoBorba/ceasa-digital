@@ -61,6 +61,9 @@ public class Pedido {
   @Column(name = "atualizado_em", columnDefinition = "TIMESTAMP")
   private Instant atualizadoEm;
 
+  @Column(name = "txid_pagamento", length = 255) // length = 255 corresponde ao VARCHAR(255)
+  private String txidPagamento;
+
   // Getters and Setters
   public Long getId() {
     return id;
@@ -132,6 +135,14 @@ public class Pedido {
 
   public void setAtualizadoEm(Instant atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
+  }
+
+  public String getTxidPagamento() {
+        return txidPagamento;
+    }
+
+  public void setTxidPagamento(String txidPagamento) {
+        this.txidPagamento = txidPagamento;
   }
   
 }

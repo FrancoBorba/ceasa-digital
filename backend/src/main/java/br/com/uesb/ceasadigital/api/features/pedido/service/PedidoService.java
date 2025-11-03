@@ -28,6 +28,8 @@ import br.com.uesb.ceasadigital.api.features.endereco.model.Endereco;
 import br.com.uesb.ceasadigital.api.features.endereco.repository.EnderecoRepository;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
+import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.response.ResultadoCobrancaDTO;
+import br.com.uesb.ceasadigital.api.features.pagamento.interfaces.GatewayPagamento;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPageRequestDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPostRequestDTO;
@@ -59,6 +61,53 @@ public class PedidoService {
 
   @Autowired
   private EnderecoRepository enderecoRepository;
+
+  @Autowired
+  private GatewayPagamento gatewayPagamentoService;
+
+
+  @Transactional
+  public void confirmarPagamento(Long pedidoId){
+    logger.info("Confirmando pagamento para o Pedido ID: {}", pedidoId);
+
+
+    Pedido pedido = pedidoRepository.findById(pedidoId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado para confirmação: " + pedidoId));
+
+
+    /*
+     * TODO: CHAMAR AQUI O MÉTODO DE CONTROLE DO ESTOQUE
+     */
+    pedido.setStatus(PedidoStatus.PAGO);
+    pedidoRepository.save(pedido);
+
+
+  }
+
+    @Transactional
+  public void cancelarPedido(Long pedidoId){
+    logger.info("Confirmando pagamento para o Pedido ID: {}", pedidoId);
+
+
+    Pedido pedido = pedidoRepository.findById(pedidoId)
+                    .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado para confirmação: " + pedidoId));
+  
+    if(pedido.getStatus() == PedidoStatus.AGUARDANDO_PAGAMENTO){
+      pedido.setStatus(PedidoStatus.CANCELADO);
+      pedidoRepository.save(pedido);
+      /*
+     * TODO: CHAMAR AQUI O MÉTODO DE CONTROLE DO ESTOQUE
+     */
+    }else{
+      logger.warn("Tentativa de cancelar pedido que não está AGUARDANDO_PAGAMENTO. Status atual: {}", pedido.getStatus());
+    }
+
+    /*
+     * TODO: CHAMAR AQUI O MÉTODO DE CONTROLE DO ESTOQUE
+     */
+
+  }
+
 
   @Transactional(readOnly = true)
   public PedidoResponseDTO getPedidoById(Long id) {
@@ -189,13 +238,25 @@ public class PedidoService {
 
     Pedido pedidoSalvo = pedidoRepository.save(pedido);
 
+    ResultadoCobrancaDTO resultadoPagamento = gatewayPagamentoService.iniciarCobrancaPix(pedidoSalvo);
+
+    if (resultadoPagamento.isSucesso()) { // A api do sicoob enviou os dados
+        pedidoSalvo.setTxidPagamento(resultadoPagamento.getTxid());
+        pedidoRepository.save(pedidoSalvo); // Atualiza o pedido com o TXID
+    } else {
+        throw new BadRequestException("Falha ao iniciar o processo de pagamento.");
+    }
+
+    PedidoResponseDTO responseDTO = new PedidoResponseDTO(pedidoSalvo);
+    responseDTO.setDadosPix(resultadoPagamento);
+
     logger.info("Pedido criado com sucesso. ID: {}", pedidoSalvo.getId());
 
     carrinhoService.finalizarCarrinho(carrinho);
 
     logger.info("Carrinho marcado como FINALIZADO. Um novo carrinho será criado na próxima compra.");
 
-    return new PedidoResponseDTO(pedidoSalvo);
+    return responseDTO;
   }
 
   @Transactional(propagation = Propagation.SUPPORTS)
