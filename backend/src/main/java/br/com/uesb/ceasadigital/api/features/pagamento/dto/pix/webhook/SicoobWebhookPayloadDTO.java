@@ -9,7 +9,6 @@ public class SicoobWebhookPayloadDTO {
 
     private List<SicoobPixNotificacaoDTO> pix; // A lista de notificações
 
-    // Getters e Setters
     public List<SicoobPixNotificacaoDTO> getPix() {
         return pix;
     }

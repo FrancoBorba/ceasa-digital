@@ -9,7 +9,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class SicoobPixNotificacaoDTO {
 
     private String endToEndId; // ID global da transação PIX
-    private String txid; // O ID da cobrança que NÓS criamos (o mais importante!)
+    private String txid; // O ID da cobrança que nós criamos
     private String valor; // O valor que foi pago
     private String horario; // Data/Hora do pagamento (String ISO)
     
