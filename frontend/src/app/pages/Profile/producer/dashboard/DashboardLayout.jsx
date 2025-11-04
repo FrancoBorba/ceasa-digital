@@ -41,7 +41,7 @@ export default function DashboardLayout() {
           <ul>
             <li>
               <SidebarLink 
-                to="/dashboard/inventory" 
+                to="/producer/dashboard" 
                 icon={ArchiveBoxIcon} 
                 label="Inventário" 
               />
