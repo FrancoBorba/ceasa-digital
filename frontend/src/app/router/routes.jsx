@@ -11,6 +11,9 @@ import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage
 import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
+import StorageManagerSalesPage from "../pages/storage/StorageManagerSalesPage";
+import StorageManagerNotificationPage from "../pages/storage/StorageManagerNotificationPage";
+import StorageManagerPackagesPage from "../pages/storage/StorageManagerPackagesPage";
 
 export const router = createBrowserRouter([
   {
@@ -61,4 +64,16 @@ export const router = createBrowserRouter([
     path: "/emailverifiedfail",
     element: <EmailVerifiedFailPage />,
   },
+  {
+    path: "/storage-manager/sales",
+    element: <StorageManagerSalesPage />
+  },
+  {
+    path: "/storage-manager/notification",
+    element: <StorageManagerNotificationPage />
+  },
+  {
+    path: "/storage-manager/packages",
+    element: <StorageManagerPackagesPage />
+  }
 ]);
