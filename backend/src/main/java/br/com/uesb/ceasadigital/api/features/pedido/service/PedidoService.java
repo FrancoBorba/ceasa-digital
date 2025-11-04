@@ -29,6 +29,7 @@ import br.com.uesb.ceasadigital.api.features.endereco.repository.EnderecoReposit
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
 import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.response.ResultadoCobrancaDTO;
+import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.webhook.SicoobPixNotificacaoDTO;
 import br.com.uesb.ceasadigital.api.features.pagamento.interfaces.GatewayPagamento;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPageRequestDto;
@@ -64,6 +65,28 @@ public class PedidoService {
 
   @Autowired
   private GatewayPagamento gatewayPagamentoService;
+
+  @Transactional
+  public void processarNotificacaoWebHook(SicoobPixNotificacaoDTO notificacao){
+    if (notificacao == null || notificacao.getTxid() == null) {
+        logger.warn("Webhook PIX recebido, mas notificação ou txid estão nulos.");
+        return; 
+    }
+
+    Pedido pedido = pedidoRepository.findByTxidPagamento(notificacao.getTxid())
+                    .orElseThrow(() -> new ResourceNotFoundException("Pedido não encontrado para o txid de pagamento: " + notificacao.getTxid()));
+
+    
+    if (pedido.getStatus() == PedidoStatus.PAGO) {
+        logger.warn("Pedido ID: {} (txid: {}) já está PAGO. Ignorando notificação duplicada.", pedido.getId(), notificacao.getTxid());
+        return;
+    }
+
+    // chama o metodo que confirma o pagamento
+    this.confirmarPagamento(pedido.getId());
+
+
+  }
 
 
   @Transactional

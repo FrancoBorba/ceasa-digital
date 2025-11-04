@@ -44,7 +44,7 @@ public class MockPagamentoService implements GatewayPagamento {
 
         // Simular a confirmação imediata do pagamento
         try {
-            pedidoService.confirmarPagamento(pedido.getId());
+      //      pedidoService.confirmarPagamento(pedido.getId());
             logger.info("--- [MOCK PAGAMENTO] --- Pagamento FAKE confirmado (instantaneamente) para o Pedido ID: {}", pedido.getId());
             resultado.setSucesso(true); // Define sucesso no DTO
 

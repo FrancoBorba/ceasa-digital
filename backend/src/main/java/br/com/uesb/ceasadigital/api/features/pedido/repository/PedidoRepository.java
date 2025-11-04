@@ -23,6 +23,11 @@ public interface PedidoRepository extends JpaRepository<Pedido, Long> {
      */
     Page<Pedido> findByUsuarioId(Long usuarioId, Pageable pageable);
 
+    /*
+     * Busca o pedido pelo ID do pagamento
+     */
+    Optional<Pedido> findByTxidPagamento(String txidPagamento);
+
     /**
      * Busca todos os pedidos com paginação (para administradores)
      * Permite ordenação por campos de tempo (dataPedido, criadoEm, atualizadoEm)
