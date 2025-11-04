@@ -5,12 +5,12 @@ import ProductEvaluationList from '../../auth/components/profile/admin/ProductEv
 // Mock data (Produtos pendentes de avaliação)
 
 const mockProdutosPendentes = [
-  { id: 101, nome: 'Banana', categoria: 'Frutas', quantidade: '200', img: 'https://via.placeholder.com/40x40/FFEB3B/000000?text=B' },
-  { id: 102, nome: 'Brócolis', categoria: 'Verduras', quantidade: '150', img: 'https://via.placeholder.com/40x40/4CAF50/FFFFFF?text=B' },
-  { id: 103, nome: 'Manga', categoria: 'Frutas', quantidade: '200', img: 'https://via.placeholder.com/40x40/FF9800/FFFFFF?text=M' },
-  { id: 104, nome: 'Abacate', categoria: 'Frutas', quantidade: '300', img: 'https://via.placeholder.com/40x40/8BC34A/FFFFFF?text=A' },
-  { id: 105, nome: 'Maçã', categoria: 'Frutas', quantidade: '100 (kilogramas)', img: 'https://via.placeholder.com/40x40/F44336/FFFFFF?text=M' },
-  { id: 106, nome: 'Couve', categoria: 'Verdura', quantidade: '4 (unidades)', img: 'https://via.placeholder.com/40x40/2E7D32/FFFFFF?text=C' },
+  { id: 101, nome: 'Banana', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/FFEB3B/000000?text=B' },
+  { id: 102, nome: 'Brócolis', categoria: 'Verduras', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/4CAF50/FFFFFF?text=B' },
+  { id: 103, nome: 'Manga', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/FF9800/FFFFFF?text=M' },
+  { id: 104, nome: 'Abacate', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/8BC34A/FFFFFF?text=A' },
+  { id: 105, nome: 'Maçã', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/F44336/FFFFFF?text=M' },
+  { id: 106, nome: 'Couve', categoria: 'Verdura', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/2E7D32/FFFFFF?text=C' },
 ];
 
 

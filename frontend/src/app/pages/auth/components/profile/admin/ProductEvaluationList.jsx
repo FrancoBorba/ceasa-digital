@@ -8,7 +8,7 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
       <header className={styles.listHeader}>
         <span className={styles.col1}>Produto</span>
         <span className={styles.col2}>Categoria</span>
-        <span className={styles.col3}>Quantidade</span>
+        <span className={styles.col3}>Nome do Produtor</span>
         <span className={styles.col4}>Avaliar</span>
       </header>
 
@@ -29,7 +29,7 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
             
             {/* Coluna Quantidade */}
             <div className={styles.col3}>
-              {produto.quantidade}
+              {produto.nomeDoProdutor}
             </div>
             
             {/* Coluna Avaliar (Botões) */}
