@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
-@Tag(name = "ItemLista", description = "Endpoints para gerenciar itens de uma lista de compras")
+@Tag(name = "Lista", description = "Endpoints para gerenciar listas e seus itens")
 public interface ItemListaControllerDocs {
 
   @Operation(

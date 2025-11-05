@@ -22,7 +22,7 @@ import jakarta.validation.Valid;
 
 @RestController
 @RequestMapping("api/v1/listas/{listaId}/itens")
-@Tag(name = "ItemLista", description = "Itens de uma lista de produtos")
+@Tag(name = "Lista", description = "Gerenciamento de listas de compras e seus itens")
 public class ItemListaController implements ItemListaControllerDocs {
 
   @Autowired
