@@ -16,7 +16,7 @@ import org.slf4j.LoggerFactory;
 
 
 @Service
-@Profile("dev")
+@Profile({"dev", "test"})
 public class MockPagamentoService implements GatewayPagamento {
 
     private static final Logger logger = LoggerFactory.getLogger(MockPagamentoService.class);
