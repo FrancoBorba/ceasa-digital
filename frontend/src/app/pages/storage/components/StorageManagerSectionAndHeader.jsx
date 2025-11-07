@@ -1,5 +1,4 @@
 import { useState } from "react";
-import testImage from "../aaaadddddbbbbb.jpg";
 import salesIcon from "../svgs/SalesIcon.svg";
 import notificationIcon from "../svgs/NotificationIcon.svg";
 import packagesIcon from "../svgs/PackagesIcon.svg";
@@ -15,7 +14,7 @@ import SearchBar from "./StorageManagerSearchBar";
 import StorageManagerPageTitle from "./StorageManagerPageTitle";
 import StorageManagerIconButton from "./StorageManagerIconButton";
 
-function StorageManagerSectionAndHeader({ children }) {
+function StorageManagerSectionAndHeader({ children, title }) {
   const [menuOpen, setMenuOpen] = useState(false);
   return (
     <div className="h-full w-full pt-14 pb-8 pl-12 pr-16">
@@ -24,7 +23,7 @@ function StorageManagerSectionAndHeader({ children }) {
         <section className="h-[37.7rem] relative bg-white w-70 min-w-50 rounded-4xl z-10 flex flex-col justify-between items-center gap-6 pb-4 px-2 mt-14">
           <div className="flex flex-col items-center">
             <img
-              src={testImage}
+              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTOZaOqdQatrMBJCWv-iQ4Tk-ptgyGixnJkQ&s"
               alt="Foto de perfil do usuário logado."
               className="size-16 rounded-full p-1 bg-green-700 relative -mt-8 z-20"
             />
@@ -84,7 +83,7 @@ function StorageManagerSectionAndHeader({ children }) {
         </section>
         <div className="flex flex-col w-full">
           <div className="flex flex-row justify-between -mt-2 w-full">
-            <StorageManagerPageTitle />
+            <StorageManagerPageTitle title={title}/>
             <div className="flex justify-evenly flex-row h-fit gap-2">
               <SearchBar />
               <StorageManagerIconButton buttonIcon={bellIcon} buttonIconAlt={"Ícone de sino."} />

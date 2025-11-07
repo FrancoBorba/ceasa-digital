@@ -11,9 +11,9 @@ import StorageManagerSalesPagination from "./components/pagination/StorageManage
 
 function StorageManagerSalesPage() {
   return (
-    <StorageManagerSectionAndHeader>
-      <div className="flex flex-col h-full w-full gap-4 bg-[#f2f2f2]">
-        <div className="h-fit w-full flex flex-row justify-between gap-1 pt-4.5 bg-[#f2f2f2]">
+    <StorageManagerSectionAndHeader title={"Página de Vendas"}>
+      <div className="flex flex-col h-full w-full gap-4">
+        <div className="h-fit w-full flex flex-row justify-between gap-1 pt-4.5">
           <StorageManagerTotalsComparison
             title={"Receita Total"}
             value={"R$ 12.540, 32"}
