@@ -1,6 +1,6 @@
 import StorageManagerNotification from "./components/notification/StoraeManagerNotification";
-import StorageManagerFIlterRadioButtons from "./components/StorageManagerFilterRadioButtons";
-import StorageManagerSectionAndHeader from "./components/StorageManagerSectionAndHeader";
+import StorageManagerFIlterRadioButtons from "./components/common/StorageManagerFilterRadioButtons";
+import StorageManagerSectionAndHeader from "./components/common/StorageManagerSectionAndHeader";
 import StorageManagerSalesShowButtonQuantity from "./components/pagination/StorageManagerSalesShowButtonQuantity";
 import StorageManagerSalesPagination from "./components/pagination/StorageManagerSalesPagination";
 
@@ -9,7 +9,7 @@ function StorageManagerNotificationPage() {
     <StorageManagerSectionAndHeader title={"Notificações"}>
       <div className="h-full w-full">
         <div className="h-fit w-full flex flex-col gap-10 pt-6">
-          <div className="flex justify-center items-center py-1 px-2.5 gap-6 w-fit text-xs bg-[#E8E8E8] rounded-lg">
+          <div className="flex justify-center items-center py-1 px-2.5 gap-12 w-fit text-xs bg-[#E8E8E8] rounded-lg">
             <StorageManagerFIlterRadioButtons buttonTitle={"Todas"} />
             <StorageManagerFIlterRadioButtons buttonTitle={"Pedidos"} />
             <StorageManagerFIlterRadioButtons buttonTitle={"FeedBacks"} />

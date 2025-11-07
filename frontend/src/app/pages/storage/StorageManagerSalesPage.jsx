@@ -1,7 +1,7 @@
 import StorageManagerDatePickerRange from "./components/date/StorageManagerDateIntervalPicker";
-import StorageManagerFIlterRadioButtons from "./components/StorageManagerFilterRadioButtons";
-import StorageManagerSectionAndHeader from "./components/StorageManagerSectionAndHeader";
-import StorageManagerTotalsComparison from "./components/StorageManagerTotalsComparison";
+import StorageManagerFIlterRadioButtons from "./components/common/StorageManagerFilterRadioButtons";
+import StorageManagerSectionAndHeader from "./components/common/StorageManagerSectionAndHeader";
+import StorageManagerTotalsComparison from "./components/sales/StorageManagerTotalsComparison";
 import gainGraphicIcon from "./svgs/GainGraphicIcon.svg";
 import losingGraphicIcon from "./svgs/LosingGraphicIcon.svg";
 import StorageManagerSalesLabel from "./components/sales/StorageManagerSalesLabel";
@@ -16,7 +16,10 @@ function StorageManagerSalesPage() {
         <div className="h-fit w-full flex flex-row justify-between gap-1 pt-4.5">
           <StorageManagerTotalsComparison
             title={"Receita Total"}
-            value={"R$ 12.540, 32"}
+            value={new Intl.NumberFormat("pt-BR", {
+              style: "currency",
+              currency: "BRL",
+            }).format(12534.25)}
             graphicIcon={gainGraphicIcon}
             interval={"Do ultimo mês"}
             percentDifference={<h4 className="text-green-700 text-[0.8rem]">4,2%</h4>}

@@ -13,7 +13,9 @@ function StorageManagerNotificationValues() {
         <span>3kg</span>
         <span>6kg</span>
       </div>
-      <StorageManagerPaymentMethod paymentMethod={"Dinheiro"}/>
+      <div className="w-full h-full flex justify-center items-center">
+        <StorageManagerPaymentMethod paymentMethod={"Dinheiro"} />
+      </div>
       <div className="flex flex-col font-medium">
         <span>Rua dos Banzeiro, N 356</span>
         <span>Bairro: Ayrton Senna</span>

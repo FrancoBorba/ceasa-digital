@@ -1,4 +1,4 @@
-import magnifyingGlassIcon from "../svgs/MagnifyingGlassIcon.svg";
+import magnifyingGlassIcon from "../../svgs/MagnifyingGlassIcon.svg";
 
 function SearchBar() {
   return (

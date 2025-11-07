@@ -1,26 +1,54 @@
 import { useState } from "react";
-import salesIcon from "../svgs/SalesIcon.svg";
-import notificationIcon from "../svgs/NotificationIcon.svg";
-import packagesIcon from "../svgs/PackagesIcon.svg";
-import waitingAssemblyIcon from "../svgs/WaitingAssemblyIcon.svg";
-import completedSalesIcon from "../svgs/CompletedSalesIcon.svg";
-import canceledSalesIcon from "../svgs/CanceledSalesIcon.svg";
-import bellIcon from "../svgs/BellIcon.svg";
-import engineIcon from "../svgs/EngineIcon.svg";
-import letterIcon from "../svgs/LetterIcon.svg";
+import salesIcon from "../../svgs/SalesIcon.svg";
+import notificationIcon from "../../svgs/NotificationIcon.svg";
+import packagesIcon from "../../svgs/PackagesIcon.svg";
+import waitingAssemblyIcon from "../../svgs/WaitingAssemblyIcon.svg";
+import completedSalesIcon from "../../svgs/CompletedSalesIcon.svg";
+import canceledSalesIcon from "../../svgs/CanceledSalesIcon.svg";
+import bellIcon from "../../svgs/BellIcon.svg";
+import engineIcon from "../../svgs/EngineIcon.svg";
+import letterIcon from "../../svgs/LetterIcon.svg";
 import StorageManagerOptionButton from "./StorageManagerOptionButton";
 import StorageManagerSubOptionButton from "./StorageManagerSubOptionButton";
 import SearchBar from "./StorageManagerSearchBar";
 import StorageManagerPageTitle from "./StorageManagerPageTitle";
 import StorageManagerIconButton from "./StorageManagerIconButton";
+import { useNavigate, useLocation } from "react-router";
 
 function StorageManagerSectionAndHeader({ children, title }) {
   const [menuOpen, setMenuOpen] = useState(false);
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const handleSalesButtonClick = () => {
+    const storageManagerSalesPath = "/storage-manager/sales";
+    if (location.pathname == storageManagerSalesPath) {
+      setMenuOpen(!menuOpen);
+    } else if (menuOpen) {
+      navigate(storageManagerSalesPath);
+    }
+    setMenuOpen(!menuOpen);
+  };
+
+  const handleNotificationButtonClick = () => {
+    const storageManagerNotificationPath = "/storage-manager/notification";
+    if (location.pathname != storageManagerNotificationPath) {
+      navigate(storageManagerNotificationPath);
+    }
+  };
+
+  const handlePackagesButtonClick = () => {
+    const storageManagerPackagesPath = "/storage-manager/packages";
+    if (location.pathname != storageManagerPackagesPath) {
+      navigate(storageManagerPackagesPath);
+    }
+  };
+
   return (
-    <div className="h-full w-full pt-14 pb-8 pl-12 pr-16">
+    <div className="h-full w-full pt-14 pb-8 pl-10 pr-6">
       <div className="fixed inset-0 bg-[#f2f2f2] -z-10" />
       <div className="flex flex-row justify-start gap-6 w-full h-full">
-        <section className="h-[37.7rem] relative bg-white w-70 min-w-50 rounded-4xl z-10 flex flex-col justify-between items-center gap-6 pb-4 px-2 mt-14">
+        <section className="h-[37.7rem] relative bg-white w-70 min-w-50 rounded-4xl z-10 flex flex-col justify-between items-center gap-6 pb-4 px-2 mt-14 shadow">
           <div className="flex flex-col items-center">
             <img
               src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQTOZaOqdQatrMBJCWv-iQ4Tk-ptgyGixnJkQ&s"
@@ -29,14 +57,14 @@ function StorageManagerSectionAndHeader({ children, title }) {
             />
             <div className="py-5 flex flex-col justify-center items-center">
               <h1 className="text-black font-semibold text-2xl">Joel</h1>
-              <h3 className="text-gray-400 text-[0.8rem]">Gerente de estoque</h3>
+              <h3 className="text-[#777777] text-[0.8rem]">Gerente de estoque</h3>
             </div>
           </div>
 
           <div className="flex flex-col w-full">
             <div className="w-full">
               <StorageManagerOptionButton
-                onClick={() => setMenuOpen(!menuOpen)}
+                onClick={() => handleSalesButtonClick()}
                 buttonIcon={salesIcon}
                 buttonTitle={"Vendas"}
                 buttonIconAlt={"Ícone de vendas."}
@@ -61,17 +89,13 @@ function StorageManagerSectionAndHeader({ children, title }) {
                 </div>
               )}
               <StorageManagerOptionButton
-                onClick={() => {
-                  return;
-                }}
+                onClick={() => handleNotificationButtonClick()}
                 buttonIcon={notificationIcon}
                 buttonTitle={"Notificações"}
                 buttonIconAlt={"Ícone de notificações."}
               />
               <StorageManagerOptionButton
-                onClick={() => {
-                  return;
-                }}
+                onClick={() => handlePackagesButtonClick()}
                 buttonIcon={packagesIcon}
                 buttonTitle={"Pacotes"}
                 buttonIconAlt={"Ícone de pacotes."}
@@ -83,7 +107,7 @@ function StorageManagerSectionAndHeader({ children, title }) {
         </section>
         <div className="flex flex-col w-full">
           <div className="flex flex-row justify-between -mt-2 w-full">
-            <StorageManagerPageTitle title={title}/>
+            <StorageManagerPageTitle title={title} />
             <div className="flex justify-evenly flex-row h-fit gap-2">
               <SearchBar />
               <StorageManagerIconButton buttonIcon={bellIcon} buttonIconAlt={"Ícone de sino."} />
