@@ -1,6 +1,8 @@
 package br.com.uesb.ceasadigital.api.features.pedido.service;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.*;
 
 import java.math.BigDecimal;
@@ -16,6 +18,8 @@ import br.com.uesb.ceasadigital.api.features.carrinho.service.CarrinhoService;
 import br.com.uesb.ceasadigital.api.features.endereco.model.Endereco;
 import br.com.uesb.ceasadigital.api.features.endereco.repository.EnderecoRepository;
 import br.com.uesb.ceasadigital.api.features.item_carrinho.model.ItemCarrinho;
+import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.response.ResultadoCobrancaDTO;
+import br.com.uesb.ceasadigital.api.features.pagamento.interfaces.GatewayPagamento;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPostRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
@@ -52,6 +56,9 @@ class PedidoServiceTest {
 
     @Mock
     private EnderecoRepository enderecoRepository;
+
+    @Mock
+    private GatewayPagamento gatewayPagamentoService;
 
     @InjectMocks
     private PedidoService pedidoService;
@@ -184,6 +191,10 @@ class PedidoServiceTest {
         endereco.setId(2L);
         endereco.setUsuario(user);
 
+        ResultadoCobrancaDTO resultadoCobranca = new ResultadoCobrancaDTO();
+        resultadoCobranca.setSucesso(true);
+        resultadoCobranca.setTxid("TX123");
+
         when(userService.getCurrentUser()).thenReturn(user);
         when(carrinhoRepository.findById(1L)).thenReturn(Optional.of(carrinho));
         when(enderecoRepository.findById(2L)).thenReturn(Optional.of(endereco));
@@ -193,10 +204,14 @@ class PedidoServiceTest {
             return p;
         });
 
+        when(gatewayPagamentoService.iniciarCobrancaPix(any(Pedido.class)))
+                .thenReturn(resultadoCobranca);
+
         PedidoResponseDTO result = pedidoService.finalizarCarrinho(request);
 
         assertNotNull(result);
         assertEquals(20L, result.getId());
+        assertEquals("TX123", result.getDadosPix().getTxid());
         verify(carrinhoService).finalizarCarrinho(carrinho);
     }
 
