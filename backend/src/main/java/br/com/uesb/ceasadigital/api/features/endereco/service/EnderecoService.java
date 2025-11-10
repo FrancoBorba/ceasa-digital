@@ -70,6 +70,10 @@ public class EnderecoService {
     endereco.setCidade(enderecoDTO.getCidade());
     endereco.setEstado(enderecoDTO.getEstado());
     endereco.setPrincipal(false);
+    endereco.setNomeEndereco(
+        (enderecoDTO.getNomeEndereco() == null || enderecoDTO.getNomeEndereco().trim().isEmpty())
+            ? "Outro"
+            : enderecoDTO.getNomeEndereco());
 
     Endereco enderecoSalvo = enderecoRepository.save(endereco);
     return new EnderecoDTO(enderecoSalvo);
@@ -110,6 +114,11 @@ public class EnderecoService {
     if (enderecoDTO.getEstado() != null) {
       endereco.setEstado(enderecoDTO.getEstado());
     }
+    if (enderecoDTO.getNomeEndereco() == null || enderecoDTO.getNomeEndereco().trim().isEmpty()) {
+      endereco.setNomeEndereco("Outro");
+    } else {
+      endereco.setNomeEndereco(enderecoDTO.getNomeEndereco());
+    }
 
     Endereco enderecoAtualizado = enderecoRepository.save(endereco);
     return new EnderecoDTO(enderecoAtualizado);
@@ -132,4 +141,3 @@ public class EnderecoService {
     enderecoRepository.delete(endereco);
   }
 }
-
