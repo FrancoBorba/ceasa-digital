@@ -13,6 +13,9 @@ import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage
 import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
+import AdminLayout from "../pages/Administrador/AdminLayout";
+import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
+
 
 import { default as UserProfileLayout } from "../pages/Profile/user/edit-info/ProfileLayout";
 import { default as UserProfileInfoPage } from "../pages/Profile/user/edit-info/ProfileInfoPage";
@@ -147,4 +150,14 @@ export const router = createBrowserRouter([
     ]
   },
   
+ {
+  path: "/admin/products",
+  element: <AdminLayout />,
+  children: [
+    {
+      index: true,
+      element: <AdminProductRequestPage />,
+    },
+  ],
+}
 ]);

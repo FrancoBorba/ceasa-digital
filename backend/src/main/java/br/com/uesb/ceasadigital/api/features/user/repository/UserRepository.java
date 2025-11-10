@@ -1,6 +1,5 @@
 package br.com.uesb.ceasadigital.api.features.user.repository;
 
-import java.lang.StackWalker.Option;
 import java.util.List;
 import java.util.Optional;
 
@@ -22,5 +21,5 @@ public interface UserRepository extends JpaRepository<User, Long> {
   
   Optional<User> findByEmail(String email);
   Optional<User> findByCpf(String cpf);
-  Optional<User> findById(Long id);
+
 }

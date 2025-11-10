@@ -82,13 +82,8 @@ public class ResourceServerSecurityConfig {
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
 				.requestMatchers("/oauth2-docs/**").permitAll()
+				.requestMatchers("/auth/**").permitAll()
 
-        .requestMatchers("/api/v1/products").permitAll()
-        .requestMatchers("/api/v1/products/{id}").permitAll()
-		.requestMatchers("/auth/**").permitAll()
-		//.requestMatchers("/produtor/**").permitAll()
-
-		
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
 
@@ -109,9 +104,9 @@ public class ResourceServerSecurityConfig {
 					);
 				})
         //Make all endpoints public:
-        //.anyRequest().permitAll());
+        .anyRequest().permitAll());
         //Make all endpoints authenticated:
-				.anyRequest().authenticated());
+				//.anyRequest().authenticated());
     
     http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 		    .jwt(jwt -> jwt
