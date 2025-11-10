@@ -59,6 +59,9 @@ public class Endereco {
   @Column(name = "atualizado_em")
   private LocalDateTime atualizadoEm;
 
+  @Column(name = "nome_endereco", length = 50)
+  private String nomeEndereco;
+
   public Long getId() {
     return id;
   }
@@ -154,5 +157,12 @@ public class Endereco {
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
-}
 
+  public String getNomeEndereco() {
+    return this.nomeEndereco;
+  }
+
+  public void setNomeEndereco(String nomeEndereco) {
+    this.nomeEndereco = nomeEndereco;
+  }
+}

@@ -55,6 +55,11 @@ public class EnderecoDTO {
   @JsonProperty("estado")
   private String estado;
 
+  @Size(max = 50, message = "Tipo de endereço deve ter no máximo 50 caracteres")
+  @Schema(description = "Nome personalizado do endereço (ex: Casa, Trabalho, Sítio)", example = "Casa")
+  @JsonProperty("nome_endereco")
+  private String nomeEndereco;
+
   public EnderecoDTO() {
   }
 
@@ -68,6 +73,7 @@ public class EnderecoDTO {
       this.bairro = endereco.getBairro();
       this.cidade = endereco.getCidade();
       this.estado = endereco.getEstado();
+      this.nomeEndereco = endereco.getNomeEndereco();
     }
   }
 
@@ -134,5 +140,12 @@ public class EnderecoDTO {
   public void setEstado(String estado) {
     this.estado = estado;
   }
-}
 
+  public String getNomeEndereco() {
+    return nomeEndereco;
+  }
+
+  public void setNomeEndereco(String nomeEndereco) {
+    this.nomeEndereco = nomeEndereco;
+  }
+}
