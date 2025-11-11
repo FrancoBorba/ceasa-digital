@@ -3,10 +3,10 @@ import AuthFormBrackground from "./components/login/AuthFormBrackground";
 import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
 import useUserLoginAuthentication from "./hooks/useUserLoginAuthentication";
 import AuthLinkText from "./components/login/AuthLinkText";
-import useEffectTryToRefreshAccessToken from "./hooks/useEffectTryToRefreshAccessToken";
+//import useEffectTryToRefreshAccessToken from "./hooks/useEffectTryToRefreshAccessToken";
 
 function LoginPage() {
-  useEffectTryToRefreshAccessToken();
+  //useEffectTryToRefreshAccessToken();
 
   const { tryToAuthenticateUser } = useUserLoginAuthentication();
   const [formData, setFormData] = useState({

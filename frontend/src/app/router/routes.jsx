@@ -13,7 +13,6 @@ import SelectRegistrationTypePage from "../pages/auth/SelectRegistrationTypePage
 import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
-import AdminLayout from "../pages/Administrador/AdminLayout";
 import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
 
 
