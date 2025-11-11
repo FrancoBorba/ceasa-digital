@@ -28,7 +28,7 @@ import { default as ProducerProfileSecurityPage } from "../pages/Profile/produce
 import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
 
-import AdminLayout from "../pages/Profile/admin/AdminLayout";
+import AdminLayoutProfile from "../pages/Profile/admin/AdminLayout";
 import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
 
 
@@ -143,7 +143,7 @@ export const router = createBrowserRouter([
   },
   {
     path: 'admin',
-    element: <AdminLayout />,
+    element: <AdminLayoutProfile />,
     children: [
       { index: true, element: <AdminProductEvaluationPage /> }, 
       { path: 'products', element: <AdminProductEvaluationPage /> },
