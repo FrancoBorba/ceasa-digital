@@ -1,0 +1,35 @@
+package br.com.uesb.ceasadigital.api.features.item_lista.dto.request;
+
+import java.math.BigDecimal;
+
+import io.swagger.v3.oas.annotations.media.Schema;
+import jakarta.validation.constraints.Digits;
+import jakarta.validation.constraints.NotNull;
+
+public class ItemListaAddRequestDTO {
+
+  @NotNull
+  @Schema(description = "ID do produto a adicionar", example = "10")
+  private Long produtoId;
+
+  @NotNull
+  @Digits(integer = 10, fraction = 3, message = "Quantidade deve ter no máximo 10 dígitos inteiros e 3 decimais")
+  @Schema(description = "Quantidade desejada", example = "2.500")
+  private BigDecimal quantidade;
+
+  public Long getProdutoId() {
+    return produtoId;
+  }
+
+  public void setProdutoId(Long produtoId) {
+    this.produtoId = produtoId;
+  }
+
+  public BigDecimal getQuantidade() {
+    return quantidade;
+  }
+
+  public void setQuantidade(BigDecimal quantidade) {
+    this.quantidade = quantidade;
+  }
+}

@@ -6,9 +6,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import br.com.uesb.ceasadigital.api.features.endereco.dto.EnderecoDTO;
+import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.response.ResultadoCobrancaDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
 import br.com.uesb.ceasadigital.api.features.pedido.model.enums.PedidoStatus;
 
@@ -37,6 +39,10 @@ public class PedidoResponseDTO {
   @JsonProperty("total")
   private BigDecimal total;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL) 
+  private ResultadoCobrancaDTO dadosPix;
+
+
   public PedidoResponseDTO() {
   }
 
@@ -61,6 +67,15 @@ public class PedidoResponseDTO {
           .map(ItemPedidoDetalhesDTO::new)
           .collect(Collectors.toList());
     }
+  }
+
+  
+  public ResultadoCobrancaDTO getDadosPix() {
+    return dadosPix;
+  }
+
+  public void setDadosPix(ResultadoCobrancaDTO dadosPix) {
+    this.dadosPix = dadosPix;
   }
 
   public static class ClienteDTO {

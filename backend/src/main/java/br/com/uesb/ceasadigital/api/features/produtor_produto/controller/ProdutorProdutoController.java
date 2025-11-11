@@ -35,9 +35,8 @@ public class ProdutorProdutoController {
     produces = MediaType.APPLICATION_JSON_VALUE,
     consumes = MediaType.APPLICATION_JSON_VALUE
     )
-    @PreAuthorize("hasRole('ROLE_PRODUTOR')")
     public ResponseEntity<ProdutorProdutoResponseVendaDTO> requestVenda(@Valid @RequestBody ProdutorProdutoRequestVendaDTO requestDTO) {
-        List<ProdutorProdutoResponseDTO> results = produtorProdutoService.requestVenda(requestDTO.getProdutosIds());
+        List<ProdutorProdutoResponseDTO> results = produtorProdutoService.requestVenda(requestDTO);
         ProdutorProdutoResponseVendaDTO response = new ProdutorProdutoResponseVendaDTO(results);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }

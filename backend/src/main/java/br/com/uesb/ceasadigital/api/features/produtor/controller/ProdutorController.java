@@ -25,9 +25,9 @@ public class ProdutorController {
     
     @PostMapping(
         produces = MediaType.APPLICATION_JSON_VALUE,
-        consumes = MediaType.APPLICATION_JSON_VALUE
+        consumes = MediaType.APPLICATION_JSON_VALUE 
     )
-    //@PreAuthorize("hasRole('ROLE_USER')")
+    //@PreAuthorize("hasAnyRole('ROLE_USER','ROLE_ADMIN')")
     public ResponseEntity<ProdutorResponseDTO> criarPerfilProdutor(@Valid @RequestBody ProdutorRequestDTO requestDTO) {
         ProdutorResponseDTO response = produtorService.create(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
