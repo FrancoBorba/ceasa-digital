@@ -1,5 +1,5 @@
-import React from 'react';
-import styles from './ProductEvaluationList.module.css';
+import React from "react";
+import styles from "./ProductEvaluationList.module.css";
 
 const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
   return (
@@ -14,43 +14,55 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
 
       {/* Itens da Lista */}
       <div className={styles.listBody}>
-        {produtos.map(produto => (
-          <div key={produto.id} className={styles.listItem}>
-            {/* Coluna Produto */}
-            <div className={styles.col1}>
-              <img src={produto.img} alt={produto.nome} className={styles.productImage} />
-              <span className={styles.productName}>{produto.nome}</span>
+        {produtos.length === 0 ? (
+          <p className={styles.noItems}>
+            Nenhum produto pendente de avaliação.
+          </p>
+        ) : (
+          produtos.map((solicitacao) => (
+            <div key={solicitacao.id} className={styles.listItem}>
+              {/* Coluna Produto */}
+              <div className={styles.col1}>
+                <img
+                  src={solicitacao.produtoImgUrl}
+                  alt={solicitacao.produtoNome}
+                  className={styles.productImage}
+                />
+                <span className={styles.productName}>
+                  {solicitacao.produtoNome}
+                </span>
+              </div>
+
+              {/* Coluna Categoria: Agora corrigido */}
+              <div className={styles.col2}>
+                <span className={styles.categoriaTag}>
+                  {/* Corrigido: Agora lê o campo do DTO */}
+                  {solicitacao.produtoCategoriaNome}
+                </span>
+              </div>
+
+              {/* Coluna Nome do Produtor */}
+              <div className={styles.col3}>{solicitacao.produtorNome}</div>
+
+              {/* Coluna Avaliar (Botões) */}
+              <div className={styles.col4}>
+                <button
+                  className={`${styles.btn} ${styles.btnApprove}`}
+                  onClick={() => onApprove(solicitacao.id)}
+                >
+                  Aprovar
+                </button>
+                <button
+                  className={`${styles.btn} ${styles.btnDeny}`}
+                  onClick={() => onDeny(solicitacao.id)}
+                >
+                  Negar
+                </button>
+              </div>
             </div>
-            
-            {/* Coluna Categoria */}
-            <div className={styles.col2}>
-              <span className={styles.categoriaTag}>{produto.categoria}</span>
-            </div>
-            
-            {/* Coluna Quantidade */}
-            <div className={styles.col3}>
-              {produto.nomeDoProdutor}
-            </div>
-            
-            {/* Coluna Avaliar (Botões) */}
-            <div className={styles.col4}>
-              <button 
-                className={`${styles.btn} ${styles.btnApprove}`}
-                onClick={() => onApprove(produto.id)}
-              >
-                Aprovar
-              </button>
-              <button 
-                className={`${styles.btn} ${styles.btnDeny}`}
-                onClick={() => onDeny(produto.id)}
-              >
-                Negar
-              </button>
-            </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      
 
       <footer className={styles.listFooter}>
         <div className={styles.footerMostrar}>

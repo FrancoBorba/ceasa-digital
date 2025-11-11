@@ -8,6 +8,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import br.com.uesb.ceasadigital.api.common.exceptions.BadRequestException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ForbiddenException;
 import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
@@ -23,11 +24,9 @@ import br.com.uesb.ceasadigital.api.features.produtor_produto.model.ProdutorProd
 import br.com.uesb.ceasadigital.api.features.produtor_produto.repository.ProdutorProdutoRepository;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.service.UserService;
-import jakarta.transaction.Transactional;
 
 @Service
 public class ProdutorProdutoService {
-    
     @Autowired
     UserService userService;
     
@@ -159,6 +158,7 @@ public class ProdutorProdutoService {
         return mapper.toResponseDTO(updatedSolicitacao);
     }
     
+    @Transactional(readOnly = true)
     public List<ProdutorProdutoResponseDTO> findAll(String status) { 
         List<ProdutorProduto> entities;
         
