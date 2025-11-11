@@ -11,6 +11,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
     <RegistrationProvider>
     <RouterProvider router={router} />
     </RegistrationProvider>
+  </React.StrictMode>
+),
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
