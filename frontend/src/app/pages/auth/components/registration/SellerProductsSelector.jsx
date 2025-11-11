@@ -1,33 +1,29 @@
 import { useState } from "react";
 
-function SellerProductsSelector({ selectedProducts, setSelectedProducts }) {
+function SellerProductsSelector({ products = [], onSelectionChange }) {
   const [showProductSelector, setShowProductSelector] = useState(false);
   const [productSearch, setProductSearch] = useState("");
-
-  //TODO: Integration
-  const mockProductNames = [
-    "Maçã",
-    "Pera",
-    "Banana da terra do mato do bentivi da flor",
-    "Abacate",
-    "Manga",
-    "Uva",
-    "Laranja",
-    "Melancia",
-    "Tomate",
-    "Cenoura",
-  ];
+  const [selectedProducts, setSelectedProducts] = useState([]);
 
   const toggleProduct = (product) => {
-    setSelectedProducts((prev) =>
-      prev.includes(product)
-        ? prev.filter((p) => p !== product)
-        : [...prev, product]
-    );
+    setSelectedProducts((prev) => {
+      let updated;
+      if (prev.includes(product)) {
+        updated = prev.filter((p) => p !== product);
+      } else {
+        updated = [...prev, product];
+      }
+
+      // notifica o componente pai
+      onSelectionChange?.(updated);
+      return updated;
+    });
   };
 
-  const filteredProducts = mockProductNames.filter((p) =>
-    p.toLowerCase().includes(productSearch.toLowerCase())
+  const filteredProducts = products.filter((p) =>
+    p.nome
+      ? p.nome.toLowerCase().includes(productSearch.toLowerCase())
+      : false
   );
 
   return (
@@ -51,7 +47,7 @@ function SellerProductsSelector({ selectedProducts, setSelectedProducts }) {
           <div className="flex flex-wrap gap-2 justify-baseline mt-3">
             {selectedProducts.map((product) => (
               <div
-                key={product}
+                key={product.id || product.nome}
                 className="bg-green-100 text-green-800 px-3 py-1 w-[31%] rounded-xl flex items-center gap-1"
               >
                 <button
@@ -61,20 +57,22 @@ function SellerProductsSelector({ selectedProducts, setSelectedProducts }) {
                 >
                   ×
                 </button>
-                <span className="text-[0.8rem] truncate flex-1">{product}</span>
+                <span className="text-[0.8rem] truncate flex-1">
+                  {product.nome}
+                </span>
               </div>
             ))}
           </div>
         ) : (
           <p className="col-span-3 p-2 text-center text-green-800 font-bold">
-            Escolha pelomenos um produto.
+            Escolha pelo menos um produto.
           </p>
         )}
       </div>
 
       {showProductSelector && (
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
-          <div className="flex flex-col gap-10 bg-white rounded-2xl p-10 shadow-xl w-[80%]  sm:w-[60%] md:w-[50%] lg:w-[40%] max-w-2xl">
+          <div className="flex flex-col gap-10 bg-white rounded-2xl p-10 shadow-xl w-[80%] sm:w-[60%] md:w-[50%] lg:w-[40%] max-w-2xl">
             <div>
               <label className="text-black text-sm font-stretch-expanded">
                 PESQUISAR PRODUTOS
@@ -92,18 +90,17 @@ function SellerProductsSelector({ selectedProducts, setSelectedProducts }) {
                 filteredProducts.map((product) => (
                   <button
                     type="button"
-                    key={product}
+                    key={product.id || product.nome}
                     onClick={() => toggleProduct(product)}
-                    className={`relative rounded-2xl py-5 px-2 text-[0.8rem] hover:cursor-pointer  max-h-[8vh]
+                    className={`relative rounded-2xl py-5 px-2 text-[0.8rem] hover:cursor-pointer max-h-[8vh]
                       flex items-center justify-center text-center break-words whitespace-normal leading-tight
-
                       ${
                         selectedProducts.includes(product)
                           ? "bg-green-200 text-green-800 border-green-800 border-2 font-semibold"
                           : "bg-white border-green-600 border-2 hover:bg-gray-100 font-semibold text-green-800"
                       }`}
                   >
-                    {product}
+                    {product.nome}
                   </button>
                 ))
               ) : (
@@ -113,9 +110,9 @@ function SellerProductsSelector({ selectedProducts, setSelectedProducts }) {
               )}
             </div>
 
-            <div className="flex justify-center items-center ">
+            <div className="flex justify-center items-center">
               <button
-                className=" h-12 w-3/6 sm:w-4/12 bg-[#3AB54A] text-white font-bold font-stretch-expanded rounded-lg hover:bg-[#69ea7a] transition-colors hover:cursor-pointer"
+                className="h-12 w-3/6 sm:w-4/12 bg-[#3AB54A] text-white font-bold font-stretch-expanded rounded-lg hover:bg-[#69ea7a] transition-colors hover:cursor-pointer"
                 onClick={() => setShowProductSelector(false)}
               >
                 Confirmar
