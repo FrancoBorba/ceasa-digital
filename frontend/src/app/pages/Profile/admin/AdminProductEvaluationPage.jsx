@@ -31,9 +31,6 @@ const AdminProductEvaluationPage = () => {
     // Próximo passo: chamar a API (ex: POST /api/admin/products/approve/${id})
   };
 
-  /**
-   * Esta função também remove o produto da lista (simulando a negação)
-   */
   const handleDeny = (id) => {
     console.log(`Produto ${id} NEGADO`);
     // Filtra a lista, removendo o item que foi avaliado

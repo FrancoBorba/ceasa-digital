@@ -27,6 +27,7 @@ import DashboardInventoryPage from "../pages/Profile/producer/dashboard/Dashboar
 
 import AdminLayout from "../pages/Profile/admin/AdminLayout";
 import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
+import AdminProducerListPage from "../pages/Profile/admin/AdminProducerListPage";
 
 
 export const router = createBrowserRouter([
@@ -144,7 +145,10 @@ export const router = createBrowserRouter([
     children: [
       { index: true, element: <AdminProductEvaluationPage /> }, 
       { path: 'products', element: <AdminProductEvaluationPage /> },
+      
+      { path: 'producers', element: <AdminProducerListPage /> },
+      
     ]
-  },
+  }
   
 ]);
