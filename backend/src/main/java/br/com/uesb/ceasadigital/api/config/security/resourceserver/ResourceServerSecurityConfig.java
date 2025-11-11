@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;	
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -82,15 +83,15 @@ public class ResourceServerSecurityConfig {
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
 				.requestMatchers("/oauth2-docs/**").permitAll()
-				.requestMatchers("/auth/**").permitAll()
-        .requestMatchers("/api/v1/products").permitAll()
-        .requestMatchers("/api/v1/products/{id}").permitAll()
-		.requestMatchers("/auth/**").permitAll()
-		//.requestMatchers("/produtor/**").permitAll()
+				//.requestMatchers("/auth/**").permitAll()
 
-		
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
+
+				.requestMatchers(HttpMethod.POST, "/users").permitAll() 
+				.requestMatchers("/users/confirmar-email").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/forgot-password").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/reset-password").permitAll() 
 
 				// Internal endpoints for error delegation (protected from external access)
 				.requestMatchers("/error/auth").access((authentication, context) -> {
