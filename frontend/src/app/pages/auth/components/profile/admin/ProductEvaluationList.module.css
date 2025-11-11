@@ -1,0 +1,135 @@
+.listContainer {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.04);
+  overflow: hidden;
+  margin-top: 2rem; /* Adiciona espaço abaixo da barra de busca */
+}
+
+.listHeader {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  background-color: #fcfcfc;
+  border-bottom: 1px solid #eaeaea;
+  color: #888;
+  font-weight: 500;
+  font-size: 0.9rem;
+  text-transform: uppercase;
+}
+
+.listItem {
+  display: flex;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+}
+.listItem:last-child {
+  border-bottom: none;
+}
+
+/* Definição das colunas (flexbox) */
+.col1 { flex: 3; display: flex; align-items: center; gap: 1rem; }
+.col2 { flex: 2; }
+.col3 { flex: 2; }
+.col4 { flex: 2; display: flex; gap: 0.5rem; }
+
+.productImage {
+  width: 40px;
+  height: 40px;
+  border-radius: 8px;
+  object-fit: cover;
+}
+
+.productName {
+  font-weight: 600;
+  color: #333;
+}
+
+.categoriaTag {
+  background-color: #f5f5f5;
+  color: #888;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.8rem;
+  font-weight: 600;
+}
+
+.btn {
+  padding: 0.4rem 0.8rem;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+/* --- CORES VIBRANTES (COMO NO MOCKUP) --- */
+.btnApprove {
+  background-color: #DCFCE7; 
+  color: #16A34A;         
+}
+.btnApprove:hover {
+  background-color: #BBF7D0; 
+}
+
+.btnDeny {
+  background-color: #FEE2E2; 
+  color: #DC2626;        
+}
+.btnDeny:hover {
+  background-color: #FECACA; 
+}
+
+/* --- Footer (Paginação) --- */
+.listFooter {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  font-size: 0.9rem;
+  color: #888;
+  border-top: 1px solid #eaeaea;
+}
+
+.footerMostrar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.footerMostrar select {
+  padding: 0.5rem;
+  border-radius: 8px;
+  border: 1px solid #eaeaea;
+  font-size: 0.9rem;
+  background-color: #fff;
+}
+
+.pagination {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.pagination button {
+  background: none;
+  border: 1px solid transparent;
+  color: #888;
+  font-weight: 600;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.pagination button:hover {
+  border-color: #eaeaea;
+}
+
+.pagination .pageActive {
+  background-color: #f4f6f8; 
+  color: #333;
+  border-color: #eaeaea;
+}

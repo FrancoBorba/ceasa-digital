@@ -1,5 +1,5 @@
 import React, { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import './header.css';
 
 const Header = () => {
@@ -56,7 +56,7 @@ const Header = () => {
   // Profile functionality
   const handleProfileClick = () => {
     console.log('Profile button clicked');
-    alert('Perfil do usuário - Funcionalidade em desenvolvimento');
+    navigate('/user/edit-profile');
   };
 
   // Utility methods
