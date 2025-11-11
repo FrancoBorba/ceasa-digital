@@ -14,6 +14,13 @@ import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
 
+// Admin imports
+import AdminLayout from "../pages/Administrador/AdminLayout";
+import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
+import AdminLayoutProfile from "../pages/Profile/admin/AdminLayout";
+import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
+
+// Profile imports
 import { default as UserProfileLayout } from "../pages/Profile/user/edit-info/ProfileLayout";
 import { default as UserProfileInfoPage } from "../pages/Profile/user/edit-info/ProfileInfoPage";
 import { default as UserProfileSecurityPage } from "../pages/Profile/user/edit-info/ProfileSecurityPage";
@@ -24,11 +31,6 @@ import { default as ProducerProfileSecurityPage } from "../pages/Profile/produce
 
 import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
-
-import AdminLayout from "../pages/Profile/admin/AdminLayout";
-import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
-import AdminProducerListPage from "../pages/Profile/admin/AdminProducerListPage";
-
 
 export const router = createBrowserRouter([
   {
@@ -105,7 +107,6 @@ export const router = createBrowserRouter([
       }
     ]
   },
-
   {
     path: "/producer/edit-profile",
     element: <ProducerProfileLayout />,
@@ -124,7 +125,6 @@ export const router = createBrowserRouter([
       }
     ]
   },
-  
   {
     path: '/producer/dashboard',
     element: <DashboardLayout />,
@@ -139,16 +139,29 @@ export const router = createBrowserRouter([
       },
     ]
   },
-  {
-    path: 'admin',
-    element: <AdminLayout />,
-    children: [
-      { index: true, element: <AdminProductEvaluationPage /> }, 
-      { path: 'products', element: <AdminProductEvaluationPage /> },
-      
-      { path: 'producers', element: <AdminProducerListPage /> },
-      
-    ]
-  }
-  
+{
+  path: "/admin",
+  children: [
+    {
+      path: "products",
+      element: <AdminLayout />,
+      children: [
+        {
+          index: true,
+          element: <AdminProductRequestPage />,
+        }
+      ]
+    },
+    {
+      path: "evaluation",
+      element: <AdminLayoutProfile />,
+      children: [
+        {
+          index: true,
+          element: <AdminProductEvaluationPage />,
+        }
+      ]
+    }
+  ]
+}
 ]);

@@ -42,6 +42,7 @@
     <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
+      <version>42.7.7</version>
       <scope>runtime</scope>
     </dependency>
     <dependency>
@@ -117,11 +118,6 @@
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
       <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.springframework.boot</groupId>
-      <artifactId>spring-boot-starter-mail</artifactId>
     </dependency>
     
     <!-- Dependências adicionais para testes -->

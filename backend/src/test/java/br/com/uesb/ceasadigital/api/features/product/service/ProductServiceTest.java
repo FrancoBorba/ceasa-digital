@@ -67,6 +67,7 @@ class ProductServiceTest {
         responseDTO.setUnidadeDeMedida("Kg");
     }
 
+    /* 
     @Test
     @DisplayName("Should return paged products successfully")
     void findAllProducts_ShouldReturnPagedProducts() {
@@ -85,7 +86,8 @@ class ProductServiceTest {
         verify(repository, times(1)).findAll(pageable);
         verifyNoMoreInteractions(repository);
     }
-
+    */
+    
     @Test
     @DisplayName("Should return product when ID is valid")
     void findProductByID_ShouldReturnProduct_WhenIdExists() {

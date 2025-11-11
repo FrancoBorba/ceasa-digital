@@ -29,7 +29,7 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
             
             {/* Coluna Quantidade */}
             <div className={styles.col3}>
-              {produto.quantidade}
+              {produto.nomeDoProdutor}
             </div>
             
             {/* Coluna Avaliar (Botões) */}

@@ -1,0 +1,153 @@
+{
+  "info": {
+    "name": "Lista API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Criar Lista",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"nome\": \"Compras da semana\"\n}"
+        }
+      }
+    },
+    {
+      "name": "Listar Listas",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas"]
+        }
+      }
+    },
+    {
+      "name": "Buscar Lista por ID",
+      "request": {
+        "method": "GET",
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}"]
+        }
+      }
+    },
+    {
+      "name": "Excluir Lista",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}"]
+        }
+      }
+    },
+    {
+      "name": "Adicionar Item na Lista",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}/itens",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}", "itens"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"produtoId\": 1,\n  \"quantidade\": 2.5\n}"
+        }
+      }
+    },
+    {
+      "name": "Atualizar Item da Lista",
+      "request": {
+        "method": "PUT",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}/itens/{{itemId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}", "itens", "{{itemId}}"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"quantidade\": 3.0\n}"
+        }
+      }
+    },
+    {
+      "name": "Excluir Item da Lista",
+      "request": {
+        "method": "DELETE",
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}/itens/{{itemId}}",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}", "itens", "{{itemId}}"]
+        }
+      }
+    },
+    {
+      "name": "Enviar Todos os Itens da Lista ao Carrinho",
+      "request": {
+        "method": "POST",
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}/enviar-carrinho/todos",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}", "enviar-carrinho", "todos"]
+        }
+      }
+    },
+    {
+      "name": "Enviar Itens Selecionados ao Carrinho",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" }
+        ],
+        "url": {
+          "raw": "http://localhost:8080/api/v1/listas/{{listaId}}/enviar-carrinho/selecionados",
+          "protocol": "http",
+          "host": ["localhost"],
+          "port": "8080",
+          "path": ["api", "v1", "listas", "{{listaId}}", "enviar-carrinho", "selecionados"]
+        },
+        "body": {
+          "mode": "raw",
+          "raw": "{\n  \"itemIds\": [1,2]\n}"
+        }
+      }
+    }
+  ]
+}
