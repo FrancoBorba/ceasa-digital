@@ -116,4 +116,12 @@ public class EstoqueVirtual {
   public void setAtualizadoEm(LocalDateTime atualizadoEm) {
     this.atualizadoEm = atualizadoEm;
   }
+
+  public List<OfertaProdutor> getOfertas() {
+    return ofertas;
+  }
+
+  public void setOfertas(List<OfertaProdutor> ofertas) {
+    this.ofertas = ofertas;
+  }
 }

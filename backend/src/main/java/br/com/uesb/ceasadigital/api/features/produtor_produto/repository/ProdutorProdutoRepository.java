@@ -19,4 +19,10 @@ public interface ProdutorProdutoRepository extends JpaRepository<ProdutorProduto
 
     @Query("SELECT pp FROM ProdutorProduto pp WHERE pp.produtor.id = :produtorId AND pp.status IN :statuses")
     List<ProdutorProduto> findAllByProdutorIdAndStatusIn(@Param("produtorId") Long produtorId, @Param("statuses") Set<String> statuses);
+
+    /**
+     * Encontra todas as permissões ativas para um produto específico.
+     * Usado para saber quais produtores devem receber uma oferta quando uma meta de estoque é criada.
+     */
+    List<ProdutorProduto> findAllByProdutoIdAndStatus(Long produtoId, String status);
 }
