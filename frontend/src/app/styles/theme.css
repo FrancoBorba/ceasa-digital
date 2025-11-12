@@ -1,0 +1,54 @@
+/* Tema global baseado na tela de perfil */
+:root {
+  --color-primary: #1D3D1C; /* Verde escuro principal */
+  --color-primary-hover: #337831; /* Hover do botão primário */
+  --color-accent: #CBF1A5; /* Acento (anel do avatar) */
+  --color-bg: #F9F7EF; /* Fundo da área principal */
+  --color-panel: #ffffff; /* Painéis/cards */
+  --color-text: #333333; /* Texto padrão */
+  --color-muted: #6b7280; /* Texto secundário */
+}
+
+/* Fonte e fundo global para harmonizar com o perfil */
+body {
+  font-family: 'Montserrat', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-bg);
+  color: var(--color-text);
+}
+
+/* Utilitários mínimos para alinhamento de tema */
+.bg-ceasa-green {
+  background-color: var(--color-primary);
+}
+.text-ceasa-primary {
+  color: var(--color-primary);
+}
+.border-ceasa-primary {
+  border-color: var(--color-primary);
+}
+
+/* Botões genéricos (opcional) seguindo o perfil */
+.btn-ceasa-primary {
+  background-color: var(--color-primary);
+  color: #fff;
+}
+.btn-ceasa-primary:hover {
+  background-color: var(--color-primary-hover);
+}
+.btn-ceasa-outline {
+  background-color: #fff;
+  color: var(--color-primary);
+  border: 2px solid var(--color-primary);
+}
+.btn-ceasa-outline:hover {
+  background-color: #f9fafb;
+}
+
+/* Botão com a mesma cor da logo (#2D4C2D) */
+.btn-logo-green {
+  background-color: #2D4C2D;
+  color: #fff;
+}
+.btn-logo-green:hover {
+  background-color: #356A35; /* leve escurecimento para hover */
+}
