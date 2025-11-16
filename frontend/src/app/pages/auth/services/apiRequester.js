@@ -1,7 +1,6 @@
 import axios from 'axios';
 import {getAccessToken} from './authTokenStorage';
 
-
 const apiRequester = axios.create({
   baseURL: 'http://localhost:8080',
   headers: {
@@ -11,9 +10,7 @@ const apiRequester = axios.create({
 
 apiRequester.interceptors.request.use(requestConfig => {
   const access_token = getAccessToken();
-  // Só adiciona Bearer token se não houver Authorization header já definido
-  // (necessário para login que usa Basic auth)
-  if (access_token && !requestConfig.headers.Authorization) {
+  if (access_token) {
     requestConfig.headers.Authorization = `Bearer ${access_token}`;
   }
   return requestConfig;

@@ -86,29 +86,20 @@ public class AuthorizationServerSecurityConfig {
 	@Order(2)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		// @formatter:off
-		// IMPORTANT: CORS and CSRF must be configured BEFORE applying default security
-		// to ensure they are not overridden by the OAuth2 Authorization Server defaults
-		
-		// Step 1: Disable CSRF first
-		http.csrf(csrf -> csrf.disable());
-		
-		// Step 2: Configure CORS with explicit configuration
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
-		
-		// Step 3: Apply default OAuth2 Authorization Server security
 		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-		
-		// Step 4: Configure custom authentication provider
+
+		// @formatter:off
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 			.tokenEndpoint(tokenEndpoint -> tokenEndpoint
 				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter())
 				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder)));
 
-		// Step 5: Configure OAuth2 Resource Server
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		
-		// Step 6: Add filter to intercept OAuth2 responses
+		// Configure CORS explicitly using the same configuration source
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+		
+		// Add filter to intercept OAuth2 responses
 		http.addFilterBefore(oauth2ResponseInterceptorFilter, LogoutFilter.class);
 		// @formatter:on
 

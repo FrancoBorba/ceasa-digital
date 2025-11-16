@@ -40,19 +40,11 @@ public class OAuth2ResponseInterceptorFilter extends OncePerRequestFilter {
             filterChain.doFilter(request, response);
             return;
         }
-        
-        // Allow OPTIONS requests (CORS preflight) to pass through without interception
-        if ("OPTIONS".equalsIgnoreCase(request.getMethod())) {
-            filterChain.doFilter(request, response);
-            return;
-        }
-        
         // Check if it's a request for the OAuth2 token endpoint
         if (!"/oauth2/token".equals(request.getServletPath())) {
             filterChain.doFilter(request, response);
             return;
         }
-
 
         OAuth2ResponseCapturingWrapper responseWrapper = new OAuth2ResponseCapturingWrapper(response);
         filterChain.doFilter(request, responseWrapper);

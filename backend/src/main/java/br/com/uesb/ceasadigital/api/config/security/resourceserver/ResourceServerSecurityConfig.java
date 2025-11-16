@@ -160,11 +160,9 @@ public class ResourceServerSecurityConfig {
 
 		CorsConfiguration corsConfig = new CorsConfiguration();
 		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
-		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH", "OPTIONS"));
+		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
 		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
-		corsConfig.setExposedHeaders(Arrays.asList("Authorization", "Content-Type")); // Expose headers to frontend
-		corsConfig.setMaxAge(3600L); // Cache preflight response for 1 hour
+		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfig);
