@@ -1,47 +1,68 @@
-import React, { useState } from 'react';
-import styles from './AdminProductEvaluationPage.module.css';
-import { MagnifyingGlassIcon } from '@heroicons/react/24/solid';
-import ProductEvaluationList from '../../auth/components/profile/admin/ProductEvaluationList';
-// Mock data (Produtos pendentes de avaliação)
+import React, { useState, useEffect } from "react";
+import styles from "./AdminProductEvaluationPage.module.css";
+import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import ProductEvaluationList from "../../auth/components/profile/admin/ProductEvaluationList";
 
-const mockProdutosPendentes = [
-  { id: 101, nome: 'Banana', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/FFEB3B/000000?text=B' },
-  { id: 102, nome: 'Brócolis', categoria: 'Verduras', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/4CAF50/FFFFFF?text=B' },
-  { id: 103, nome: 'Manga', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/FF9800/FFFFFF?text=M' },
-  { id: 104, nome: 'Abacate', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/8BC34A/FFFFFF?text=A' },
-  { id: 105, nome: 'Maçã', categoria: 'Frutas', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/F44336/FFFFFF?text=M' },
-  { id: 106, nome: 'Couve', categoria: 'Verdura', 'nome do produtor': '', img: 'https://via.placeholder.com/40x40/2E7D32/FFFFFF?text=C' },
-];
-
+import apiRequester from "../../auth/services/apiRequester";
 
 const AdminProductEvaluationPage = () => {
-  // Estado para a lista de produtos pendentes
-  const [produtos, setProdutos] = useState(mockProdutosPendentes);
+  const [produtos, setProdutos] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchSolicitacoes = async () => {
+      try {
+        setLoading(true);
+        const response = await apiRequester.get(
+          "/api/v1/produtor-produtos?status=STATUS_PENDENTE"
+        );
+
+        setProdutos(response.data);
+      } catch (error) {
+        console.error("Erro ao buscar solicitações:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchSolicitacoes();
+  }, []);
 
   /**
-   * História de Usuário: "Confirmar cada produto"
-   * Esta função remove o produto da lista de pendências (simulando a aprovação)
+   * 3. Atualiza handleApprove para chamar a API
    */
-  const handleApprove = (id) => {
-    console.log(`Produto ${id} APROVADO`);
-    // Filtra a lista, removendo o item que foi avaliado
-    setProdutos(produtosAtuais =>
-      produtosAtuais.filter(p => p.id !== id)
-    );
-    // Próximo passo: chamar a API (ex: POST /api/admin/products/approve/${id})
+  const handleApprove = async (idSolicitacao) => {
+    try {
+      // 4. Use o apiRequester e o caminho completo do endpoint
+      await apiRequester.put(
+        `/api/v1/produtor-produtos/admin/avaliar/${idSolicitacao}?status=STATUS_ATIVO`
+      );
+
+      setProdutos((produtosAtuais) =>
+        produtosAtuais.filter((p) => p.id !== idSolicitacao)
+      );
+    } catch (error) {
+      console.error(`Erro ao aprovar solicitação ${idSolicitacao}:`, error);
+    }
   };
 
   /**
-   * Esta função também remove o produto da lista (simulando a negação)
+   * 4. Atualiza handleDeny para chamar a API
    */
-  const handleDeny = (id) => {
-    console.log(`Produto ${id} NEGADO`);
-    // Filtra a lista, removendo o item que foi avaliado
-    setProdutos(produtosAtuais =>
-      produtosAtuais.filter(p => p.id !== id)
-    );
-  };
+  const handleDeny = async (idSolicitacao) => {
+    try {
+      // 5. Use o apiRequester e o caminho completo do endpoint
+      await apiRequester.put(
+        `/api/v1/produtor-produtos/admin/avaliar/${idSolicitacao}?status=STATUS_REJEITADO`
+      );
 
+      setProdutos((produtosAtuais) =>
+        produtosAtuais.filter((p) => p.id !== idSolicitacao)
+      );
+    } catch (error) {
+      console.error(`Erro ao negar solicitação ${idSolicitacao}:`, error);
+    }
+  };
 
   return (
     <div className={styles.wrapper}>
@@ -55,12 +76,16 @@ const AdminProductEvaluationPage = () => {
           <input type="text" placeholder="Pesquisar..." />
         </div>
       </header>
-      
-      <ProductEvaluationList 
-        produtos={produtos}
-        onApprove={handleApprove}
-        onDeny={handleDeny}
-      />
+
+      {loading ? (
+        <p>Carregando solicitações...</p>
+      ) : (
+        <ProductEvaluationList
+          produtos={produtos}
+          onApprove={handleApprove}
+          onDeny={handleDeny}
+        />
+      )}
     </div>
   );
 };

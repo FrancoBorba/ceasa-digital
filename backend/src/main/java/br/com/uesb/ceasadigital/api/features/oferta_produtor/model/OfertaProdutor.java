@@ -1,10 +1,23 @@
 package br.com.uesb.ceasadigital.api.features.oferta_produtor.model;
 
-import jakarta.persistence.*;
+import br.com.uesb.ceasadigital.api.features.estoque.model.EstoqueVirtual;
+import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.enums.OfertaStatus;
+import br.com.uesb.ceasadigital.api.features.produtor.model.Produtor;
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.Table;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import br.com.uesb.ceasadigital.api.features.estoque.model.EstoqueVirtual;
-import br.com.uesb.ceasadigital.api.features.produtor.model.Produtor;
+import org.hibernate.annotations.CreationTimestamp;
+import org.hibernate.annotations.UpdateTimestamp;
 
 @Entity
 @Table(name = "tb_ofertas_produtor")
@@ -19,31 +32,34 @@ public class OfertaProdutor {
   private EstoqueVirtual metaEstoque;
   
   @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "produtor_id") // Nome da coluna no V04
+  @JoinColumn(name = "produtor_id", nullable = false)
   private Produtor produtor;
   
-  @Column(name = "quantidade_ofertada", precision = 10, scale = 3, nullable = false)
+  @Column(name = "quantidade_ofertada", nullable = false, precision = 10, scale = 3)
   private BigDecimal quantidadeOfertada;
   
-  @Column(name = "quantidade_disponivel", precision = 10, scale = 3, nullable = false)
+  @Column(name = "quantidade_disponivel", nullable = false, precision = 10, scale = 3)
   private BigDecimal quantidadeDisponivel;
   
-  @Column(name = "total_volume_vendido", precision = 10, scale = 3, nullable = false)
+  @Column(name = "total_volume_vendido", nullable = false, precision = 10, scale = 3)
   private BigDecimal totalVolumeVendido = BigDecimal.ZERO;
   
   @Column(name = "data_ultima_venda")
   private LocalDateTime dataUltimaVenda;
   
-  @Column(nullable = false)
-  private String status = "ATIVA";
+  @Enumerated(EnumType.STRING)
+  @Column(length = 50, nullable = false)
+  private OfertaStatus status;
   
-  @Column(name = "criado_em")
-  private LocalDateTime criadoEm = LocalDateTime.now();
+  @CreationTimestamp
+  @Column(name = "criado_em", updatable = false)
+  private LocalDateTime criadoEm;
   
+  @UpdateTimestamp
   @Column(name = "atualizado_em")
-  private LocalDateTime atualizadoEm = LocalDateTime.now();
+  private LocalDateTime atualizadoEm;
   
-  // Getters e Setters comuns
+  // Getters e Setters
   public Long getId() {
     return id;
   }
@@ -61,7 +77,7 @@ public class OfertaProdutor {
   }
   
   public Produtor getProdutor() {
-    return this.produtor;
+    return produtor;
   }
   
   public void setProdutor(Produtor produtor) {
@@ -100,11 +116,11 @@ public class OfertaProdutor {
     this.dataUltimaVenda = dataUltimaVenda;
   }
   
-  public String getStatus() {
+  public OfertaStatus getStatus() {
     return status;
   }
   
-  public void setStatus(String status) {
+  public void setStatus(OfertaStatus status) {
     this.status = status;
   }
   
