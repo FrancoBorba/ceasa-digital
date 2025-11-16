@@ -1,11 +1,15 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import './header.css';
+import AddressModal from '../../components/AddressModal.jsx';
+import LocalizationIcon from '../../pages/auth/svgs/LocalizationIcon.svg';
 
 const Header = () => {
   const searchInputRef = useRef(null);
   const cartCountRef = useRef(0);
   const navigate = useNavigate();
+  const [isAddressOpen, setIsAddressOpen] = React.useState(false);
+  const [savedAddress, setSavedAddress] = React.useState(null);
 
   useEffect(() => {
     // Setup search functionality when component mounts
@@ -64,7 +68,23 @@ const Header = () => {
     console.log(`${type.toUpperCase()}: ${message}`);
   };
 
+  // Address prompt action
+  const handleAddressClick = () => {
+    setIsAddressOpen(true);
+  };
+
+  const handleAddressSave = (address) => {
+    setSavedAddress(address);
+    showNotification('Endereço salvo', 'success');
+  };
+
+  const handleAddressDelete = () => {
+    setSavedAddress(null);
+    showNotification('Endereço excluído', 'info');
+  };
+
   return (
+    <>
     <header className="w-full h-100 bg-ceasa-green px-4 flex items-center justify-between shadow-sm">
       {/* Logo */}
       <div className="flex items-center">
@@ -79,16 +99,20 @@ const Header = () => {
 
       {/* Search Bar */}
       <div className="flex-1 max-w-2xl mx-8">
-        <div className="relative flex border border-black rounded-full">
+        <div className="relative flex border border-transparent rounded-full shadow-sm">
           <input
             ref={searchInputRef}
             type="text"
             placeholder="Buscar no Ceasa Digital..."
-            className="flex-1 px-4 py-3 rounded-l-full border-0 bg-white text-gray-700 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-white focus:ring-opacity-50"
+            className="flex-1 px-4 py-3 rounded-l-full border-0 bg-white text-gray-700 placeholder-gray-500 focus:outline-none"
             onChange={handleSearchInput}
             onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
           />
-          <div className="rounded-r-full px-4 py-3 flex items-center justify-center cursor-pointer transition-colors" style={{backgroundColor: '#2c4c2b'}} onClick={handleSearch}>
+          <div
+            className="rounded-r-full px-4 py-3 flex items-center justify-center cursor-pointer transition-colors"
+            style={{ backgroundColor: '#2D4C2D' }}
+            onClick={handleSearch}
+          >
             <svg 
               className="w-5 h-5 text-white" 
               fill="none" 
@@ -106,8 +130,24 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Right Icons */}
+      {/* Right Icons and Address prompt */}
       <div className="flex items-center space-x-4">
+        {/* Address prompt (near cart) */}
+        <div
+          className="address-prompt flex items-center px-3 py-2 rounded-md cursor-pointer text-white"
+          onClick={handleAddressClick}
+          title="Adicione seu endereço"
+        >
+          <img src={LocalizationIcon} alt="Localização" className="w-8 h-8 mr-2" />
+          <div className="flex flex-col leading-tight select-none">
+            <span className="text-[10px] sm:text-xs">Adicione seu</span>
+            <span className="text-xs sm:text-sm font-semibold address-value">
+              {savedAddress?.district && savedAddress?.city
+                ? `Endereço: ${savedAddress.district}, ${savedAddress.city}`
+                : 'Endereço'}
+            </span>
+          </div>
+        </div>
         {/* Shopping Cart */}
         <svg 
           className="w-10 h-10 text-white cursor-pointer hover:text-gray-200 transition-colors" 
@@ -136,6 +176,14 @@ const Header = () => {
         </svg>
       </div>
     </header>
+    <AddressModal
+      isOpen={isAddressOpen}
+      onClose={() => setIsAddressOpen(false)}
+      onSave={handleAddressSave}
+      onDelete={handleAddressDelete}
+      initialAddress={savedAddress}
+    />
+    </>
   );
 };
 
