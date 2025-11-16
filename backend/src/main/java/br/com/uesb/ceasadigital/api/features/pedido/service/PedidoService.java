@@ -50,6 +50,7 @@ import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.service.UserService;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import br.com.uesb.ceasadigital.api.features.oferta_produtor.repository.OfertaProdutorRepository;
+import br.com.uesb.ceasadigital.api.features.oferta_produtor.service.FilaDePrioridadeService;
 
 @Service
 public class PedidoService {
@@ -79,6 +80,9 @@ public class PedidoService {
   
   @Autowired
   private GatewayPagamento gatewayPagamentoService;
+
+  @Autowired
+  private FilaDePrioridadeService filaDePrioridadeService;
   
   @Transactional
   public void processarNotificacaoWebHook(SicoobPixNotificacaoDTO notificacao) {
@@ -254,12 +258,18 @@ public class PedidoService {
     BigDecimal valorTotal = BigDecimal.ZERO;
     
     for (ItemCarrinho itemCarrinho : carrinho.getItens()) {
+
+      // Seleciona o vendedor atual do item
+      OfertaProdutor ofertaProdutor = filaDePrioridadeService.selecionarOfertaDisponivel(
+        itemCarrinho.getProduto().getId()
+      , itemCarrinho.getQuantidade());
+
       ItemPedido itemPedido = new ItemPedido();
       itemPedido.setPedido(pedido);
-      itemPedido.setOferta(itemCarrinho.getOfertaProdutor());
       itemPedido.setProduto(itemCarrinho.getProduto());
       itemPedido.setQuantidade(itemCarrinho.getQuantidade());
       itemPedido.setPrecoUnitario(itemCarrinho.getPrecoUnitarioArmazenado());
+      itemPedido.setOferta(ofertaProdutor);
       
       pedido.getItens().add(itemPedido);
       

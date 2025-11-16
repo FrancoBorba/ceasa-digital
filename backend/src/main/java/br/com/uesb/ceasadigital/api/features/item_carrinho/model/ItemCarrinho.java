@@ -7,7 +7,6 @@ import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import br.com.uesb.ceasadigital.api.features.carrinho.model.Carrinho;
-import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -31,9 +30,6 @@ public class ItemCarrinho {
   @JoinColumn(name = "carrinho_id" , nullable = false)
   private Carrinho carrinho;
 
-  @ManyToOne
-  @JoinColumn(name = "oferta_produtor_id" , nullable = true)
-  private OfertaProdutor ofertaProdutor;
 
   @Column(nullable = false , precision = 10 , scale = 3)
   private BigDecimal quantidade;
@@ -74,13 +70,7 @@ public class ItemCarrinho {
     this.carrinho = carrinho;
   }
 
-  public OfertaProdutor getOfertaProdutor() {
-    return ofertaProdutor;
-  }
-
-  public void setOfertaProdutor(OfertaProdutor ofertaProdutor) {
-    this.ofertaProdutor = ofertaProdutor;
-  }
+ 
 
   public BigDecimal getQuantidade() {
     return quantidade;
