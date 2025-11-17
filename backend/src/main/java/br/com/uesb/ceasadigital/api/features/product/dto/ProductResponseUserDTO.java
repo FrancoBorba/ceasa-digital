@@ -1,7 +1,11 @@
 package br.com.uesb.ceasadigital.api.features.product.dto;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
+import br.com.uesb.ceasadigital.api.features.categoria.dto.CategoryDTO;
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 public class ProductResponseUserDTO {
@@ -41,8 +45,40 @@ public class ProductResponseUserDTO {
     requiredMode = Schema.RequiredMode.REQUIRED
   )
   private String fotoUrl;
-
   
+  private List<CategoryDTO> categories = new ArrayList<>();
+  
+  public ProductResponseUserDTO() {
+  }
+
+  public ProductResponseUserDTO(Product product) {
+    this.id = product.getId();
+    this.nome = product.getNome();
+    this.preco = product.getPreco();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.descricao = product.getDescricao();
+    this.fotoUrl = product.getFotoUrl();
+  }
+
+
+  public ProductResponseUserDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao, String fotoUrl) {
+    this.id = id;
+    this.nome = nome;
+    this.preco = preco;
+    this.unidadeDeMedida = unidadeDeMedida;
+    this.descricao = descricao;
+    this.fotoUrl = fotoUrl;
+  }
+
+  public ProductResponseUserDTO(Product product, List<CategoryDTO> categories) {
+    this.id = product.getId();
+    this.nome = product.getNome();
+    this.preco = product.getPreco();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.descricao = product.getDescricao();
+    this.fotoUrl = product.getFotoUrl();
+    categories.forEach(category -> this.categories.add(category));
+  }
 
   public Long getId() {
     return id;
@@ -88,8 +124,16 @@ public class ProductResponseUserDTO {
   return fotoUrl;
 }
 
- public void setFotoUrl(String fotoUrl) {
+public void setFotoUrl(String fotoUrl) {
   this.fotoUrl = fotoUrl;
- }
+}
+
+public List<CategoryDTO> getCategories() {
+  return categories;
+}
+
+public void setCategories(List<CategoryDTO> categories) {
+  this.categories = categories;
+}
 
 }

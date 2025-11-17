@@ -1,0 +1,36 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.label {
+  color: #1D3D1C; /* Mudei para verde escuro */
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  margin-bottom: 4px;
+}
+
+.input {
+  border: none;
+  border-bottom: 2px solid #1D3D1C; /* Linha um pouco mais grossa */
+  color: #333;
+  outline: none;
+  padding: 4px 2px; /* Adiciona um pouco de padding */
+  font-size: 1rem;
+  background-color: transparent;
+}
+.input:focus {
+  border-bottom-color: #00B050; /* Verde mais claro no focus */
+}
+
+/* CORRIGIDO: Estilo do campo desabilitado (Email) */
+.input:disabled {
+  /* Fundo verde pálido, como no molde */
+  background-color: #F0F8E7; 
+  color: #333; /* Texto escuro */
+  border-bottom: 2px solid #F0F8E7; /* Esconde a borda */
+  padding: 4px 8px; /* Adiciona padding lateral para o fundo */
+  border-radius: 4px 4px 0 0; /* Arredonda cantos superiores */
+}

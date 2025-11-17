@@ -22,7 +22,7 @@ docker-compose down -v
 
 # Remover imagens antigas dos serviços
 echo "🧹 Removendo imagens antigas..."
-docker-compose rm -f
+
 docker rmi ceasa-backend-container 2>/dev/null || true
 
 # Iniciar banco de dados e backend

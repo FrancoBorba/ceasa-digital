@@ -2,6 +2,8 @@ package br.com.uesb.ceasadigital.api.features.product.service;
 
 
 
+import java.util.stream.Collectors;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +12,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import br.com.uesb.ceasadigital.api.common.exceptions.ResourceNotFoundException;
+import br.com.uesb.ceasadigital.api.common.exceptions.InvalidProductException;
+import br.com.uesb.ceasadigital.api.common.exceptions.ProductNotFoundException;
+import br.com.uesb.ceasadigital.api.features.categoria.dto.CategoryDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
-import br.com.uesb.ceasadigital.api.common.exceptions.InvalidProductException;
-import br.com.uesb.ceasadigital.api.common.exceptions.ProductNotFoundException;
 
 @Service
 public class ProductService {
@@ -34,11 +36,9 @@ public class ProductService {
 
     logger.info("Find All Products");
 
-    Page<Product> products = repository.findAll(pageable);
-    
-   
+    Page<Product> products = repository.findAllWithCategories(pageable);   
 
-    return products.map(mapper::productToProductResponseUserDTO);
+    return products.map(product -> new ProductResponseUserDTO(product, product.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList())));
   }
 
   @Transactional(readOnly = true)
@@ -47,9 +47,9 @@ public class ProductService {
 
     // TODO:
     // Throw Excpetions like price negative , Null name , etc
-    var entity = repository.findById(id).orElseThrow(() -> new ProductNotFoundException(id));
+    var entity = repository.findByIdWithCategories(id).orElseThrow(() -> new ProductNotFoundException(id));
 
-    return mapper.productToProductResponseUserDTO(entity);
+    return new ProductResponseUserDTO(entity, entity.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList()));
   }
 
 

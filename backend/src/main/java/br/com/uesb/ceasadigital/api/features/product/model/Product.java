@@ -2,15 +2,20 @@ package br.com.uesb.ceasadigital.api.features.product.model;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.UpdateTimestamp;
 
+import br.com.uesb.ceasadigital.api.features.categoria.model.Category;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
+import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 
 
@@ -35,9 +40,12 @@ public class Product {
   private String descricao;
 
   @Column(name = "foto_url")
-  private String fotoUrl;   
+  private String fotoUrl;  
 
-
+  @ManyToMany
+  @JoinTable(name = "tb_produto_categoria", joinColumns = @JoinColumn(name = "produto_id"),
+  inverseJoinColumns = @JoinColumn(name = "categoria_id"))
+  private Set<Category> categories;
 
   @CreationTimestamp // Define a data e a hora de criação
   @Column(name = "criado_em",updatable = false) 
@@ -123,5 +131,8 @@ public class Product {
     this.atualizadoEm = atualizado_em;
   }
 
+  public Set<Category> getCategories() {
+    return categories;
+  }
 
 }

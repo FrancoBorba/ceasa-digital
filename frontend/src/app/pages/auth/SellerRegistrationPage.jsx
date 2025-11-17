@@ -1,6 +1,5 @@
-import { useRef, useState } from "react";
+import React, { useRef, useState, useEffect } from "react";
 import GenericRegistrationHeader from "./components/registration/header/GenericRegistrationHeader";
-import UserRegistrationInfo from "./components/registration/form/UserRegistrationInfo";
 import RegistrationHeaderTitlePhaseOne from "./components/registration/header/RegistrationHeaderTitlePhaseOne";
 import RegistrationHeaderTitlePhaseTwo from "./components/registration/header/RegistrationHeaderTitlePhaseTwo";
 import RegistrationHeaderTitlePhaseThree from "./components/registration/header/RegistrationHeaderTitlePhaseThree";
@@ -9,16 +8,32 @@ import RegistrationFormFirstPhase from "./components/registration/form/Registrat
 import TurnBackRegistrationButton from "./components/registration/TurnBackRegistrationButton";
 import RegistrationFormSecondPhase from "./components/registration/form/RegistrationFormSecondPhase";
 import RegistrationFormConfirmationPhase from "./components/registration/form/RegistrationFormConfirmationPhase";
-import SellerProductsSelector from "./components/registration/SellerProductsSelector";
 import { useNavigate } from "react-router";
+import apiRequester from "./services/apiRequester";
+import { useRegistration } from "../../context/RegistrationContext";
+import SellerProductsSelector from "./components/registration/SellerProductsSelector";
+
+// Função para buscar produtos públicos
+const fetchPublicProducts = async (page = 0, size = 100) => {
+  try {
+    const response = await apiRequester.get("/api/v1/products", {
+      params: { page, size, sortBy: "nome", direction: "asc" },
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Erro ao buscar produtos públicos:", error);
+    throw error;
+  }
+};
 
 function SellerRegistrationPage() {
-  const [selectedProducts, setSelectedProducts] = useState([]);
   const [isPhaseOneCompleted, setIsPhaseOneCompleted] = useState(false);
   const [isPhaseTwoCompleted, setIsPhaseTwoCompleted] = useState(false);
   const [registrationPhase, setRegistrationPhase] = useState(0);
-  const [headerTitle, setHeaderTitle] = useState(<RegistrationHeaderTitlePhaseOne userType={"PRODUTOR"} />);
-  const formData = useRef();
+  const [headerTitle, setHeaderTitle] = useState(
+    <RegistrationHeaderTitlePhaseOne userType={"PRODUTOR"} />
+  );
+  const formData = useRef({});
   const {
     register,
     handleSubmit,
@@ -27,48 +42,129 @@ function SellerRegistrationPage() {
   } = useForm();
   const password = watch("password");
   const navigate = useNavigate();
+  const { setRegData } = useRegistration();
+
+  // Estados para produtos
+  const [availableProducts, setAvailableProducts] = useState([]);
+  const [selectedProductIds, setSelectedProductIds] = useState([]);
+  const [productsError, setProductsError] = useState(null);
+  const [productsLoading, setProductsLoading] = useState(false);
+
+  // useEffect para buscar produtos ao carregar
+  useEffect(() => {
+    const loadProducts = async () => {
+      setProductsLoading(true);
+      setProductsError(null);
+      try {
+        const productData = await fetchPublicProducts(0, 100);
+        setAvailableProducts(productData.content || []);
+      } catch (err) {
+        setProductsError("Falha ao carregar a lista de produtos.");
+      } finally {
+        setProductsLoading(false);
+      }
+    };
+    loadProducts();
+  }, []);
 
   const onSubmitFirstPhase = (data) => {
+    formData.current = { ...formData.current, userData: data };
     setIsPhaseOneCompleted(true);
     setRegistrationPhase(registrationPhase + 1);
-    setHeaderTitle(<RegistrationHeaderTitlePhaseTwo userName={data.name.split(/\s+/)[0]} />);
+
+    const firstName = data.name ? data.name.split(/\s+/)[0] : "Usuário";
+    setHeaderTitle(<RegistrationHeaderTitlePhaseTwo userName={firstName} />);
   };
 
   const onSubmitSecondPhase = (data) => {
-    if (selectedProducts.length == 0) {
-      alert("Selecione pelomenos um produto que deseje vender.");
+    if (!selectedProductIds || selectedProductIds.length === 0) {
+      alert("Selecione pelo menos um produto que deseje vender.");
       return;
     }
+
+    formData.current = {
+      ...formData.current,
+      producerData: data,
+      produtosIds: selectedProductIds || [],
+    };
 
     setIsPhaseTwoCompleted(true);
     setRegistrationPhase(registrationPhase + 1);
     setHeaderTitle(<RegistrationHeaderTitlePhaseThree />);
-    formData.current = { ...data, products: selectedProducts };
+    console.log("formData antes de confirmar:", formData);
   };
 
-  const onSubmitConfirmation = (e) => {
-    // TODO: Integration
+  const onSubmitConfirmation = async (e) => {
     e.preventDefault();
-    console.log(formData);
-  }
 
+    const { userData, producerData, produtosIds } = formData.current;
+
+    if (!userData || !producerData || !Array.isArray(produtosIds) || produtosIds.length === 0) {
+      alert("Dados incompletos. Por favor, revise o formulário.");
+      return;
+    }
+
+    try {
+      // Criação do usuário
+      const userResponse = await apiRequester.post("/auth/register", {
+        name: userData.name,
+        email: userData.email,
+        password: userData.password,
+        telefone: producerData.phoneNumber,
+        cpf: producerData.cpf,
+      });
+
+      const  user  = userResponse.data;
+      console.log("Usuário criado:", user);
+      setRegData({ userId: user.id });
+
+      // Criação do produtor vinculado
+      const producerResponse = await apiRequester.post("/produtor", {
+        idUser: user.id,
+        numeroDeIdentificacao: producerData.numeroDeIdentificacao,
+        tipoDeIdentificacao: producerData.tipoDeIdentificacao,
+      });
+
+      const produtor = producerResponse.data;
+      console.log("Produtor criado:", produtor);
+
+      const payload = {
+        idProdutor: produtor.id,
+        produtosIds: produtosIds,
+      };
+        
+      console.log("ENVIANDO PARA /solicitar-venda:", JSON.stringify(payload, null, 2));
+        
+      const productLinkResponse = await apiRequester.post(
+        "/api/v1/produtor-produtos/solicitar-venda",
+        payload // Envia o payload
+      );
+
+      console.log("Produtos vinculados:", productLinkResponse.data);
+
+      alert("Cadastro completo com sucesso! Agora você já pode acessar o sistema.");
+      navigate("/login");
+    } catch (err) {
+      console.error("Erro no fluxo de cadastro completo:", err);
+      const details =
+        err.response?.data?.details ||
+        err.response?.data?.message ||
+        "Erro inesperado ao concluir o cadastro.";
+      alert(details);
+    }
+  };
+
+  // --- Voltar fase ---
   const handleTurnBackRegistration = () => {
-    setRegistrationPhase(registrationPhase - 1);
-
-    if (registrationPhase == 0) {
-      navigate("/select-register");
-      return;
-    }
-
-    if (registrationPhase == 1) {
-      setIsPhaseOneCompleted(false);
-      setHeaderTitle(<RegistrationHeaderTitlePhaseOne userType={"PRODUTOR"} />);
-      return;
-    }
-
-    if (registrationPhase == 2) {
-      setIsPhaseTwoCompleted(false);
-      setHeaderTitle(<RegistrationHeaderTitlePhaseTwo userName={formData.current.name.split(/\s+/)[0]} />);
+    if (registrationPhase > 0) {
+      setRegistrationPhase(registrationPhase - 1);
+      if (registrationPhase === 1) {
+        setHeaderTitle(<RegistrationHeaderTitlePhaseOne userType={"PRODUTOR"} />);
+      } else if (registrationPhase === 2) {
+        const userName =
+          formData.current.userData?.name?.split(/\s+/)[0] || "Usuário";
+        setHeaderTitle(<RegistrationHeaderTitlePhaseTwo userName={userName} />);
+      }
     }
   };
 
@@ -80,9 +176,12 @@ function SellerRegistrationPage() {
         isPhaseTwoCompleted={isPhaseTwoCompleted}
       />
 
-      <TurnBackRegistrationButton onClick={handleTurnBackRegistration} registrationPhase={registrationPhase} />
+      <TurnBackRegistrationButton
+        onClick={handleTurnBackRegistration}
+        registrationPhase={registrationPhase}
+      />
 
-      {registrationPhase == 0 && (
+      {registrationPhase === 0 && (
         <RegistrationFormFirstPhase
           onSubmit={handleSubmit(onSubmitFirstPhase)}
           register={register}
@@ -91,20 +190,44 @@ function SellerRegistrationPage() {
         />
       )}
 
-      {registrationPhase == 1 && (
+      {registrationPhase === 1 && (
         <RegistrationFormSecondPhase
           onSubmit={handleSubmit(onSubmitSecondPhase)}
           errors={errors}
           register={register}
           formData={formData}
+          userType="PRODUTOR"
         >
-          <SellerProductsSelector selectedProducts={selectedProducts} setSelectedProducts={setSelectedProducts} />
+          <div className="mt-4">
+            <h3 className="text-lg font-semibold mb-3">
+              Selecione os Produtos que Deseja Vender
+            </h3>
+            {productsLoading && <p>Carregando produtos...</p>}
+            {productsError && <p className="text-red-500">{productsError}</p>}
+            {Array.isArray(availableProducts) && availableProducts.length > 0 && (
+              <SellerProductsSelector
+                products={availableProducts}
+                onSelectionChange={(productObjects) => {
+                  const ids = (productObjects || []).map(p => p.id);
+                  setSelectedProductIds(ids);
+                }}
+              />
+            )}
+          </div>
         </RegistrationFormSecondPhase>
       )}
 
-      {registrationPhase == 2 && (
-        <RegistrationFormConfirmationPhase formData={formData} onSubmit={onSubmitConfirmation}>
-          <UserRegistrationInfo labelName={"PRODUTOS"} value={formData?.current?.products.join(", ")} />
+      {registrationPhase === 2 && (
+        <RegistrationFormConfirmationPhase
+          formData={formData}
+          onSubmit={onSubmitConfirmation}
+          userType="PRODUTOR"
+        >
+          {Array.isArray(formData.current.produtosIds) && (
+            <p>
+              Produtos selecionados: {formData.current.produtosIds.length} item(s)
+            </p>
+          )}
         </RegistrationFormConfirmationPhase>
       )}
     </div>

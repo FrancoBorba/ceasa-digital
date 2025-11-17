@@ -1,13 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import Header from '../../layouts/header/header';
 import Footer from '../../layouts/footer/footer';
-import { getProducts } from '../Product/services/productService';
 import Products from '../Product/Product';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    
 
     // Imagens promocionais para o carrossel
     const promotionalImages = [
@@ -57,23 +55,12 @@ const Home = () => {
     const goToSlide = (index) => {
         setCurrentSlide(index);
     };
-    //retornando produtos do backend
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const data = await getProducts();
-                setProducts(data);
-            } catch (error) {
-                console.error('Erro ao buscar produtos:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-    }, []);
+    // removido: busca de produtos local (Home usa componente Products)
+
+    
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
             <Header />
             <main className="p-5 px-4 md:p-5 md:px-4">
                 {/* Carrossel*/}
@@ -156,43 +143,43 @@ const Home = () => {
                         </div>
                     </div>
                 </section>
-
-                {/* Espaço reservado para Calendário Sazonal */}
-                <section className="w-full max-w-none m-0 mt-8 mb-8">
-                    <div className="bg-white rounded-2xl shadow-lg p-8 border border-gray-200">
-                        <div className="text-center">
-                            <h2 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
-                                Calendário Sazonal
-                            </h2>
-                            <div className="bg-gray-50 rounded-xl p-12 border-2 border-dashed border-gray-300">
-                                <div className="flex flex-col items-center justify-center space-y-4">
-                                    <svg 
-                                        className="w-16 h-16 text-gray-400" 
-                                        fill="none" 
-                                        stroke="currentColor" 
-                                        viewBox="0 0 24 24"
-                                    >
-                                        <path 
-                                            strokeLinecap="round" 
-                                            strokeLinejoin="round" 
-                                            strokeWidth={2} 
-                                            d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" 
-                                        />
-                                    </svg>
-                                    <p className="text-gray-500 font-medium">
-                                        Calendário em desenvolvimento
-                                    </p>
-                                    <p className="text-sm text-gray-400 max-w-md">
-                                        Em breve você poderá visualizar quais produtos estão na época ideal para consumo
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
+                {/* Categorias (chips) */}
+                <section className="w-full max-w-none m-0 mt-6">
+                    <div className="rounded-2xl shadow-md p-4 flex flex-wrap items-center justify-around gap-6 px-6" style={{ backgroundColor: 'var(--color-panel)' }}>
+                        {[
+                            { icon: '🥬', label: 'Legumes' },
+                            { icon: '🍎', label: 'Frutas' },
+                            { icon: '🥦', label: 'Verduras' },
+                            { icon: '🌾', label: 'Grãos' },
+                            { icon: '🌶️', label: 'Temperos' }
+                        ].map((c, idx) => (
+                            <button
+                                key={idx}
+                                className="group flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-ceasa-primary rounded-xl px-3 py-2 transition-colors border border-transparent outline-none focus:outline-none focus-visible:outline-none focus:ring-0 active:outline-none select-none"
+                                style={{ backgroundColor: 'transparent', appearance: 'none' }}
+                                aria-label={c.label}
+                            >
+                                <span className="text-2xl transition-transform duration-200 ease-out group-hover:scale-[1.15] group-hover:-translate-y-[1px] text-ceasa-primary">
+                                    {c.icon}
+                                </span>
+                                <span>{c.label}</span>
+                            </button>
+                        ))}
                     </div>
                 </section>
 
-                {/* Produtos em destaque */}
-                <Products />
+                {/* Calendário Sazonal */}
+                <section className="mt-10">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Calendário Sazonal</h2>
+                    <div className="bg-white rounded-2xl shadow-md p-6 h-40 flex items-center justify-center text-gray-500">
+                        <p>Em breve: calendário sazonal com frutas e legumes por estação.</p>
+                    </div>
+                </section>
+
+                {/* Lista de produtos reutilizando o componente Products */}
+                <section className="mt-10">
+                    <Products />
+                </section>
                 
             </main>
             <Footer />
