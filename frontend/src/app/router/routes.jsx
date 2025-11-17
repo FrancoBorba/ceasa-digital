@@ -35,24 +35,6 @@ import { default as ProducerProfileSecurityPage } from "../pages/Profile/produce
 import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
 
-// Admin imports
-import AdminLayout from "../pages/Administrador/AdminLayout";
-import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
-import AdminLayoutProfile from "../pages/Profile/admin/AdminLayout";
-import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
-
-// Profile imports
-import { default as UserProfileLayout } from "../pages/Profile/user/edit-info/ProfileLayout";
-import { default as UserProfileInfoPage } from "../pages/Profile/user/edit-info/ProfileInfoPage";
-import { default as UserProfileSecurityPage } from "../pages/Profile/user/edit-info/ProfileSecurityPage";
-
-import { default as ProducerProfileLayout } from "../pages/Profile/producer/edit-info/ProfileLayout";
-import { default as ProducerProfileInfoPage } from "../pages/Profile/producer/edit-info/ProfileInfoPage";
-import { default as ProducerProfileSecurityPage } from "../pages/Profile/producer/edit-info/ProfileSecurityPage";
-
-import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
-import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
-
 export const router = createBrowserRouter([
   {
     path: "/",
