@@ -3,14 +3,18 @@ spring:
   config:
     import: optional:file:../.env[.properties]
   mail:
-    host: 
-    port: 
-    username: 
-    password: 
+    host: smtp.gmail.com
+    port: 587
+    username: ${EMAIL_USERNAME}
+    password: ${EMAIL_PASSWORD}
     properties:
-      mail.smtp.auth: false
-      mail.smtp.starttls.enable: false
-
+      mail.smtp.auth: true
+      mail.smtp.starttls.enable: true
+      mail.smtp.starttls.required: true
+      mail.smtp.connectiontimeout: 5000
+      mail.smtp.timeout: 3000
+      mail.smtp.writetimeout: 5000
+  
   datasource:
     url: ${DATASOURCE_URL}
     username: ${DATASOURCE_USERNAME}
