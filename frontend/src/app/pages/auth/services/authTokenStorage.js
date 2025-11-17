@@ -15,7 +15,8 @@ function getRefreshToken() {
 }
 
 function removeAccessAndRefreshToken() {
-  localStorage.removeItem(ACCESS_TOKEN_KEY, REFRESH_TOKEN_KEY);
+  localStorage.removeItem(ACCESS_TOKEN_KEY);   // Remove o token de acesso
+  localStorage.removeItem(REFRESH_TOKEN_KEY);  // Remove o token de refresh
 }
 
 export {setAccessAndRefreshToken, getAccessToken, getRefreshToken, removeAccessAndRefreshToken};

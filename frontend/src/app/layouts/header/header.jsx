@@ -1,10 +1,12 @@
 import React, { useEffect, useRef } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
+import { useLogout } from '../../pages/auth/hooks/useLogout';
 import './header.css';
 import AddressModal from '../../components/AddressModal.jsx';
 import LocalizationIcon from '../../pages/auth/svgs/LocalizationIcon.svg';
 
 const Header = () => {
+  const logout = useLogout();
   const searchInputRef = useRef(null);
   const cartCountRef = useRef(0);
   const navigate = useNavigate();
@@ -19,7 +21,7 @@ const Header = () => {
   // Search functionality
   const handleSearch = () => {
     const searchTerm = searchInputRef.current ? searchInputRef.current.value.trim() : '';
-    
+
     if (searchTerm) {
       console.log('Searching for:', searchTerm);
       performSearch(searchTerm);
@@ -35,7 +37,7 @@ const Header = () => {
   const performSearch = (searchTerm) => {
     // Implement actual search functionality
     console.log('Performing search for:', searchTerm);
-    
+
     // Example: redirect to search results page
     // window.location.href = `/search?q=${encodeURIComponent(searchTerm)}`;
   };
@@ -89,9 +91,9 @@ const Header = () => {
       {/* Logo */}
       <div className="flex items-center">
         <div className="logo-container">
-          <img 
-            src="/logo.png" 
-            alt="Ceasa Digital Logo" 
+          <img
+            src="/logo.png"
+            alt="Ceasa Digital Logo"
             className="h-20 w-20"
           />
         </div>
@@ -119,11 +121,11 @@ const Header = () => {
               stroke="currentColor" 
               viewBox="0 0 24 24"
             >
-              <path 
-                strokeLinecap="round" 
-                strokeLinejoin="round" 
-                strokeWidth="2" 
-                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" 
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
               />
             </svg>
           </div>
@@ -149,31 +151,48 @@ const Header = () => {
           </div>
         </div>
         {/* Shopping Cart */}
-        <svg 
-          className="w-10 h-10 text-white cursor-pointer hover:text-gray-200 transition-colors" 
-          fill="none" 
-          stroke="currentColor" 
-          viewBox="0 0 24 24" 
+        <svg
+          className="w-10 h-10 text-white cursor-pointer hover:text-gray-200 transition-colors"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
           onClick={handleCartClick}
         >
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M2.25 3h1.386c.51 0 .955.343 1.087.835l.383 1.437M7.5 14.25a3 3 0 00-3 3h15.75m-12.75-3h11.218c1.121-2.3 2.1-4.684 2.924-7.138a60.114 60.114 0 00-16.536-1.84M7.5 14.25L5.106 5.272M6 20.25a.75.75 0 11-1.5 0 .75.75 0 011.5 0zm12.75 0a.75.75 0 11-1.5 0 .75.75 0 011.5 0z" />
         </svg>
 
         {/* User Profile */}
-        <svg 
-          className="w-10 h-10 text-white cursor-pointer hover:text-gray-200 transition-colors" 
-          fill="none" 
-          stroke="currentColor" 
+        <svg
+          className="w-10 h-10 text-white cursor-pointer hover:text-gray-200 transition-colors"
+          fill="none"
+          stroke="currentColor"
           viewBox="0 0 24 24"
           onClick={handleProfileClick}
         >
-          <path 
-            strokeLinecap="round" 
-            strokeLinejoin="round" 
-            strokeWidth="2" 
-            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" 
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
           />
         </svg>
+        {/* NOVO: Logout Icon */}
+        <svg
+          className="w-10 h-10 text-white cursor-pointer hover:text-red-300 transition-colors"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+          onClick={logout}
+          title="Sair"
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            strokeWidth="2"
+            d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"
+          />
+        </svg>
+
       </div>
     </header>
     <AddressModal
