@@ -35,6 +35,24 @@ import { default as ProducerProfileSecurityPage } from "../pages/Profile/produce
 import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
 
+// Admin imports
+import AdminLayout from "../pages/Administrador/AdminLayout";
+import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
+import AdminLayoutProfile from "../pages/Profile/admin/AdminLayout";
+import AdminProductEvaluationPage from "../pages/Profile/admin/AdminProductEvaluationPage";
+
+// Profile imports
+import { default as UserProfileLayout } from "../pages/Profile/user/edit-info/ProfileLayout";
+import { default as UserProfileInfoPage } from "../pages/Profile/user/edit-info/ProfileInfoPage";
+import { default as UserProfileSecurityPage } from "../pages/Profile/user/edit-info/ProfileSecurityPage";
+
+import { default as ProducerProfileLayout } from "../pages/Profile/producer/edit-info/ProfileLayout";
+import { default as ProducerProfileInfoPage } from "../pages/Profile/producer/edit-info/ProfileInfoPage";
+import { default as ProducerProfileSecurityPage } from "../pages/Profile/producer/edit-info/ProfileSecurityPage";
+
+import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
+import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
+
 export const router = createBrowserRouter([
   {
     path: "/",
@@ -109,18 +127,18 @@ export const router = createBrowserRouter([
     element: <UserProfileLayout />,
     children: [
       {
-        index: true,
-        element: <UserProfileInfoPage />,
+        index: true, 
+        element: <UserProfileInfoPage /> 
       },
       {
         path: "info",
-        element: <UserProfileInfoPage />,
+        element: <UserProfileInfoPage />
       },
       {
         path: "security",
-        element: <UserProfileSecurityPage />,
-      },
-    ],
+        element: <UserProfileSecurityPage />
+      }
+    ]
   },
   {
     path: "/producer/edit-profile",
@@ -128,55 +146,55 @@ export const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <ProducerProfileInfoPage />,
+        element: <ProducerProfileInfoPage /> 
       },
       {
         path: "info",
-        element: <ProducerProfileInfoPage />,
+        element: <ProducerProfileInfoPage />
       },
       {
         path: "security",
-        element: <ProducerProfileSecurityPage />,
-      },
-    ],
+        element: <ProducerProfileSecurityPage />
+      }
+    ]
   },
   {
-    path: "/producer/dashboard",
+    path: '/producer/dashboard',
     element: <DashboardLayout />,
     children: [
       {
         index: true,
-        element: <DashboardInventoryPage />,
+        element: <DashboardInventoryPage /> 
       },
       {
-        path: "inventory",
-        element: <DashboardInventoryPage />,
+        path: 'inventory',
+        element: <DashboardInventoryPage />
       },
-    ],
+    ]
   },
-  {
-    path: "/admin",
-    children: [
-      {
-        path: "products",
-        element: <AdminLayout />,
-        children: [
-          {
-            index: true,
-            element: <AdminProductRequestPage />,
-          },
-        ],
-      },
-      {
-        path: "evaluation",
-        element: <AdminLayoutProfile />,
-        children: [
-          {
-            index: true,
-            element: <AdminProductEvaluationPage />,
-          },
-        ],
-      },
-    ],
-  },
+{
+  path: "/admin",
+  children: [
+    {
+      path: "products",
+      element: <AdminLayout />,
+      children: [
+        {
+          index: true,
+          element: <AdminProductRequestPage />,
+        }
+      ]
+    },
+    {
+      path: "evaluation",
+      element: <AdminLayoutProfile />,
+      children: [
+        {
+          index: true,
+          element: <AdminProductEvaluationPage />,
+        }
+      ]
+    }
+  ]
+}
 ]);
