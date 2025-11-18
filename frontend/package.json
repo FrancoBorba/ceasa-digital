@@ -1,7 +1,8 @@
 {
   "dependencies": {
     "@heroicons/react": "^1.0.6",
-    "axios": "^1.12.2"
+    "axios": "^1.12.2",
+    "jwt-decode": "^4.0.0"
   },
   "devDependencies": {
     "autoprefixer": "^10.4.21",

@@ -14,6 +14,8 @@ import ChangePasswordPage from "../pages/auth/ChangePasswordPage";
 import EmailVerifiedPage from "../pages/auth/EmailVerifiedPage";
 import EmailVerifiedFailPage from "../pages/auth/EmailVerifiedFailPage";
 
+import { ProtectedRoute } from "./ProtectedRoute";
+
 // Admin imports
 import AdminLayout from "../pages/Administrador/AdminLayout";
 import AdminProductRequestPage from "../pages/Administrador/AdminProductRequestPage.jsx";
@@ -54,14 +56,6 @@ export const router = createBrowserRouter([
     element: <ResetPasswordPage />,
   },
   {
-    path: "/cart",
-    element: <Cart />,
-  },
-  {
-    path: "/purchase",
-    element: <PurchaseConfirmation />,
-  },
-  {
     path: "/productDetail/:id",
     element: <ProductDetail />,
   },
@@ -78,10 +72,6 @@ export const router = createBrowserRouter([
     element: <SelectRegistrationTypePage />,
   },
   {
-    path: "/changepassword",
-    element: <ChangePasswordPage />,
-  },
-  {
     path: "/emailverified",
     element: <EmailVerifiedPage />,
   },
@@ -90,78 +80,101 @@ export const router = createBrowserRouter([
     element: <EmailVerifiedFailPage />,
   },
   {
-    path: "/user/edit-profile",
-    element: <UserProfileLayout />,
+    element: <ProtectedRoute allowedRoles={['ROLE_USER']} />,
     children: [
       {
-        index: true, 
-        element: <UserProfileInfoPage /> 
+        path: "/cart",
+        element: <Cart />,
       },
       {
-        path: "info",
-        element: <UserProfileInfoPage />
+        path: "/purchase",
+        element: <PurchaseConfirmation />,
       },
       {
-        path: "security",
-        element: <UserProfileSecurityPage />
+        path: "/changepassword",
+        element: <ChangePasswordPage />,
+      },
+      {
+        path: "/user/edit-profile",
+        element: <UserProfileLayout />,
+        children: [
+          {
+            index: true,
+            element: <UserProfileInfoPage />
+          },
+          {
+            path: "info",
+            element: <UserProfileInfoPage />
+          },
+          {
+            path: "security",
+            element: <UserProfileSecurityPage />
+          }
+        ]
       }
     ]
   },
   {
-    path: "/producer/edit-profile",
-    element: <ProducerProfileLayout />,
+    element: <ProtectedRoute allowedRoles={['ROLE_PRODUTOR']} />,
     children: [
       {
-        index: true,
-        element: <ProducerProfileInfoPage /> 
+        path: "/producer/edit-profile",
+        element: <ProducerProfileLayout />,
+        children: [
+          {
+            index: true,
+            element: <ProducerProfileInfoPage />
+          },
+          {
+            path: "info",
+            element: <ProducerProfileInfoPage />
+          },
+          {
+            path: "security",
+            element: <ProducerProfileSecurityPage />
+          }
+        ]
       },
       {
-        path: "info",
-        element: <ProducerProfileInfoPage />
-      },
-      {
-        path: "security",
-        element: <ProducerProfileSecurityPage />
+        path: '/producer/dashboard',
+        element: <DashboardLayout />,
+        children: [
+          {
+            index: true,
+            element: <DashboardInventoryPage />
+          },
+          {
+            path: 'inventory',
+            element: <DashboardInventoryPage />
+          },
+        ]
       }
-    ]
-  },
-  {
-    path: '/producer/dashboard',
-    element: <DashboardLayout />,
-    children: [
-      {
-        index: true,
-        element: <DashboardInventoryPage /> 
-      },
-      {
-        path: 'inventory',
-        element: <DashboardInventoryPage />
-      },
     ]
   },
 {
-  path: "/admin",
-  children: [
-    {
-      path: "products",
-      element: <AdminLayout />,
-      children: [
-        {
-          index: true,
-          element: <AdminProductRequestPage />,
-        }
-      ]
-    },
-    {
-      path: "evaluation",
-      element: <AdminLayoutProfile />,
-      children: [
-        {
-          index: true,
-          element: <AdminProductEvaluationPage />,
-        }
-      ]
-    }
-  ]
-}
+    path: "/admin",
+    element: <ProtectedRoute allowedRoles={['ROLE_ADMIN']} />,
+    children: [
+      {
+        path: "products",
+        element: <AdminLayout />,
+        children: [
+          {
+            index: true,
+            element: <AdminProductRequestPage />,
+          }
+        ]
+      },
+      {
+        path: "evaluation",
+        element: <AdminLayoutProfile />,
+        children: [
+          {
+            index: true,
+            element: <AdminProductEvaluationPage />,
+          }
+        ]
+      }
+    ]
+  }
 ]);
