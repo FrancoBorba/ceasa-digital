@@ -7,8 +7,8 @@ function ProducerProductRequestPage() {
 
   const [products, setProducts] = useState([
     { id: 1, name: "Abacaxi", category: "Frutas", image: "/images/abacaxi.jpg", requested: false, weight: "50 Kg" },
-    { id: 2, name: "Manga", category: "Frutas", image: "/images/manga.jpg", requested: true, weight: "20 Kg" },
-    { id: 3, name: "Banana", category: "Frutas", image: "/images/banana.jpg", requested: false, weight: "30 Kg" },
+    { id: 2, name: "Manga", category: "Frutas", image: "/images/amanga.jpg", requested: true, weight: "20 Kg" },
+    { id: 3, name: "Banana", category: "Frutas", image: "/images/abanana.jpg", requested: false, weight: "30 Kg" },
   ]);
 
   const filteredProducts = products.filter(
