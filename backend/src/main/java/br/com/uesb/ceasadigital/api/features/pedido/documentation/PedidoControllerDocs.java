@@ -1,18 +1,13 @@
 package br.com.uesb.ceasadigital.api.features.pedido.documentation;
 
-import java.util.List;
-
-import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RequestParam;
-
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.FinalizarCarrinhoRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.request.PedidoPutRequestDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoPageResponseDto;
 import br.com.uesb.ceasadigital.api.features.pedido.dto.response.PedidoResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;

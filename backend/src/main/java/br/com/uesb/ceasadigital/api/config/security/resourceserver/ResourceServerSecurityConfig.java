@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;	
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -82,10 +83,15 @@ public class ResourceServerSecurityConfig {
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
 				.requestMatchers("/oauth2-docs/**").permitAll()
-				.requestMatchers("/auth/**").permitAll()
+				//.requestMatchers("/auth/**").permitAll()
 
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
+
+				.requestMatchers(HttpMethod.POST, "/users").permitAll() 
+				.requestMatchers("/users/confirmar-email").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/forgot-password").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/reset-password").permitAll() 
 
 				// Internal endpoints for error delegation (protected from external access)
 				.requestMatchers("/error/auth").access((authentication, context) -> {
@@ -154,9 +160,11 @@ public class ResourceServerSecurityConfig {
 
 		CorsConfiguration corsConfig = new CorsConfiguration();
 		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
-		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		corsConfig.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+		corsConfig.setExposedHeaders(Arrays.asList("Authorization", "Content-Type")); // Expose headers to frontend
+		corsConfig.setMaxAge(3600L); // Cache preflight response for 1 hour
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfig);

@@ -1,0 +1,32 @@
+.baseButton {
+  font-weight: 800;
+  padding: 12px 32px;
+  border-radius: 8px;
+  transition: all 0.3s;
+  letter-spacing: 0.05em;
+  font-size: 0.875rem;
+  border: none;
+  cursor: pointer;
+}
+
+.primary {
+  background-color: #1D3D1C;
+  color: white;
+}
+.primary:hover {
+  background-color: #337831;
+}
+
+.outline {
+  background-color: white;
+  color: #1D3D1C;
+  border: 2px solid #1D3D1C;
+}
+.outline:hover {
+  background-color: #f9fafb;
+}
+
+.baseButton:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

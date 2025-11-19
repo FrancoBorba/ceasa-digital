@@ -60,7 +60,7 @@ const Home = () => {
     
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
             <Header />
             <main className="p-5 px-4 md:p-5 md:px-4">
                 {/* Carrossel*/}
@@ -145,27 +145,21 @@ const Home = () => {
                 </section>
                 {/* Categorias (chips) */}
                 <section className="w-full max-w-none m-0 mt-6">
-                    <div className="bg-white rounded-2xl shadow-md p-4 flex flex-wrap items-center justify-around gap-6 px-6">
+                    <div className="rounded-2xl shadow-md p-4 flex flex-wrap items-center justify-around gap-6 px-6" style={{ backgroundColor: 'var(--color-panel)' }}>
                         {[
                             { icon: '🥬', label: 'Legumes' },
                             { icon: '🍎', label: 'Frutas' },
                             { icon: '🥦', label: 'Verduras' },
-                            { icon: '🍞', label: 'Padaria' },
-                            { icon: '🧀', label: 'Queijos' },
-                            { icon: '🥩', label: 'Carnes' },
-                            { icon: '🍫', label: 'Doces' },
-                            { icon: '🥪', label: 'Salgados' },
-                            { icon: '🥤', label: 'Bebidas' },
                             { icon: '🌾', label: 'Grãos' },
                             { icon: '🌶️', label: 'Temperos' }
                         ].map((c, idx) => (
                             <button
                                 key={idx}
-                                className="group flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-green-700 outline-none focus:outline-none focus:ring-0 active:outline-none select-none"
-                                style={{ appearance: 'none' }}
+                                className="group flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-ceasa-primary rounded-xl px-3 py-2 transition-colors border border-transparent outline-none focus:outline-none focus-visible:outline-none focus:ring-0 active:outline-none select-none"
+                                style={{ backgroundColor: 'transparent', appearance: 'none' }}
                                 aria-label={c.label}
                             >
-                                <span className="text-2xl transition-transform duration-200 ease-out group-hover:scale-[1.15] group-hover:-translate-y-[1px]">
+                                <span className="text-2xl transition-transform duration-200 ease-out group-hover:scale-[1.15] group-hover:-translate-y-[1px] text-ceasa-primary">
                                     {c.icon}
                                 </span>
                                 <span>{c.label}</span>

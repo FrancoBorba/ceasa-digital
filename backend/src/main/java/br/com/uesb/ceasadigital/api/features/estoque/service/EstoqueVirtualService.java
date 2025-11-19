@@ -7,12 +7,21 @@ import br.com.uesb.ceasadigital.api.features.estoque.mapper.EstoqueVirtualMapper
 import br.com.uesb.ceasadigital.api.features.estoque.model.EstoqueVirtual;
 import br.com.uesb.ceasadigital.api.features.estoque.model.enums.MetaEstoqueStatus;
 import br.com.uesb.ceasadigital.api.features.estoque.repository.EstoqueVirtualRepository;
+import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.OfertaProdutor;
+import br.com.uesb.ceasadigital.api.features.oferta_produtor.model.enums.OfertaStatus;
+import br.com.uesb.ceasadigital.api.features.oferta_produtor.repository.OfertaProdutorRepository;
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
+import br.com.uesb.ceasadigital.api.features.produtor.model.Produtor;
+import br.com.uesb.ceasadigital.api.features.produtor_produto.model.ProdutorProduto;
+import br.com.uesb.ceasadigital.api.features.produtor_produto.repository.ProdutorProdutoRepository;
 import br.com.uesb.ceasadigital.api.features.user.model.User;
 import br.com.uesb.ceasadigital.api.features.user.service.UserService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.List;
 
 @Service
@@ -22,29 +31,86 @@ public class EstoqueVirtualService {
   private final ProductRepository productRepository;
   private final UserService userService;
   private final EstoqueVirtualMapper estoqueMapper;
+  private final ProdutorProdutoRepository produtorProdutoRepository;
+  private final OfertaProdutorRepository ofertaProdutorRepository;
   
-  public EstoqueVirtualService(EstoqueVirtualRepository estoqueRepository, ProductRepository productRepository, UserService userService, EstoqueVirtualMapper estoqueMapper) {
+  public EstoqueVirtualService(
+  EstoqueVirtualRepository estoqueRepository, 
+  ProductRepository productRepository, 
+  UserService userService, 
+  EstoqueVirtualMapper estoqueMapper,
+  ProdutorProdutoRepository produtorProdutoRepository,
+  OfertaProdutorRepository ofertaProdutorRepository
+  ) {
     this.estoqueRepository = estoqueRepository;
     this.productRepository = productRepository;
     this.userService = userService;
     this.estoqueMapper = estoqueMapper;
+    this.produtorProdutoRepository = produtorProdutoRepository;
+    this.ofertaProdutorRepository = ofertaProdutorRepository;
   }
   
   @Transactional
   public EstoqueVirtualResponseDTO create(EstoqueVirtualRequestDTO requestDTO) {
     User admin = userService.getCurrentUser();
     
-    var produto = productRepository.findById(requestDTO.getProdutoId())
+    Product produto = productRepository.findById(requestDTO.getProdutoId())
     .orElseThrow(() -> new ResourceNotFoundException("Produto com id " + requestDTO.getProdutoId() + " não encontrado."));
     
     EstoqueVirtual meta = new EstoqueVirtual();
     meta.setProduto(produto);
     meta.setAdminCriador(admin);
     meta.setQuantidadeMeta(requestDTO.getQuantidadeMeta());
-    meta.setStatus(MetaEstoqueStatus.ABERTA); // Status padrão
+    meta.setStatus(MetaEstoqueStatus.ABERTA);
     
-    var savedMeta = estoqueRepository.save(meta);
+    EstoqueVirtual savedMeta = estoqueRepository.save(meta);
+    
+    // --- LÓGICA DE DISTRIBUIÇÃO DA META PARA PRODUTORES ---
+    distribuirMetaParaProdutores(savedMeta);
+    // --- FIM DA LÓGICA ---
+    
     return estoqueMapper.toResponseDTO(savedMeta);
+  }
+  
+  /**
+  * Método auxiliar para criar e distribuir Ofertas de Produtor
+  * baseado em uma Meta de Estoque recém-criada.
+  */
+  private void distribuirMetaParaProdutores(EstoqueVirtual meta) {
+    Product produto = meta.getProduto();
+    BigDecimal totalMeta = meta.getQuantidadeMeta();
+    
+    // 1. Encontrar todos os produtores que podem vender este produto
+    List<ProdutorProduto> permissoes = produtorProdutoRepository
+    .findAllByProdutoIdAndStatus(produto.getId(), "ATIVO");
+    
+    if (permissoes.isEmpty()) {
+      // Nenhum produtor pode vender este produto, não faz nada
+      return;
+    }
+    
+    // 2. Calcular a divisão igualitária
+    int numProdutores = permissoes.size();
+    BigDecimal quantidadePorProdutor = totalMeta.divide(
+    new BigDecimal(numProdutores), 
+    3, // 3 casas decimais, conforme definido na entidade
+    RoundingMode.HALF_UP
+    );
+    
+    // 3. Criar uma OfertaProdutor "PENDENTE" para cada um
+    for (ProdutorProduto permissao : permissoes) {
+      Produtor produtor = permissao.getProdutor();
+      
+      OfertaProdutor novaOferta = new OfertaProdutor();
+      novaOferta.setMetaEstoque(meta);
+      novaOferta.setProdutor(produtor);
+      novaOferta.setQuantidadeOfertada(quantidadePorProdutor);
+      novaOferta.setQuantidadeDisponivel(quantidadePorProdutor); // Inicialmente é a mesma
+      novaOferta.setTotalVolumeVendido(BigDecimal.ZERO);
+      novaOferta.setStatus(OfertaStatus.PENDENTE); // Status inicial
+      
+      ofertaProdutorRepository.save(novaOferta);
+    }
   }
   
   @Transactional(readOnly = true)
@@ -64,6 +130,11 @@ public class EstoqueVirtualService {
     var meta = estoqueRepository.findById(id)
     .orElseThrow(() -> new ResourceNotFoundException("Meta de estoque com id " + id + " não encontrada."));
     
+    // Não permite alterar meta que já tem ofertas (simplificação de negócio)
+    if (!meta.getOfertas().isEmpty()) {
+      throw new IllegalStateException("Não é possível alterar uma meta que já foi distribuída.");
+    }
+    
     if (!meta.getProduto().getId().equals(requestDTO.getProdutoId())) {
       var novoProduto = productRepository.findById(requestDTO.getProdutoId())
       .orElseThrow(() -> new ResourceNotFoundException("Produto com id " + requestDTO.getProdutoId() + " não encontrado."));
@@ -81,8 +152,6 @@ public class EstoqueVirtualService {
     EstoqueVirtual meta = estoqueRepository.findById(id)
     .orElseThrow(() -> new ResourceNotFoundException("Meta de estoque com id " + id + " não encontrada."));
     EstoqueVirtualResponseDTO responseDTO = estoqueMapper.toResponseDTO(meta);
-
-    // TODO: Avisar para o admin caso ja tenha um oferta de algum produtor vinculada a essa meta de estoque
     estoqueRepository.deleteById(id);
     return responseDTO;
   }

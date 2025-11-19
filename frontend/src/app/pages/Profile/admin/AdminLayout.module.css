@@ -1,0 +1,224 @@
+.layoutContainer {
+  display: flex;
+  min-height: 100vh;
+  background-color: #f9f9f9; 
+}
+
+.sidebar {
+  width: 280px;
+  padding: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  background-color: #f4f6f8; 
+}
+
+.profileCard {
+  background-color: #ffffff;
+  border-radius: 20px;
+  padding: 2rem;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+  margin-bottom: 2rem;
+}
+.profilePic {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-bottom: 1rem;
+}
+.profileNameContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+.profileName {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0;
+  color: #333;
+}
+.profileBadge {
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #2563EB; /* Azul do selo */
+}
+.profileRole {
+  font-size: 0.9rem;
+  color: #888;
+  margin: 0.25rem 0 0;
+}
+
+.navMenu ul { list-style: none; padding: 0; margin: 0; }
+.navItem {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #555;
+  text-decoration: none;
+  transition: all 0.3s ease;
+}
+.navIcon { 
+  margin-right: 1rem; 
+  width: 20px; 
+  height: 20px; 
+  flex-shrink: 0; /* Impede que o ícone esprema */
+}
+.navItemActive {
+  background-color: #e4e6e8;
+  color: #111;
+  font-weight: 600;
+}
+.navItem:not(.navItemActive):hover { background-color: #eef0f2; }
+.sidebarFooter {
+  margin-top: auto;
+  text-align: center;
+  font-size: 0.85rem;
+  color: #888;
+}
+
+.contentWrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  padding: 1rem;
+  overflow: hidden; /* Impede o wrapper de crescer */
+}
+.topHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 60px;
+  padding: 0 1.5rem;
+  box-sizing: border-box;
+}
+.mainContent {
+  flex: 1;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow-y: auto; /* Scroll apenas no conteúdo */
+}
+
+.dropdownOverlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.1);
+  z-index: 40;
+}
+.dropdownContent {
+  position: absolute;
+  top: 70px;
+  right: 2rem;
+  width: 400px;
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  z-index: 50;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+.dropdownHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+}
+.dropdownHeader h3 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+}
+.closeButton {
+  background: none; border: none; cursor: pointer; color: #888;
+  width: 24px; height: 24px;
+}
+.closeButton svg { width: 24px; height: 24px; }
+.closeButton:hover { color: #111; }
+
+.dropdownTabs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1.5rem;
+  border-bottom: 1px solid #eaeaea;
+}
+.tab, .tabActive {
+  background: none; border: none; cursor: pointer;
+  font-size: 0.9rem; font-weight: 500;
+  padding-bottom: 0.5rem;
+}
+.tab {
+  color: #888;
+  border-bottom: 2px solid transparent;
+}
+.tab:hover { color: #111; }
+.tabActive {
+  color: #16A34A; 
+  border-bottom: 2px solid #16A34A;
+}
+.markAsRead {
+  margin-left: auto;
+  font-size: 0.8rem;
+  color: #16A34A;
+  cursor: pointer;
+}
+
+.dropdownBody { max-height: 400px; overflow-y: auto; }
+.notifItem {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.notifItem:hover { background-color: #f9f9f9; }
+.notifAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+.notifText {
+  flex: 1;
+  font-size: 0.9rem;
+  color: #555;
+  line-height: 1.4;
+}
+.notifText strong {
+  color: #111;
+  font-weight: 600;
+}
+.notifButton {
+  background-color: #DCFCE7; 
+  color: #16A34A; 
+  border: none;
+  padding: 0.4rem 0.8rem;
+  border-radius: 8px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+.notifButton:hover { background-color: #BBF7D0; }
+.dropdownFooter {
+  padding: 1rem;
+  text-align: center;
+  border-top: 1px solid #eaeaea;
+}
+.dropdownFooter button {
+  background: none; border: none; cursor: pointer;
+  color: #16A34A;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
