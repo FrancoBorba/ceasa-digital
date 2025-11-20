@@ -30,9 +30,7 @@ function SellerProductsSelector({ products = [], onSelectionChange }) {
     <div>
       <div className="flex flex-col">
         <div className="flex flex-row items-center justify-evenly">
-          <label className="text-black text-sm font-stretch-expanded font-bold">
-            PRODUTOS QUE PRETENDE VENDER
-          </label>
+          <label className="text-black text-sm font-stretch-expanded font-bold">PRODUTOS QUE PRETENDE VENDER</label>
 
           <button
             type="button"
@@ -74,9 +72,7 @@ function SellerProductsSelector({ products = [], onSelectionChange }) {
         <div className="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50">
           <div className="flex flex-col gap-10 bg-white rounded-2xl p-10 shadow-xl w-[80%] sm:w-[60%] md:w-[50%] lg:w-[40%] max-w-2xl">
             <div>
-              <label className="text-black text-sm font-stretch-expanded">
-                PESQUISAR PRODUTOS
-              </label>
+              <label className="text-black text-sm font-stretch-expanded font-medium">PESQUISAR PRODUTOS</label>
               <input
                 type="text"
                 value={productSearch}
@@ -85,7 +81,7 @@ function SellerProductsSelector({ products = [], onSelectionChange }) {
               />
             </div>
 
-            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-x-8 gap-y-6 px-4 overflow-y-auto max-h-[42vh]">
+            <div className="grid sm:grid-cols-2 xl:grid-cols-3 gap-x-1 gap-y-1 overflow-y-auto max-h-[42vh]">
               {filteredProducts.length > 0 ? (
                 filteredProducts.map((product) => (
                   <button
@@ -96,16 +92,19 @@ function SellerProductsSelector({ products = [], onSelectionChange }) {
                       flex items-center justify-center text-center break-words whitespace-normal leading-tight
                       ${
                         selectedProducts.includes(product)
-                          ? "bg-green-200 text-green-800 border-green-800 border-2 font-semibold"
-                          : "bg-white border-green-600 border-2 hover:bg-gray-100 font-semibold text-green-800"
+                          ? "hidden"
+                          : "bg-[#ebffce] border-[#e1ffbb] border-2  transition hover:bg-[#e0ffb8] font-medium text-[#225710]"
                       }`}
                   >
                     {product.nome}
                   </button>
                 ))
               ) : (
+                <p className="col-span-3 p-2 text-center text-gray-500 font-bold">Nenhum produto encontrado</p>
+              )}
+              {selectedProducts.length == products.length && (
                 <p className="col-span-3 p-2 text-center text-gray-500 font-bold">
-                  Nenhum produto encontrado
+                  Todos os produtos foram selecionados
                 </p>
               )}
             </div>
