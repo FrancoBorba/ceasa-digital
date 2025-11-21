@@ -1,35 +1,71 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import styles from './ProfileInfoPage.module.css';
 import ProfileInput from "../../../auth/components/profile/ProfileInput"; 
 import ProfileButton from "../../../auth/components/profile/ProfileButton"; 
+import { useUser } from '../../../../context/UserContext.jsx'; 
 
 export default function ProfileInfoPage() {
-  const [formData, setFormData] = useState({
-    gender: "",
-    firstName: "",
-    lastName: "",
-    email: "",
-    address: "",
-    phone: "",
+  const { userName, setUserName, userEmail } = useUser(); 
 
-    isEmailVerified: true 
+  const [formData, setFormData] = useState({
+    name: '',
+    email: '' 
   });
+  useEffect(() => {
+    setFormData({
+      name: userName || '',
+      email: userEmail || ''
+    });
+  }, [userName, userEmail]);
+  
   
   const [isLoading, setIsLoading] = useState(false);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+    setFormData(prevState => ({
+      ...prevState,
+      [name]: value
+    }));
   };
-
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Salvando mudanças:", formData);
-    setTimeout(() => {
+
+    const API_URL = 'http://localhost:8080';
+    const token = localStorage.getItem('authToken'); 
+
+    try {
+      const payload = {
+        name: formData.name,
+        email: formData.email
+      };
+
+      const response = await fetch(
+        `${API_URL}/users/me`, 
+        {
+          method: 'PATCH', 
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${token}` 
+          },
+          body: JSON.stringify(payload) 
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Erro na API: ${response.status}`);
+      }
+      const data = await response.json();
+      setUserName(data.name); 
+
+      alert("Informações atualizadas com sucesso!");
+      } catch (err) {
+      console.error("Erro ao atualizar perfil:", err);
+      alert("Não foi possível atualizar suas informações.");
+    } finally {
       setIsLoading(false);
-      alert("Perfil salvo!");
-    }, 1500);
+    }
   };
 
   const handleDiscard = () => {
@@ -76,7 +112,8 @@ export default function ProfileInfoPage() {
               name="email"
               type="email"
               value={formData.email}
-              disabled={false} 
+              onChange={handleChange}
+              required
             />
 
            

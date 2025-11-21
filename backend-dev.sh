@@ -21,22 +21,22 @@ fi
 
 # Parar containers existentes e limpar volumes
 echo "🛑 Parando containers existentes e removendo volumes..."
-docker-compose down -v
+docker compose down -v
 
 # Remover container do banco de dados
 echo "🧹 Limpando container do banco de dados..."
-docker-compose rm -f database-ceasa-digital
+docker compose rm -f database-ceasa-digital
 
 # Iniciar apenas o banco de dados
 echo "🚀 Iniciando banco de dados..."
-docker-compose up -d database-ceasa-digital
+docker compose up -d database-ceasa-digital
 
 # Aguardar banco estar pronto
 echo "⏳ Aguardando banco de dados ficar disponível..."
 sleep 5
 
 # Verificar status
-if docker-compose ps database-ceasa-digital | grep -q "Up"; then
+if docker compose ps database-ceasa-digital | grep -q "Up"; then
     echo ""
     echo "✅ Banco de dados iniciado com sucesso!"
     echo "📊 PostgreSQL disponível em: localhost:$(grep DATASOURCE_EXTERNAL_PORT .env | cut -d'=' -f2)"
@@ -55,6 +55,6 @@ if docker-compose ps database-ceasa-digital | grep -q "Up"; then
     ./mvnw spring-boot:run -Dspring-boot.run.arguments="--spring.profiles.active=dev"
 else
     echo "❌ Erro ao iniciar banco de dados"
-    docker-compose logs database-ceasa-digital
+    docker compose logs database-ceasa-digital
     exit 1
 fi

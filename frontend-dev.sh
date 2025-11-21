@@ -18,33 +18,33 @@ fi
 
 # Parar containers existentes e limpar volumes
 echo "🛑 Parando containers existentes e removendo volumes..."
-docker-compose down -v
+docker compose down -v
 
 # Remover imagens antigas dos serviços
 echo "🧹 Removendo imagens antigas..."
-docker-compose rm -f
+docker compose rm -f
 docker rmi ceasa-backend-container 2>/dev/null || true
 
 # Iniciar banco de dados e backend
 echo "🚀 Iniciando banco de dados..."
-docker-compose up -d database-ceasa-digital
+docker compose up -d database-ceasa-digital
 
 echo "⏳ Aguardando banco de dados ficar disponível..."
 sleep 10
 
 echo "🔨 Rebuilding imagem do backend (sem cache)..."
-docker-compose build --no-cache backend
+docker compose build --no-cache backend
 
 echo "🚀 Iniciando backend..."
-docker-compose up -d backend
+docker compose up -d backend
 
 # Aguardar serviços estarem prontos
 echo "⏳ Aguardando serviços ficarem disponíveis..."
 sleep 15
 
 # Verificar status
-DB_STATUS=$(docker-compose ps database-ceasa-digital | grep -q "Up" && echo "✅" || echo "❌")
-BACKEND_STATUS=$(docker-compose ps backend | grep -q "Up" && echo "✅" || echo "❌")
+DB_STATUS=$(docker compose ps database-ceasa-digital | grep -q "Up" && echo "✅" || echo "❌")
+BACKEND_STATUS=$(docker compose ps backend | grep -q "Up" && echo "✅" || echo "❌")
 
 echo ""
 echo "📊 Status dos Serviços:"
@@ -62,11 +62,11 @@ if [[ "$DB_STATUS" == "✅" && "$BACKEND_STATUS" == "✅" ]]; then
     echo "🔧 Para desenvolvimento: Execute sua aplicação frontend localmente"
     echo ""
     echo "🎯 Comandos úteis:"
-    echo "   - Ver logs backend: docker-compose logs -f backend"
-    echo "   - Ver logs banco: docker-compose logs -f database-ceasa-digital"
-    echo "   - Ver logs todos: docker-compose logs -f"
-    echo "   - Parar: docker-compose down"
-    echo "   - Status: docker-compose ps"
+    echo "   - Ver logs backend: docker compose logs -f backend"
+    echo "   - Ver logs banco: docker compose logs -f database-ceasa-digital"
+    echo "   - Ver logs todos: docker compose logs -f"
+    echo "   - Parar: docker compose down"
+    echo "   - Status: docker compose ps"
     echo ""
     echo "🚀 Iniciando frontend..."
     echo "🧹 Limpando node_modules antigo..."
@@ -76,6 +76,6 @@ if [[ "$DB_STATUS" == "✅" && "$BACKEND_STATUS" == "✅" ]]; then
 else
     echo "❌ Erro ao iniciar serviços"
     echo "📋 Verificando logs..."
-    docker-compose logs
+    docker compose logs
     exit 1
 fi

@@ -8,8 +8,6 @@ import {
 } from '@heroicons/react/24/solid';
 import { PencilIcon } from '@heroicons/react/24/solid';
 import styles from './ProfileLayout.module.css';
-
-
 import { useUser } from '../../../../context/UserContext.jsx'; 
 
 function MainSidebarLink({ to, icon: Icon, label }) {
