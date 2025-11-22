@@ -1,24 +1,88 @@
-.form {
+.wrapper {
   display: flex;
   flex-direction: column;
-  height: 100%;
-  justify-content: space-between;
+  width: 100%;
+  padding: 0 1rem;
+  box-sizing: border-box;
 }
-.header {
+
+.header { 
   font-size: 1.5rem;
   font-weight: 800;
   color: #1D3D1C;
   margin-bottom: 32px;
   letter-spacing: 0.025em;
+  text-transform: uppercase;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  /* Define uma altura mínima para o formulário para que haja espaço 
+     para empurrar o rodapé para baixo */
+  min-height: 60vh; 
+  gap: 28px;
+}
+
+.row {
+  display: flex;
+  flex-direction: row;
+  gap: 32px;
+  width: 100%;
+}
+
+.row > div {
+  flex: 1;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end; /* Alinha à direita */
+  gap: 16px;
+  align-items: center;
+  margin-top: auto; 
+  padding-top: 2rem; 
+}
+
+.cancelButton {
+  background-color: white;
+  border: 1px solid #1D3D1C;
+  color: #1D3D1C;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-transform: uppercase;
+  height: 48px;
+}
+
+.cancelButton:hover {
+  background-color: #f0fdf4;
+}
+
+@media (max-width: 768px) {
+  .row {
+    flex-direction: column;
+    gap: 28px;
+  }
+
+  .footer {
+    flex-direction: column-reverse;
+    width: 100%;
+  }
+
+  .cancelButton {
+    width: 100%;
+  }
+  
+  .wrapper {
+    padding: 0;
+  }
 }
 .fieldsContainer {
   display: flex;
   flex-direction: column;
-  gap: 28px;
-}
-.buttonContainer {
-  display: flex;
-  justify-content: flex-end;
-  gap: 16px;
-  margin-top: 65px;
+  gap: 45px; 
 }

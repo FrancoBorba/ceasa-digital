@@ -13,7 +13,7 @@ function useForgotPassword() {
 
     try {
     
-      await apiRequester.post("/auth/forgot-password", {
+      await apiRequester.post("/users/forgot-password", {
         email: email,
       });
       setIsSuccess(true);

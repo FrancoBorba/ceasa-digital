@@ -4,7 +4,6 @@ import styles from "./ProductEvaluationList.module.css";
 const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
   return (
     <div className={styles.listContainer}>
-      {/* Cabeçalho da Lista */}
       <header className={styles.listHeader}>
         <span className={styles.col1}>Produto</span>
         <span className={styles.col2}>Categoria</span>
@@ -12,7 +11,6 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
         <span className={styles.col4}>Avaliar</span>
       </header>
 
-      {/* Itens da Lista */}
       <div className={styles.listBody}>
         {produtos.length === 0 ? (
           <p className={styles.noItems}>
@@ -33,18 +31,13 @@ const ProductEvaluationList = ({ produtos, onApprove, onDeny }) => {
                 </span>
               </div>
 
-              {/* Coluna Categoria: Agora corrigido */}
               <div className={styles.col2}>
                 <span className={styles.categoriaTag}>
-                  {/* Corrigido: Agora lê o campo do DTO */}
                   {solicitacao.produtoCategoriaNome}
                 </span>
               </div>
-
-              {/* Coluna Nome do Produtor */}
               <div className={styles.col3}>{solicitacao.produtorNome}</div>
 
-              {/* Coluna Avaliar (Botões) */}
               <div className={styles.col4}>
                 <button
                   className={`${styles.btn} ${styles.btnApprove}`}
