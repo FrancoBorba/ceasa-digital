@@ -5,12 +5,41 @@ export default function AdminProductRequestPage() {
   const [showRequested, setShowRequested] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
 
- const [products, setProducts] = useState([
-  { id: 1, name: "Abacaxi", category: "Frutas", image: "/images/abacaxi.jpg", requested: false, quantity: "", isEditing: false },
-  { id: 2, name: "Manga", category: "Frutas", image: "/images/manga.jpg", requested: true, quantity: "20", isEditing: false },
-  { id: 3, name: "Banana", category: "Frutas", image: "/images/banana.jpg", requested: false, quantity: "", isEditing: false },
-]);
-
+  const [products, setProducts] = useState([
+    { 
+      id: 1, 
+      name: "Abacaxi", 
+      category: "Frutas", 
+      image: "/images/abacaxi.jpg", 
+      requested: false, 
+      quantity: "", 
+      unit: "Kg",
+      requestDate: "",
+      isEditing: false 
+    },
+    { 
+      id: 2, 
+      name: "Manga", 
+      category: "Frutas", 
+      image: "/images/manga.jpg", 
+      requested: true, 
+      quantity: "20", 
+      unit: "Kg",
+      requestDate: "2024-01-15",
+      isEditing: false 
+    },
+    { 
+      id: 3, 
+      name: "Banana", 
+      category: "Frutas", 
+      image: "/images/banana.jpg", 
+      requested: false, 
+      quantity: "", 
+      unit: "Kg",
+      requestDate: "",
+      isEditing: false 
+    },
+  ]);
 
   const filteredProducts = products.filter(
     (p) =>
@@ -24,28 +53,44 @@ export default function AdminProductRequestPage() {
     );
   };
 
+  const handleUnitChange = (id, value) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.id === id ? { ...p, unit: value } : p))
+    );
+  };
+
   const handleRequest = (id) => {
-  setProducts((prev) =>
-    prev.map((p) => {
-      // Se a quantidade for inválida, não marca como solicitado
-      if (p.id === id && (!p.quantity || Number(p.quantity) <= 0)) {
-        return { ...p, requested: false, isEditing: false };
-      }
-      return p.id === id
-        ? { ...p, requested: true, isEditing: false }
-        : p;
-    })
-  );
-};
+    setProducts((prev) =>
+      prev.map((p) => {
+        if (p.id === id && (!p.quantity || Number(p.quantity) <= 0)) {
+          return { ...p, requested: false, isEditing: false };
+        }
+        return p.id === id
+          ? { 
+              ...p, 
+              requested: true, 
+              isEditing: false,
+              requestDate: new Date().toISOString().split('T')[0] // Data atual no formato YYYY-MM-DD
+            }
+          : p;
+      })
+    );
+  };
 
-const handleEdit = (id) => {
-  setProducts((prev) =>
-    prev.map((p) =>
-      p.id === id ? { ...p, isEditing: true } : p
-    )
-  );
-};
+  const handleEdit = (id) => {
+    setProducts((prev) =>
+      prev.map((p) =>
+        p.id === id ? { ...p, isEditing: true } : p
+      )
+    );
+  };
 
+  // Função para formatar a data para exibição
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString('pt-BR');
+  };
 
   return (
     <div className={styles.container}>
@@ -89,42 +134,55 @@ const handleEdit = (id) => {
             <div className={styles.productInfo}>
               <h2>{product.name}</h2>
               <p>{product.category}</p>
+              
+              {/* Exibir informações de solicitação quando o produto estiver solicitado */}
+              {product.requested && !product.isEditing && (
+                <div className={styles.requestInfo}>
+                  <p><strong>Quantidade:</strong> {product.quantity} {product.unit}</p>
+                  <p><strong>Data de Solicitação:</strong> {formatDate(product.requestDate)}</p>
+                </div>
+              )}
             </div>
 
             <div className={styles.productAction}>
-  <label>Solicitar produto para venda</label>
-  {!product.requested || product.isEditing ? (
-    <div className={styles.actionRow}>
-      <select className={styles.select}>
-        <option>Kg</option>
-        <option>Unidade</option>
-      </select>
-      <input
-        type="number"
-        placeholder="Digite a quantidade"
-        value={product.quantity}
-        onChange={(e) =>
-          handleQuantityChange(product.id, e.target.value)
-        }
-        className={styles.quantityInput}
-      />
-      <button
-        className={styles.button}
-        onClick={() => handleRequest(product.id)}
-      >
-        {product.isEditing ? "Salvar" : "Solicitar"}
-      </button>
-    </div>
-  ) : (
-    <button
-      className={`${styles.button} ${styles.editButton}`}
-      onClick={() => handleEdit(product.id)}
-    >
-      Editar
-    </button>
-  )}
-</div>
-
+              <label>Solicitar produto para venda</label>
+              {!product.requested || product.isEditing ? (
+                <div className={styles.actionRow}>
+                  <select 
+                    className={styles.select}
+                    value={product.unit}
+                    onChange={(e) => handleUnitChange(product.id, e.target.value)}
+                  >
+                    <option value="Kg">Kg</option>
+                    <option value="Unidade">Unidade</option>
+                    <option value="Caixa">Caixa</option>
+                    <option value="Pacote">Pacote</option>
+                  </select>
+                  <input
+                    type="number"
+                    placeholder="Digite a quantidade"
+                    value={product.quantity}
+                    onChange={(e) =>
+                      handleQuantityChange(product.id, e.target.value)
+                    }
+                    className={styles.quantityInput}
+                  />
+                  <button
+                    className={styles.button}
+                    onClick={() => handleRequest(product.id)}
+                  >
+                    {product.isEditing ? "Salvar" : "Solicitar"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  className={`${styles.button} ${styles.editButton}`}
+                  onClick={() => handleEdit(product.id)}
+                >
+                  Editar
+                </button>
+              )}
+            </div>
           </div>
         ))}
 
