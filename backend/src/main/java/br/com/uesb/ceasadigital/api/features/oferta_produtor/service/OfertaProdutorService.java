@@ -17,10 +17,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
 public class OfertaProdutorService {
+
+  @Autowired
+  private EstoqueService estoqueService;
   
   @Autowired
   private OfertaProdutorRepository ofertaProdutorRepository;
@@ -75,6 +79,7 @@ public class OfertaProdutorService {
   @Transactional
   public OfertaProdutorResponseDTO confirmarOferta(Long ofertaId) {
     Produtor produtor = getCurrentProdutor();
+    BigDecimal quantidade = BigDecimal.valueOf(1); // Reservando 1 unidade ao confirmar a oferta
     
     OfertaProdutor oferta = ofertaProdutorRepository.findById(ofertaId)
     .orElseThrow(() -> new ResourceNotFoundException("Oferta com ID " + ofertaId + " não encontrada."));
@@ -91,6 +96,8 @@ public class OfertaProdutorService {
     
     oferta.setStatus(OfertaStatus.ATIVA);
     OfertaProdutor ofertaSalva = ofertaProdutorRepository.save(oferta);
+
+    estoqueService.reservarProdutos(ofertaId, quantidade);
     
     return mapper.toResponseDTO(ofertaSalva);
   }
