@@ -29,6 +29,11 @@ public class EstoqueService {
         }
 
         oferta.setQuantidadeDisponivel(oferta.getQuantidadeDisponivel().subtract(quantidade));
+        // Set de padrao acumulativo, para evitar sobrescrever reservas anteriores
+        oferta.setQuantidadeReservada(
+            oferta.getQuantidadeReservada().add(quantidade)
+        );
+
         ofertaRepository.save(oferta);
         return true;
     }
@@ -41,18 +46,30 @@ public class EstoqueService {
         OfertaProdutor oferta = ofertaRepository.findById(ofertaId)
                 .orElseThrow(() -> new RuntimeException("Oferta não encontrada"));
 
+        if(oferta.getQuantidadeReservada().compareTo(quantidade) < 0) {
+            throw new RuntimeException("Quantidade a confirmar maior que a reservada");
+        }
+
+        oferta.setQuantidadeReservada(oferta.getQuantidadeReservada().subtract(quantidade) );
+
         oferta.setTotalVolumeVendido(oferta.getTotalVolumeVendido().add(quantidade));
         oferta.setDataUltimaVenda(LocalDateTime.now());
         ofertaRepository.save(oferta);
     }
 
     /**
-     * Cancela uma reserva, devolvendo a quantidade ao estoque disponível
+     * Cancela uma reserva, devolvendo a quantidade ao estoque disponivel
      */
     @Transactional
     public void cancelarCompra(Long ofertaId, BigDecimal quantidade) {
         OfertaProdutor oferta = ofertaRepository.findById(ofertaId)
                 .orElseThrow(() -> new RuntimeException("Oferta não encontrada"));
+
+        if(oferta.getQuantidadeReservada().compareTo(quantidade) < 0) {
+            throw new RuntimeException("Quantidade a cancelar maior que a reservada");
+        }
+
+        oferta.setQuantidadeReservada(oferta.getQuantidadeReservada().subtract(quantidade));
 
         oferta.setQuantidadeDisponivel(oferta.getQuantidadeDisponivel().add(quantidade));
         ofertaRepository.save(oferta);
