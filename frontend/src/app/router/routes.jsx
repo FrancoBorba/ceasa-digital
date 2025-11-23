@@ -34,6 +34,7 @@ import { default as ProducerProfileSecurityPage } from "../pages/Profile/produce
 
 import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout";
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
+import ProdutorProdutos from "../pages/Home/ProdutorProdutos";
 
 export const router = createBrowserRouter([
   {
@@ -153,6 +154,10 @@ export const router = createBrowserRouter([
         element: <DashboardInventoryPage />
       },
     ]
+  },
+  {
+    path: "/meus-produtos",
+    element: <ProdutorProdutos />,
   },
 {
   path: "/admin",

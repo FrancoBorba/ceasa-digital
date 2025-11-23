@@ -21,10 +21,14 @@ function useTryToRefreshAccessToken() {
     }
 
     function sendRefreshTokenAndReturnDataResponse() {
-      return apiRequester.post("/oauth2-docs/refresh", null, {
-        params: {
-          refresh_token: getRefreshToken(),
-          grant_type: "refresh_token",
+      const params = new URLSearchParams();
+      params.append('refresh_token', getRefreshToken());
+      params.append('grant_type', 'refresh_token');
+
+      return apiRequester.post("/oauth2/token", params, {
+        headers: {
+          'Authorization': 'Basic ' + btoa('ceasa-digital-client:ceasa-digital-secret'),
+          'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
     }
