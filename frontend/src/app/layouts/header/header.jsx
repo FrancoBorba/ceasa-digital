@@ -90,11 +90,12 @@ const Header = () => {
     <header className="w-full h-100 bg-ceasa-green px-4 flex items-center justify-between shadow-sm">
       {/* Logo */}
       <div className="flex items-center">
-        <div className="logo-container">
-          <img
-            src="/logo.png"
-            alt="Ceasa Digital Logo"
-            className="h-20 w-20"
+        <div className="logo-container group">
+          <img 
+            src="/logo.png" 
+            alt="Ceasa Digital Logo" 
+            className="h-20 w-20 cursor-pointer transition-transform duration-200 ease-out group-hover:scale-[1.1]"
+            onClick={() => navigate('/')}
           />
         </div>
       </div>

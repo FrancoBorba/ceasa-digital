@@ -79,7 +79,6 @@ public class ItemCarrinhoService {
       itemParaSalvar.setQuantidade(itemToAdd.getQuantidade());
       itemParaSalvar.setProduto(produto);
       itemParaSalvar.setPrecoUnitarioArmazenado(produto.getPreco());
-      itemParaSalvar.setOfertaProdutor(null); // Null permitido agora
         }
 
         repository.save(itemParaSalvar);

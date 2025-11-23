@@ -40,6 +40,9 @@ public class OfertaProdutor {
   
   @Column(name = "quantidade_disponivel", nullable = false, precision = 10, scale = 3)
   private BigDecimal quantidadeDisponivel;
+
+  @Column(name = "quantidade_reservada", nullable = false, precision = 10, scale = 3)
+  private BigDecimal quantidadeReservada = BigDecimal.ZERO;
   
   @Column(name = "total_volume_vendido", nullable = false, precision = 10, scale = 3)
   private BigDecimal totalVolumeVendido = BigDecimal.ZERO;
@@ -107,6 +110,15 @@ public class OfertaProdutor {
   public void setTotalVolumeVendido(BigDecimal totalVolumeVendido) {
     this.totalVolumeVendido = totalVolumeVendido;
   }
+
+  public BigDecimal getQuantidadeReservada() {
+    return quantidadeReservada;
+  }
+
+  public void setQuantidadeReservada(BigDecimal quantidadeReservada) {
+    this.quantidadeReservada = quantidadeReservada;
+  }
+
   
   public LocalDateTime getDataUltimaVenda() {
     return dataUltimaVenda;

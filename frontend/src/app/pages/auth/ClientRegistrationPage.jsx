@@ -151,6 +151,7 @@ function ClientRegistrationPage() {
           errors={errors}
           register={register}
           formData={formData.current}
+          userType="CLIENTE"
         />
       )}
 

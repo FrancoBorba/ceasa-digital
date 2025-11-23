@@ -11,6 +11,8 @@ function RegistrationFormSecondPhase({
 }) {
   return (
     <RegistrationFormBackground onSubmit={onSubmit} buttonName={"Continuar"}>
+      {userType === "CLIENTE" && (
+      <>
       <RegistrationInput
         labelName={"CEP"}
         type={"text"}
@@ -24,6 +26,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.cep}
         value={formData?.cep}
       />
+      
       <RegistrationInput
         labelName={"LOGRADOURO"}
         type={"text"}
@@ -33,6 +36,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.logradouro}
         value={formData?.logradouro}
       />
+      
       <RegistrationInput
         labelName={"NÚMERO"}
         type={"text"}
@@ -42,6 +46,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.numero}
         value={formData?.numero}
       />
+      
       <RegistrationInput
         labelName={"COMPLEMENTO"}
         type={"text"}
@@ -49,6 +54,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.complemento}
         value={formData?.complemento}
       />
+      
       <RegistrationInput
         labelName={"BAIRRO"}
         type={"text"}
@@ -58,6 +64,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.bairro}
         value={formData?.bairro}
       />
+      
       <RegistrationInput
         labelName={"CIDADE"}
         type={"text"}
@@ -67,6 +74,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.cidade}
         value={formData?.cidade}
       />
+      
       <RegistrationInput
         labelName={"ESTADO"}
         type={"text"}
@@ -80,6 +88,10 @@ function RegistrationFormSecondPhase({
         errors={errors?.estado}
         value={formData?.estado}
       />
+      </>
+      
+      )}
+
       <RegistrationInput
         labelName={"TELEFONE"}
         type={"text"}
@@ -97,6 +109,7 @@ function RegistrationFormSecondPhase({
         errors={errors?.phoneNumber}
         value={formData?.phoneNumber}
       />
+      
       <RegistrationInput
         labelName={"CPF"}
         type={"text"}
@@ -114,6 +127,8 @@ function RegistrationFormSecondPhase({
         errors={errors?.cpf}
         value={formData?.cpf}
       />
+
+      
       {userType === "PRODUTOR" && (
         <>
           {/* CAMPO DE SELECT ATUALIZADO 

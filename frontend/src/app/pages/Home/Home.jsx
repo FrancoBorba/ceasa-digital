@@ -23,12 +23,6 @@ const Home = () => {
         },
         {
             id: 3,
-            title: "CARNES SELECIONADAS",
-            subtitle: "Qualidade premium garantida",
-            image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-        },
-        {
-            id: 4,
             title: "QUEIJOS ARTESANAIS",
             subtitle: "Sabores únicos e tradicionais",
             image: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80"
