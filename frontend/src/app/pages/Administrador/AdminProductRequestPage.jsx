@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import styles from "./AdminProductRequestPage.module.css";
-import api from "../auth/services/apiRequester"; // Importando o serviço de API existente
+import api from "../auth/services/apiRequester";
 
 export default function AdminProductRequestPage() {
   const [showRequested, setShowRequested] = useState(false);
@@ -8,106 +8,168 @@ export default function AdminProductRequestPage() {
   const [products, setProducts] = useState([]);
   const BACKEND_URL = "http://localhost:8080";
 
-  // Função para carregar os dados
+  // Função para formatar data e hora
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  };
+
   useEffect(() => {
     const fetchData = async () => {
       try {
-        // Busca todos os produtos (catálogo)
         const productsResponse = await api.get("/api/v1/products");
         const allProducts = productsResponse.data.content || [];
 
-        // Busca todas as metas de estoque já definidas
-        const metasResponse = await api.get("/api/v1/metas-estoque");
-        const metas = metasResponse.data || [];
+        if (showRequested) {
+          // --- LÓGICA DA ABA "SOLICITADOS" ---
+          // Busca as metas e mostra CADA META como um item na lista.
+          // Isso permite que um mesmo produto apareça múltiplas vezes se tiver N metas.
+          const metasResponse = await api.get("/api/v1/metas-estoque");
+          const metas = metasResponse.data || [];
 
-        // Mapeia os produtos mesclando com as informações das metas
-        const mappedProducts = allProducts.map((prod) => {
-          // Tenta encontrar uma meta para este produto
-          const meta = metas.find((m) => m.produtoId === prod.id);
+          const mappedMetas = metas
+            .map((meta) => {
+              const prod = allProducts.find((p) => p.id === meta.produtoId);
 
-          return {
-            id: prod.id, // ID do produto
-            metaId: meta ? meta.id : null, // ID da meta (necessário para o PUT)
-            name: prod.nome,
-            category:
-              prod.categories && prod.categories.length > 0
-                ? prod.categories[0].nome
-                : "Geral",
-            image: BACKEND_URL + prod.fotoUrl || "/images/abacaxi.jpg", // Fallback para manter o design
-            requested: !!meta, // Se tem meta, está solicitado
-            quantity: meta ? meta.quantidadeMeta : "",
-            isEditing: false,
-          };
-        });
+              // Se por acaso a meta aponta para um produto que não veio na lista, ignoramos (segurança)
+              if (!prod) return null;
 
-        // Filtra com base no switch (Solicitados vs Disponíveis) e atualiza o estado
-        // O filtro de visualização final será feito no filteredProducts,
-        // mas aqui garantimos que temos todos os dados carregados.
-        setProducts(mappedProducts);
+              return {
+                uniqueKey: `meta-${meta.id}`, // Chave única para o React (baseada na Meta)
+                id: prod.id, // ID do Produto (para referências)
+                metaId: meta.id, // ID da Meta (fundamental para edição)
+                name: prod.nome,
+                category:
+                  prod.categories && prod.categories.length > 0
+                    ? prod.categories[0].name // Pega a primeira categoria
+                    : "Geral",
+                image: BACKEND_URL + prod.fotoUrl || "/images/abacaxi.jpg",
+                // Estado visual
+                requested: true, // Na aba solicitados, o item já é uma solicitação
+                quantity: meta.quantidadeMeta,
+                requestDate: meta.criadoEm,
+                unit: "Kg",
+                isEditing: false,
+              };
+            })
+            .filter(Boolean); // Remove nulos
+
+          setProducts(mappedMetas);
+        } else {
+          // --- LÓGICA DA ABA "TODOS" ---
+          // Mostra apenas o catálogo de produtos para CRIAR NOVA solicitação.
+          // Ignora se já existe meta ou não. O objetivo é criar uma nova (POST).
+          const mappedCatalog = allProducts.map((prod) => {
+            return {
+              uniqueKey: `prod-${prod.id}`, // Chave única baseada no Produto
+              id: prod.id,
+              metaId: null, // Não tem meta associada, é uma criação nova
+              name: prod.nome,
+              category:
+                prod.categories && prod.categories.length > 0
+                  ? prod.categories[0].name // Pega a primeira categoria
+                  : "Geral",
+              image: BACKEND_URL + prod.fotoUrl || "/images/abacaxi.jpg",
+
+              // Estado visual
+              requested: false, // Força modo de "criação" (aparece o input)
+              quantity: "", // Começa vazio para o usuário digitar
+              requestDate: null,
+              unit: "Kg",
+              isEditing: false,
+            };
+          });
+
+          setProducts(mappedCatalog);
+        }
       } catch (error) {
         console.error("Erro ao buscar dados:", error);
       }
     };
 
     fetchData();
-  }, [showRequested]); // Recarrega ao mudar o switch, conforme solicitado ("quando ativar o switch, vai ter outro GET")
+  }, [showRequested]); // Recarrega tudo quando muda a aba
 
-  const filteredProducts = products.filter(
-    (p) =>
-      p.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (showRequested ? p.requested : !p.requested)
+  // Filtro de pesquisa visual (apenas busca pelo nome no array carregado)
+  const filteredProducts = products.filter((p) =>
+    p.name.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  const handleQuantityChange = (id, value) => {
+  const handleQuantityChange = (uniqueKey, value) => {
     setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, quantity: value } : p))
+      prev.map((p) =>
+        p.uniqueKey === uniqueKey ? { ...p, quantity: value } : p
+      )
     );
   };
 
-  const handleRequest = async (id) => {
-    const product = products.find((p) => p.id === id);
+  const handleUnitChange = (uniqueKey, value) => {
+    setProducts((prev) =>
+      prev.map((p) => (p.uniqueKey === uniqueKey ? { ...p, unit: value } : p))
+    );
+  };
 
-    // Validação básica
+  // Alterado para receber o uniqueKey para identificar o item correto na lista
+  const handleRequest = async (uniqueKey) => {
+    const product = products.find((p) => p.uniqueKey === uniqueKey);
+
     if (!product.quantity || Number(product.quantity) <= 0) {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, requested: false, isEditing: false } : p
-        )
-      );
+      alert("Por favor, insira uma quantidade válida.");
       return;
     }
 
-    // Lógica do PUT (Apenas para edição de metas existentes)
-    if (product.requested && product.metaId) {
-      try {
-        const payload = {
-          produtoId: product.id,
-          quantidadeMeta: Number(product.quantity),
-        };
+    const payload = {
+      produtoId: product.id,
+      quantidadeMeta: Number(product.quantity),
+    };
 
-        // PUT /api/v1/metas-estoque/{id}
+    try {
+      if (showRequested && product.metaId) {
+        // --- PUT: Atualizar meta existente (Aba Solicitados) ---
         await api.put(`/api/v1/metas-estoque/${product.metaId}`, payload);
 
-        // Atualiza estado local após sucesso
         setProducts((prev) =>
-          prev.map((p) => (p.id === id ? { ...p, isEditing: false } : p))
+          prev.map((p) =>
+            p.uniqueKey === uniqueKey ? { ...p, isEditing: false } : p
+          )
         );
-      } catch (error) {
-        console.error("Erro ao atualizar meta:", error);
-        alert("Erro ao atualizar a meta." + error);
+        alert("Meta atualizada com sucesso!");
+      } else {
+        // --- POST: Criar nova meta (Aba Todos) ---
+        await api.post("/api/v1/metas-estoque", payload);
+
+        // Na aba "Todos", após criar, nós limpamos o campo para permitir nova criação
+        // Não mudamos para 'requested: true' porque aqui é o catálogo de criação.
+        setProducts((prev) =>
+          prev.map((p) =>
+            p.uniqueKey === uniqueKey
+              ? { ...p, quantity: "" } // Limpa o input
+              : p
+          )
+        );
+        alert("Solicitação criada com sucesso!");
       }
-    } else {
-      setProducts((prev) =>
-        prev.map((p) =>
-          p.id === id ? { ...p, requested: true, isEditing: false } : p
-        )
+    } catch (error) {
+      console.error("Erro ao salvar meta:", error);
+      alert(
+        "Erro ao salvar a solicitação. " +
+          (error.response?.data?.message || error.message)
       );
     }
   };
 
-  const handleEdit = (id) => {
+  const handleEdit = (uniqueKey) => {
     setProducts((prev) =>
-      prev.map((p) => (p.id === id ? { ...p, isEditing: true } : p))
+      prev.map((p) =>
+        p.uniqueKey === uniqueKey ? { ...p, isEditing: true } : p
+      )
     );
   };
 
@@ -115,7 +177,6 @@ export default function AdminProductRequestPage() {
     <div className={styles.container}>
       <h1 className={styles.title}>Solicitar Produtos</h1>
 
-      {/* Barra superior com switch e pesquisa */}
       <div className={styles.topBar}>
         <div className={styles.switchContainer}>
           <label className={styles.switch}>
@@ -127,7 +188,7 @@ export default function AdminProductRequestPage() {
             <span className={styles.slider}></span>
           </label>
           <span className={styles.switchLabel}>
-            {showRequested ? "Solicitados" : "Disponíveis"}
+            {showRequested ? "Solicitados (Metas Ativas)" : "Todos (Catálogo)"}
           </span>
         </div>
 
@@ -140,10 +201,9 @@ export default function AdminProductRequestPage() {
         />
       </div>
 
-      {/* Lista de produtos */}
       <div className={styles.productList}>
         {filteredProducts.map((product) => (
-          <div key={product.id} className={styles.productCard}>
+          <div key={product.uniqueKey} className={styles.productCard}>
             <img
               src={product.image}
               alt={product.name}
@@ -153,46 +213,81 @@ export default function AdminProductRequestPage() {
             <div className={styles.productInfo}>
               <h2>{product.name}</h2>
               <p>{product.category}</p>
+
+              {/* Exibe info apenas se for um item JÁ solicitado (Aba Solicitados) e não estiver editando */}
+              {product.requested && !product.isEditing && (
+                <div className={styles.requestInfo}>
+                  <p>
+                    <strong>Quantidade:</strong> {product.quantity}{" "}
+                    {product.unit}
+                  </p>
+                  <p>
+                    <strong>Criado em:</strong>{" "}
+                    {formatDate(product.requestDate)}
+                  </p>
+                </div>
+              )}
             </div>
 
             <div className={styles.productAction}>
-              <label>Solicitar produto para venda</label>
+              {/* Se estiver na aba TODOS (!requested) OU estiver EDITANDO na aba solicitados */}
               {!product.requested || product.isEditing ? (
-                <div className={styles.actionRow}>
-                  <select className={styles.select}>
-                    <option>Kg</option>
-                    <option>Unidade</option>
-                  </select>
-                  <input
-                    type="number"
-                    placeholder="Digite a quantidade"
-                    value={product.quantity}
-                    onChange={(e) =>
-                      handleQuantityChange(product.id, e.target.value)
-                    }
-                    className={styles.quantityInput}
-                  />
+                <>
+                  <label>
+                    {product.isEditing
+                      ? "Editar Quantidade"
+                      : "Criar nova meta"}
+                  </label>
+                  <div className={styles.actionRow}>
+                    <select
+                      className={styles.select}
+                      value={product.unit}
+                      onChange={(e) =>
+                        handleUnitChange(product.uniqueKey, e.target.value)
+                      }
+                    >
+                      <option value="Kg">Kg</option>
+                      <option value="Unidade">Unidade</option>
+                      <option value="Caixa">Caixa</option>
+                      <option value="Pacote">Pacote</option>
+                    </select>
+                    <input
+                      type="number"
+                      placeholder="Qtd"
+                      value={product.quantity}
+                      onChange={(e) =>
+                        handleQuantityChange(product.uniqueKey, e.target.value)
+                      }
+                      className={styles.quantityInput}
+                    />
+                    <button
+                      className={styles.button}
+                      onClick={() => handleRequest(product.uniqueKey)}
+                    >
+                      {product.isEditing ? "Salvar" : "Solicitar"}
+                    </button>
+                  </div>
+                </>
+              ) : (
+                // Botão Editar apenas na aba Solicitados
+                <div
+                  className={styles.actionRow}
+                  style={{ justifyContent: "flex-end" }}
+                >
                   <button
-                    className={styles.button}
-                    onClick={() => handleRequest(product.id)}
+                    className={`${styles.button} ${styles.editButton}`}
+                    onClick={() => handleEdit(product.uniqueKey)}
                   >
-                    {product.isEditing ? "Salvar" : "Solicitar"}
+                    Editar Meta
                   </button>
                 </div>
-              ) : (
-                <button
-                  className={`${styles.button} ${styles.editButton}`}
-                  onClick={() => handleEdit(product.id)}
-                >
-                  Editar
-                </button>
               )}
             </div>
           </div>
         ))}
 
         {filteredProducts.length === 0 && (
-          <p className={styles.emptyMessage}>Nenhum produto encontrado.</p>
+          <p className={styles.emptyMessage}>Nenhum item encontrado.</p>
         )}
       </div>
     </div>
