@@ -2,105 +2,118 @@ import { useState, useEffect } from "react";
 import styles from "./ProducerProductRequestPage.module.css";
 
 function ProducerProductRequestPage() {
-  const [showRequested, setShowRequested] = useState(false); // ATIVO vs PENDENTE
+  const [showRequested, setShowRequested] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [updatingProducts, setUpdatingProducts] = useState(new Set());
 
-  const [products, setProducts] = useState([]);
-
-  // Fetch dos produtos da API
-  useEffect(() => {
-    const fetchProducts = async () => {
-      try {
-        setLoading(true);
-
-        const response = await fetch("/api/v1/ofertas-produtor/me");
-
-        if (!response.ok) throw new Error("Erro ao carregar produtos");
-
-        const data = await response.json();
-        setProducts(data);
-
-      } catch (err) {
-        setError(err.message);
-        console.error("Erro ao buscar produtos:", err);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, []);
-
-  // Mapeia APENAS o que o endpoint realmente envia
-  const mappedProducts = products.map((product) => ({
-    id: product.id,
-    nomeProduto: product.nomeProduto,
-    quantidadeDisponivel: product.quantidadeDisponivel,
-    status: product.status, // exatamente como vem da API
-    isAtivo: product.status === "ATIVO",
-    originalData: product
-  }));
-
-  // Filtrar com base no status
-  const filteredProducts = mappedProducts.filter(
-    (p) =>
-      p.nomeProduto.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (showRequested ? p.status === "ATIVO" : p.status === "PENDENTE")
-  );
-
-  // Confirmar produto (POST)
-  const handleRequest = async (id) => {
+  // Função para buscar as ofertas do produtor
+  const fetchProducerOffers = async () => {
     try {
-      setUpdatingProducts((prev) => new Set(prev.add(id)));
-
-      const response = await fetch(`/api/v1/ofertas-produtor/me/confirmar/${id}`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" }
+      setLoading(true);
+      const token = localStorage.getItem("token"); // ou sua forma de autenticação
+      
+      const response = await fetch("/api/v1/ofertas-produtor/me", {
+        method: "GET",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
       });
 
-      if (!response.ok) throw new Error("Erro ao confirmar produto");
+      if (!response.ok) {
+        throw new Error(`Erro: ${response.status}`);
+      }
 
-      const updatedProduct = await response.json(); // vem atualizado
+      const offers = await response.json();
+      
+      // Usando apenas os campos que vêm da API
+      const mappedProducts = offers.map(offer => ({
+        id: offer.id,
+        metaEstoqueId: offer.metaEstoqueId,
+        nomeProduto: offer.nomeProduto,
+        produtorId: offer.produtorId,
+        quantidadeOfertada: offer.quantidadeOfertada,
+        quantidadeDisponivel: offer.quantidadeDisponivel,
+        totalVolumeVendido: offer.totalVolumeVendido,
+        status: offer.status,
+        criadoEm: offer.criadoEm,
+        // Campo calculado para compatibilidade com a lógica existente
+        requested: offer.status !== "PENDENTE"
+      }));
 
-      // Atualiza o produto na lista local
+      setProducts(mappedProducts);
+    } catch (err) {
+      setError(err.message);
+      console.error("Erro ao buscar ofertas:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchProducerOffers();
+  }, []);
+
+  const filteredProducts = products.filter(
+    (p) =>
+      p.nomeProduto.toLowerCase().includes(searchTerm.toLowerCase()) &&
+      (showRequested ? p.requested : !p.requested)
+  );
+
+  const handleRequest = async (id) => {
+    try {
+      const productToUpdate = products.find(p => p.id === id);
+      const token = localStorage.getItem("token");
+      
+      // Fazendo o POST para confirmar a oferta
+      const response = await fetch(`/api/v1/ofertas-produtor/me/confirmar/${productToUpdate.metaEstoqueId}`, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`Erro ao confirmar: ${response.status}`);
+      }
+
+      // Atualiza o estado local apenas se a requisição foi bem sucedida
       setProducts((prev) =>
-        prev.map((p) => (p.id === id ? updatedProduct : p))
+        prev.map((p) => {
+          if (p.id === id) {
+            return { 
+              ...p, 
+              requested: true,
+              status: "ATIVO"
+            };
+          }
+          return p;
+        })
       );
+
+      console.log(`Produto ${id} confirmado com sucesso!`);
 
     } catch (err) {
       console.error("Erro ao confirmar produto:", err);
       alert("Erro ao confirmar produto. Tente novamente.");
-    } finally {
-      setUpdatingProducts((prev) => {
-        const newSet = new Set(prev);
-        newSet.delete(id);
-        return newSet;
-      });
     }
   };
 
-  if (loading)
-    return (
-      <div className={styles.container}>
-        <div className={styles.loading}>Carregando produtos...</div>
-      </div>
-    );
+  if (loading) {
+    return <div className={styles.container}>Carregando...</div>;
+  }
 
-  if (error)
+  if (error) {
     return (
       <div className={styles.container}>
-        <div className={styles.error}>Erro: {error}</div>
-        <button
-          className={styles.retryButton}
-          onClick={() => window.location.reload()}
-        >
-          Tentar Novamente
-        </button>
+        <p>Erro: {error}</p>
+        <button onClick={fetchProducerOffers}>Tentar novamente</button>
       </div>
     );
+  }
 
   return (
     <div className={styles.container}>
@@ -117,7 +130,7 @@ function ProducerProductRequestPage() {
             <span className={styles.slider}></span>
           </label>
           <span className={styles.switchLabel}>
-            {showRequested ? "Confirmados (ATIVO)" : "Disponíveis (PENDENTE)"}
+            {showRequested ? "Confirmados" : "Disponíveis"}
           </span>
         </div>
 
@@ -131,40 +144,44 @@ function ProducerProductRequestPage() {
       </div>
 
       <div className={styles.productList}>
-        {filteredProducts.map((product) => {
-          const isUpdating = updatingProducts.has(product.id);
-          const isConfirmed = product.status === "ATIVO";
+        {filteredProducts.map((product) => (
+          <div key={product.id} className={styles.productCard}>
+            {/* Imagem padrão já que não vem da API */}
+            <img
+              src="/images/abacaxi.jpg"
+              alt={product.nomeProduto}
+              className={styles.productImage}
+            />
 
-          return (
-            <div key={product.id} className={styles.productCard}>
-              <div className={styles.productInfo}>
-                <h2>{product.nomeProduto}</h2>
-                <p>Peso: {product.quantidadeDisponivel} Kg</p>
-                <p>Status: {product.status}</p>
-              </div>
-
-              <div className={styles.productAction}>
-                <label>Confirmar produto para venda</label>
-
-                {!isConfirmed ? (
-                  <div className={styles.actionRow}>
-                    <button
-                      className={`${styles.button} ${
-                        isUpdating ? styles.buttonLoading : ""
-                      }`}
-                      onClick={() => handleRequest(product.id)}
-                      disabled={isUpdating}
-                    >
-                      {isUpdating ? "Confirmando..." : "Confirmar"}
-                    </button>
-                  </div>
-                ) : (
-                  <div className={styles.confirmedBox}>Confirmado</div>
-                )}
-              </div>
+            <div className={styles.productInfo}>
+              <h2>{product.nomeProduto}</h2>
+              {/* Usando quantidadeOfertada como "peso" */}
+              <p className={styles.weight}>Quantidade Ofertada: {product.quantidadeOfertada}</p>
+              <p className={styles.status}>Status: {product.status}</p>
+              <p className={styles.quantity}>Disponível: {product.quantidadeDisponivel}</p>
+              <p className={styles.quantity}>Vendido: {product.totalVolumeVendido}</p>
             </div>
-          );
-        })}
+
+            <div className={styles.productAction}>
+              <label>Confirmar produto para venda</label>
+
+              {!product.requested ? (
+                <div className={styles.actionRow}>
+                  <button
+                    className={styles.button}
+                    onClick={() => handleRequest(product.id)}
+                  >
+                    Confirmar
+                  </button>
+                </div>
+              ) : (
+                <div className={styles.confirmedBox}>
+                  Confirmado
+                </div>
+              )}
+            </div>
+          </div>
+        ))}
 
         {filteredProducts.length === 0 && (
           <p className={styles.emptyMessage}>Nenhum produto encontrado.</p>
