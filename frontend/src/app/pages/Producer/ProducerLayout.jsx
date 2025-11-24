@@ -40,23 +40,16 @@ export default function ProducerLayout() {
           <ul>
             <li>
               <SidebarLink 
-                to="/producer/producers" 
-                icon={UserGroupIcon} 
-                label="Lista dos Produtores" 
-              />
-            </li>
-            <li>
-              <SidebarLink 
                 to="/producer/registrations" 
-                icon={ClipboardDocumentCheckIcon} 
-                label="Avaliar Cadastros" 
+                icon={ArchiveBoxIcon} 
+                label="Dashboard" 
               />
             </li>
             <li>
               <SidebarLink 
                 to="/producer/products" 
-                icon={ArchiveBoxIcon} 
-                label="Solicitação de Produtos" 
+                icon={ClipboardDocumentCheckIcon} 
+                label="Estoque" 
               />
             </li>
           </ul>

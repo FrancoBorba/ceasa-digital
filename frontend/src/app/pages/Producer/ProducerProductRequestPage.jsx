@@ -140,7 +140,7 @@ function ProducerProductRequestPage() {
 
   return (
     <div className={styles.container}>
-      <h1 className={styles.title}>Solicitar Produtos</h1>
+      <h1 className={styles.title}>Estoque de Produtos</h1>
 
       <div className={styles.topBar}>
         <div className={styles.switchContainer}>
