@@ -18,44 +18,72 @@ function ProducerProductRequestPage() {
   // Função para buscar as ofertas do produtor
   const fetchProducerOffers = async () => {
     try {
-      setLoading(true);
-      const token = localStorage.getItem("token");
-      
-      const response = await fetch("/api/v1/ofertas-produtor/me", {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
+        setLoading(true);
+        
+        const token = localStorage.getItem("access_token");
+        
+        // 1. 🛑 VERIFICAÇÃO DE TOKEN: Impede a requisição se o token não existir.
+        if (!token) {
+            console.error("Erro: Token de autenticação não encontrado no localStorage.");
+            // Define uma mensagem de erro clara para o usuário
+            throw new Error("Sessão expirada ou não autenticada. Por favor, faça login novamente.");
+        }
 
-      if (!response.ok) {
-        throw new Error(`Erro: ${response.status}`);
-      }
+        const response = await fetch("http://localhost:8080/api/v1/ofertas-produtor/me", {
+            method: "GET",
+            headers: {
+                "Authorization": `Bearer ${token}`,
+                "Content-Type": "application/json",
+            },
+        });
 
-      const offers = await response.json();
-      
-      // Usando apenas os campos que vêm da API, sem lógica de status
-      const mappedProducts = offers.map(offer => ({
-        id: offer.id,
-        metaEstoqueId: offer.metaEstoqueId,
-        nomeProduto: offer.nomeProduto,
-        produtorId: offer.produtorId,
-        quantidadeOfertada: offer.quantidadeOfertada,
-        quantidadeDisponivel: offer.quantidadeDisponivel,
-        totalVolumeVendido: offer.totalVolumeVendido,
-        status: offer.status,
-        criadoEm: offer.criadoEm,
-      }));
+        if (!response.ok) {
+            // 2. ❌ TRATAMENTO DE ERRO ROBUSTO: Tenta ler a resposta como texto (para HTML/erro do servidor).
+            // Apenas se a resposta não for 401 (Unauthorized), que pode ser tratada de forma diferente.
+            let errorDetails = response.statusText;
 
-      setProducts(mappedProducts);
+            // Tenta obter uma mensagem de erro mais detalhada do corpo da resposta
+            try {
+                // Tenta ler o corpo como JSON primeiro (se a API retornar um erro JSON)
+                const errorJson = await response.json();
+                errorDetails = errorJson.message || JSON.stringify(errorJson);
+            } catch {
+                // Se falhar (corpo não é JSON, ex: é HTML), tenta ler como texto
+                const errorText = await response.text();
+                // Usa o texto, mas limita o tamanho para não poluir o console com HTML gigante
+                errorDetails = errorText.substring(0, 200) + '...'; 
+            }
+            
+            // Lança o erro com o status HTTP e a mensagem detalhada
+            throw new Error(`Falha na busca de ofertas: Status ${response.status}. Detalhes: ${errorDetails}`);
+        }
+
+        // Se a resposta for OK (200-299), ela DEVE ser JSON.
+        const offers = await response.json();
+        
+        // Mapeamento dos produtos (mantido como estava)
+        const mappedProducts = offers.map(offer => ({
+            id: offer.id,
+            metaEstoqueId: offer.metaEstoqueId,
+            nomeProduto: offer.nomeProduto,
+            produtorId: offer.produtorId,
+            quantidadeOfertada: offer.quantidadeOfertada,
+            quantidadeDisponivel: offer.quantidadeDisponivel,
+            totalVolumeVendido: offer.totalVolumeVendido,
+            status: offer.status,
+            criadoEm: offer.criadoEm,
+        }));
+
+        setProducts(mappedProducts);
+
     } catch (err) {
-      setError(err.message);
-      console.error("Erro ao buscar ofertas:", err);
+        // O `catch` agora recebe o erro mais específico que lançamos acima
+        setError(err.message);
+        console.error("Erro ao buscar ofertas:", err.message);
     } finally {
-      setLoading(false);
+        setLoading(false);
     }
-  };
+};
 
   useEffect(() => {
     fetchProducerOffers();
@@ -71,10 +99,10 @@ function ProducerProductRequestPage() {
   const handleRequest = async (id) => {
     try {
       const productToUpdate = products.find(p => p.id === id);
-      const token = localStorage.getItem("token");
+      const token = localStorage.getItem("access_token");
       
       // Fazendo o POST para confirmar a oferta
-      const response = await fetch(`/api/v1/ofertas-produtor/me/confirmar/${productToUpdate.metaEstoqueId}`, {
+      const response = await fetch(`http://localhost:8080/api/v1/ofertas-produtor/me/confirmar/${productToUpdate.metaEstoqueId}`, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
