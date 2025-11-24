@@ -1,7 +1,6 @@
 import React from 'react';
 import styles from './InventoryTable.module.css';
 import { 
-  PencilIcon,       // Ícone de Editar
   TrashIcon,        // Ícone de Excluir
   ChevronLeftIcon,  // Ícone de Paginação
   ChevronRightIcon  // Ícone de Paginação
@@ -22,7 +21,6 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
               <th>Produto</th>
               <th>ID do produto</th>
               <th>Categoria</th>
-              <th>Estoque</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -40,17 +38,9 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
                     {produto.categoria}
                   </span>
                 </td>
-                <td>{produto.estoque}</td>
                 <td>
                   {/* Botões de Ação (História de Usuário: Gerenciar) */}
                   <div className={styles.actionButtons}>
-                    <button 
-                      className={`${styles.btnIcon} ${styles.btnEdit}`} 
-                      onClick={() => onEdit(produto.id)}
-                      title="Editar"
-                    >
-                      <PencilIcon className={styles.icon} />
-                    </button>
                     <button 
                       className={`${styles.btnIcon} ${styles.btnDelete}`} 
                       onClick={() => onDelete(produto.id)}
