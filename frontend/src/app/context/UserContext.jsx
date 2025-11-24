@@ -5,7 +5,7 @@ const avatarPlaceholder = "https://i.pravatar.cc/150";
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  // 1. Inicializa o estado buscando do localStorage para não perder o login no F5
+  // 1. Recupera o usuário do localStorage ao iniciar
   const [user, setUser] = useState(() => {
     const savedUser = localStorage.getItem("user");
     return savedUser ? JSON.parse(savedUser) : null;
@@ -13,36 +13,37 @@ export function UserProvider({ children }) {
 
   const [avatar, setAvatar] = useState(avatarPlaceholder);
 
-  // 2. Função de Login: Salva no estado e no localStorage
+  // 2. Função de Login
   const login = (userData) => {
     setUser(userData);
     localStorage.setItem("user", JSON.stringify(userData));
-    // Se tiver token, salve também: localStorage.setItem('token', userData.token);
+    // O token geralmente já foi salvo pelo hook de login, mas pode reforçar aqui se quiser
   };
 
-  // 3. Função de Logout: Limpa tudo
-  const logout = () => {
+  // 3. Função de Logout Centralizada
+  const logoutContext = () => {
     setUser(null);
+    setAvatar(avatarPlaceholder);
     localStorage.removeItem("user");
     localStorage.removeItem("token");
-    window.location.href = "/login";
+    localStorage.removeItem("access_token");
+    localStorage.removeItem("refresh_token");
   };
 
-  // 4. Helper para verificar permissões (roles)
+  // 4. Helper para verificar roles
   const hasRole = (role) => {
     return user?.roles?.includes(role);
   };
 
   const value = {
     user,
-    userName: user?.nome || "Visitante", // Ajuste conforme seu objeto de usuário
+    userName: user?.nome || "Ceasa Digital", // Nome vindo do objeto user ou fallback
     avatar,
     setAvatar,
     login,
-    logout,
+    logout: logoutContext, // Expõe a função de logout
     hasRole,
-    // AQUI ESTÁ A CHAVE: isAuthenticated precisa ser true se user existir
-    isAuthenticated: !!user,
+    isAuthenticated: !!user, // Transforma o objeto user em booleano
   };
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
