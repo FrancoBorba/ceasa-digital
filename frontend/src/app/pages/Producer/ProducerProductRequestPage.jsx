@@ -8,11 +8,18 @@ function ProducerProductRequestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // Função para formatar a data
+  const formatDate = (dateString) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    return date.toLocaleDateString("pt-BR");
+  };
+
   // Função para buscar as ofertas do produtor
   const fetchProducerOffers = async () => {
     try {
       setLoading(true);
-      const token = localStorage.getItem("token"); // ou sua forma de autenticação
+      const token = localStorage.getItem("token");
       
       const response = await fetch("/api/v1/ofertas-produtor/me", {
         method: "GET",
@@ -28,7 +35,7 @@ function ProducerProductRequestPage() {
 
       const offers = await response.json();
       
-      // Usando apenas os campos que vêm da API
+      // Usando apenas os campos que vêm da API, sem lógica de status
       const mappedProducts = offers.map(offer => ({
         id: offer.id,
         metaEstoqueId: offer.metaEstoqueId,
@@ -39,8 +46,6 @@ function ProducerProductRequestPage() {
         totalVolumeVendido: offer.totalVolumeVendido,
         status: offer.status,
         criadoEm: offer.criadoEm,
-        // Campo calculado para compatibilidade com a lógica existente
-        requested: offer.status !== "PENDENTE"
       }));
 
       setProducts(mappedProducts);
@@ -56,10 +61,11 @@ function ProducerProductRequestPage() {
     fetchProducerOffers();
   }, []);
 
+  // Filtro baseado apenas no status real do backend
   const filteredProducts = products.filter(
     (p) =>
       p.nomeProduto.toLowerCase().includes(searchTerm.toLowerCase()) &&
-      (showRequested ? p.requested : !p.requested)
+      (showRequested ? p.status !== "PENDENTE" : p.status === "PENDENTE")
   );
 
   const handleRequest = async (id) => {
@@ -80,19 +86,8 @@ function ProducerProductRequestPage() {
         throw new Error(`Erro ao confirmar: ${response.status}`);
       }
 
-      // Atualiza o estado local apenas se a requisição foi bem sucedida
-      setProducts((prev) =>
-        prev.map((p) => {
-          if (p.id === id) {
-            return { 
-              ...p, 
-              requested: true,
-              status: "ATIVO"
-            };
-          }
-          return p;
-        })
-      );
+      // Recarrega os dados do backend para ter status atualizado
+      await fetchProducerOffers();
 
       console.log(`Produto ${id} confirmado com sucesso!`);
 
@@ -155,17 +150,15 @@ function ProducerProductRequestPage() {
 
             <div className={styles.productInfo}>
               <h2>{product.nomeProduto}</h2>
-              {/* Usando quantidadeOfertada como "peso" */}
-              <p className={styles.weight}>Quantidade Ofertada: {product.quantidadeOfertada}</p>
-              <p className={styles.status}>Status: {product.status}</p>
-              <p className={styles.quantity}>Disponível: {product.quantidadeDisponivel}</p>
-              <p className={styles.quantity}>Vendido: {product.totalVolumeVendido}</p>
+              {/* Apenas quantidade ofertada e data */}
+              <p className={styles.quantity}>Quantidade: {product.quantidadeOfertada}</p>
+              <p className={styles.date}>Data: {formatDate(product.criadoEm)}</p>
             </div>
 
             <div className={styles.productAction}>
               <label>Confirmar produto para venda</label>
 
-              {!product.requested ? (
+              {product.status === "PENDENTE" ? (
                 <div className={styles.actionRow}>
                   <button
                     className={styles.button}
