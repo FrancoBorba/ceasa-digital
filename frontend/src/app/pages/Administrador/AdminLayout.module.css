@@ -124,3 +124,22 @@
   overflow-y: auto; 
   
 }
+.navItemDisabled {
+  display: flex;
+  align-items: center;
+  padding: 0.9rem 1.5rem;
+  border-radius: 12px;
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  color: #bdc3c7;
+  cursor: default; 
+  user-select: none; 
+}
+
+.navIconDisabled {
+  margin-right: 1rem;
+  width: 20px;
+  height: 20px;
+  color: #bdc3c7; 
+}

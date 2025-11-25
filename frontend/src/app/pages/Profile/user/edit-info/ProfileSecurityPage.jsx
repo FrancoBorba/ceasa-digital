@@ -25,8 +25,11 @@ const ProfileSecurityPage = () => {
       alert("As novas senhas não coincidem!");
       return;
     }
-    if (formData.newPassword.length < 6) {
-      alert("A nova senha deve ter pelo menos 6 caracteres.");
+
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    
+    if (!passwordRegex.test(formData.newPassword)) {
+      alert("A senha deve ter no mínimo 8 caracteres, com letras maiúsculas, minúsculas, números e caracteres especiais.");
       return;
     }
 
@@ -34,10 +37,9 @@ const ProfileSecurityPage = () => {
     const token = localStorage.getItem('authToken');
 
     try {
-
       const payload = {
         oldPassword: formData.currentPassword, 
-        newPassword: formData.newPassword
+        newPassword: formData.newPassword      
       };
 
       const response = await fetch(`${API_URL}/users/me/password`, {
@@ -50,7 +52,10 @@ const ProfileSecurityPage = () => {
       });
 
       if (!response.ok) {
-        if (response.status === 400) throw new Error("Senha atual incorreta ou dados inválidos.");
+        if (response.status === 400) {
+           const errorData = await response.json().catch(() => null);
+           throw new Error(errorData?.message || "Dados inválidos ou senha antiga incorreta.");
+        }
         throw new Error("Erro ao alterar senha.");
       }
 
@@ -59,7 +64,7 @@ const ProfileSecurityPage = () => {
 
     } catch (err) {
       console.error(err);
-      alert(err.message || "Não foi possível alterar a senha.");
+      alert(err.message);
     } finally {
       setIsLoading(false);
     }

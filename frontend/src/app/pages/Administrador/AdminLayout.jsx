@@ -40,18 +40,17 @@ export default function AdminLayout() {
         <nav className={styles.navMenu}>
           <ul>
             <li>
-              <SidebarLink 
-                to="/admin/producers" 
-                icon={UserGroupIcon} 
-                label="Lista dos Produtores" 
-              />
+              <div className={styles.navItemDisabled}>
+                <UserGroupIcon className={styles.navIconDisabled} />
+                <span>Lista dos Produtores</span>
+              </div>
             </li>
+
             <li>
-              <SidebarLink 
-                to="/admin/registrations" 
-                icon={ClipboardDocumentCheckIcon} 
-                label="Avaliar Cadastros" 
-              />
+              <div className={styles.navItemDisabled}>
+                <ClipboardDocumentCheckIcon className={styles.navIconDisabled} />
+                <span>Avaliar Cadastros</span>
+              </div>
             </li>
             <li>
               <SidebarLink 
