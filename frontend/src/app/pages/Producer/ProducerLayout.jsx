@@ -1,18 +1,18 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { 
+import {
   UserGroupIcon,
   ClipboardDocumentCheckIcon,
   ArchiveBoxIcon,
-} from '@heroicons/react/24/solid';
-import styles from './ProducerLayout.module.css'; 
+} from "@heroicons/react/24/solid";
+import styles from "./ProducerLayout.module.css";
 import ProducerHeaderWidgets from "../auth/components/producer/ProducerHeaderWidgets";
 
 function SidebarLink({ to, icon: Icon, label }) {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => 
-        `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+      className={({ isActive }) =>
+        `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
       }
     >
       <Icon className={styles.navIcon} />
@@ -22,20 +22,23 @@ function SidebarLink({ to, icon: Icon, label }) {
 }
 
 export default function ProducerLayout() {
-
   const userName = "Maria Silva";
   const avatar = "/images/producer.jpg";
   const userRole = "Produtor";
-  
+
   return (
     <div className={styles.layoutContainer}>
       <aside className={styles.sidebar}>
         <div className={styles.profileCard}>
-          <img src={avatar} alt="Foto do Produtor" className={styles.profilePic} />
+          <img
+            src={avatar}
+            alt="Foto do Produtor"
+            className={styles.profilePic}
+          />
           <h2 className={styles.profileName}>{userName}</h2>
           <p className={styles.profileRole}>{userRole}</p>
         </div>
-        
+
         <nav className={styles.navMenu}>
           <ul>
             <li>
@@ -62,14 +65,13 @@ export default function ProducerLayout() {
 
       <div className={styles.contentWrapper}>
         <header className={styles.topHeader}>
-          <ProducerHeaderWidgets /> 
+          <ProducerHeaderWidgets />
         </header>
 
         <main className={styles.mainContent}>
-          <Outlet /> 
+          <Outlet />
         </main>
       </div>
-
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './DashboardInventoryPage.module.css';
 import InventoryControls from '../../../auth/components/profile/producer/producer-inventory/InventoryControls';
 import InventoryTable from '../../../auth/components/profile/producer/producer-inventory/InventoryTable';
@@ -17,6 +17,33 @@ const DashboardInventoryPage = () => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [produtoParaEditar, setProdutoParaEditar] = useState(null);
 
+  // Estados para gerenciar o ID do produtor e o carregamento
+  const [producerId, setProducerId] = useState(null);
+  const [isLoadingId, setIsLoadingId] = useState(true);
+  const [errorId, setErrorId] = useState(null);
+
+  // Efeito para buscar o ID do produtor
+  useEffect(() => {
+    const fetchProducerId = async () => {
+      setIsLoadingId(true);
+      setErrorId(null);
+      try {
+        // Usamos /produtor/me (Melhor prática para buscar dados do usuário logado)
+        const response = await apiRequester.get(`/produtor/me`);
+        
+        // response.data é o ProdutorResponseDTO, que deve ter o campo 'id'
+        setProducerId(response.data.id); 
+        
+      } catch (error) {
+        console.error("Falha ao buscar ID do produtor:", error);
+        setErrorId("Falha ao carregar o ID do produtor. Verifique se o perfil de produtor foi criado.");
+      } finally {
+        setIsLoadingId(false);
+      }
+    };
+
+    fetchProducerId();
+  }, []); // 🛑 CORREÇÃO: Array de dependência VAZIO para rodar APENAS na montagem.
 
   const handleEdit = (id) => {
     const produto = produtos.find(p => p.id === id);
@@ -35,17 +62,23 @@ const DashboardInventoryPage = () => {
   };
 
   const handleSaveProduct = async (selectedProducts) => {
+    // Validação do ID do produtor antes de prosseguir
+      if (isLoadingId) {
+          alert("Aguarde o carregamento dos dados do produtor.");
+          return;
+      }
+      if (errorId || !producerId) {
+          alert("Erro: Não foi possível identificar o produtor. Verifique sua autenticação.");
+          return;
+      }
     try {
       // Extrai apenas os IDs dos produtos selecionados
       const produtosIds = selectedProducts.map(p => p.id);
 
-      // Todo: Change mock value to request to some endpoint that returns producer id.
-      const MOCK_PRODUTOR_ID = 102;
-
       const response = await apiRequester.post(
         '/api/v1/produtor-produtos/solicitar-venda',
         {
-          idProdutor: MOCK_PRODUTOR_ID,
+          idProdutor: producerId,
           produtosIds: produtosIds
         }
       );
@@ -84,6 +117,16 @@ const DashboardInventoryPage = () => {
     setIsModalOpen(false);
     setProdutoParaEditar(null);
   };
+
+    // 🛑 CORREÇÃO: Renderização condicional para carregamento/erro
+    if (isLoadingId) {
+        return <div className={styles.wrapper}>Carregando perfil do produtor...</div>;
+    }
+
+    if (errorId) {
+        return <div className={styles.wrapper}><p style={{color: 'red'}}>Erro ao carregar dados: {errorId}</p></div>;
+    }
+    // Fim da correção
 
   return (
     <div className={styles.wrapper}>

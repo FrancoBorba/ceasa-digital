@@ -1,4 +1,4 @@
-import {useState } from "react";
+import { useState } from "react";
 import AuthFormBrackground from "./components/login/AuthFormBrackground";
 import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
 import useUserLoginAuthentication from "./hooks/useUserLoginAuthentication";
@@ -45,8 +45,10 @@ function LoginPage() {
         type={"password"}
       />
       <div className="flex flex-col gap-1">
-        <AuthLinkText link={"/forgot-password"} >Esqueceu o e-mail ou senha?</AuthLinkText>
-        <AuthLinkText link={"/select-register"} >Crie sua conta</AuthLinkText>
+        <AuthLinkText link={"/forgot-password"}>
+          Esqueceu o e-mail ou senha?
+        </AuthLinkText>
+        <AuthLinkText link={"/select-register"}>Crie sua conta</AuthLinkText>
       </div>
     </AuthFormBrackground>
   );

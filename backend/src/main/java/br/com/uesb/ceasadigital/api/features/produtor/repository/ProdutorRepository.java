@@ -11,4 +11,5 @@ public interface ProdutorRepository extends JpaRepository<Produtor, Long> {
     Optional<Produtor> findByUsuarioId(Long usuarioId);
     Boolean existsByUsuarioId(Long usuarioId);
     Optional<Produtor> findById(Long id);
+    Optional<Produtor> findByUsuarioEmail(String email);
 }

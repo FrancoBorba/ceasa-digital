@@ -9,36 +9,21 @@ import br.com.uesb.ceasadigital.api.features.categoria.dto.CategoryDTO;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 
+public class ProductResponseAdminDTO {
 
-public class ProductResponseAdminDTO{
- 
-   @Schema(description = "ID único do produto", example = "1")
+  @Schema(description = "ID único do produto", example = "1")
   private Long id;
 
-  @Schema(
-  description = "Nome do Produto " , 
-  example = "Batata " , 
-  requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(description = "Nome do Produto ", example = "Batata ", requiredMode = Schema.RequiredMode.REQUIRED)
   private String nome;
 
-
-  @Schema(
-    description = "Preço do produto na sua unidade de medida" ,
-    example = "100.00",
-   requiredMode = Schema.RequiredMode.REQUIRED )
+  @Schema(description = "Preço do produto na sua unidade de medida", example = "100.00", requiredMode = Schema.RequiredMode.REQUIRED)
   private BigDecimal preco;
 
-    @Schema(
-    description = "Unidade de medida a qual vai ser vendido o produto" ,
-    example = "Kg",
-   requiredMode = Schema.RequiredMode.REQUIRED )
+  @Schema(description = "Unidade de medida a qual vai ser vendido o produto", example = "Kg", requiredMode = Schema.RequiredMode.REQUIRED)
   private String unidadeDeMedida;
 
-  @Schema(
-    description = "Descrição do produto",
-    example = "Batata inglêsa vinda da chapada diamantina ótima para batata frita e purê",
-    requiredMode = Schema.RequiredMode.REQUIRED
-  )
+  @Schema(description = "Descrição do produto", example = "Batata inglêsa vinda da chapada diamantina ótima para batata frita e purê", requiredMode = Schema.RequiredMode.REQUIRED)
   private String descricao;
 
   private LocalDateTime criadoEm;
@@ -46,11 +31,12 @@ public class ProductResponseAdminDTO{
   private LocalDateTime atualizadoEm;
 
   private List<CategoryDTO> categories = new ArrayList<>();
-  
+
   public ProductResponseAdminDTO() {
   }
 
-  public ProductResponseAdminDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao, String fotoUrl) {
+  public ProductResponseAdminDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao,
+      String fotoUrl) {
     this.id = id;
     this.nome = nome;
     this.preco = preco;
@@ -62,7 +48,7 @@ public class ProductResponseAdminDTO{
     this.id = product.getId();
     this.nome = product.getNome();
     this.preco = product.getPreco();
-    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.unidadeDeMedida = product.getUnidadeDeMedida().name();
     this.descricao = product.getDescricao();
   }
 
@@ -70,11 +56,10 @@ public class ProductResponseAdminDTO{
     this.id = product.getId();
     this.nome = product.getNome();
     this.preco = product.getPreco();
-    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.unidadeDeMedida = product.getUnidadeDeMedida().name();
     this.descricao = product.getDescricao();
     categories.forEach(category -> this.categories.add(category));
   }
-
 
   public Long getId() {
     return id;
