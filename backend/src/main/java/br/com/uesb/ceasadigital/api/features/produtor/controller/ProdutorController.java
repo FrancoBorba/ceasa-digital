@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.GetMapping; // NOVO IMPORT
+import org.springframework.web.bind.annotation.RequestParam; // NOVO IMPORT, necessário para o método findByUsername
 
 import br.com.uesb.ceasadigital.api.features.produtor.dto.request.ProdutorRequestDTO;
 import br.com.uesb.ceasadigital.api.features.produtor.dto.response.ProdutorResponseDTO;
@@ -31,5 +33,19 @@ public class ProdutorController {
     public ResponseEntity<ProdutorResponseDTO> criarPerfilProdutor(@Valid @RequestBody ProdutorRequestDTO requestDTO) {
         ProdutorResponseDTO response = produtorService.create(requestDTO);
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
+    }
+
+    
+    @GetMapping("/username") 
+    public ResponseEntity<ProdutorResponseDTO> findByUsername(@RequestParam(value = "email") String email) {
+        ProdutorResponseDTO response = produtorService.findProdutorByEmail(email);
+        return ResponseEntity.ok(response);
+    }
+
+    @PreAuthorize("hasRole('ROLE_PRODUTOR')")
+    @GetMapping("/me")
+    public ResponseEntity<ProdutorResponseDTO> retornaPerfil() {
+        ProdutorResponseDTO response = produtorService.retornaPerfil();
+        return ResponseEntity.ok(response);
     }
 }

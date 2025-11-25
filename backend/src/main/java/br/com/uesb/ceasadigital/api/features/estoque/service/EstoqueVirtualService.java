@@ -65,16 +65,14 @@ public class EstoqueVirtualService {
     
     EstoqueVirtual savedMeta = estoqueRepository.save(meta);
     
-    // --- LÓGICA DE DISTRIBUIÇÃO DA META PARA PRODUTORES ---
     distribuirMetaParaProdutores(savedMeta);
-    // --- FIM DA LÓGICA ---
     
     return estoqueMapper.toResponseDTO(savedMeta);
   }
   
   /**
   * Método auxiliar para criar e distribuir Ofertas de Produtor
-  * baseado em uma Meta de Estoque recém-criada.
+  * baseado em uma Meta de Estoque recém-criada ou atualizada.
   */
   private void distribuirMetaParaProdutores(EstoqueVirtual meta) {
     Product produto = meta.getProduto();
@@ -85,7 +83,6 @@ public class EstoqueVirtualService {
     .findAllByProdutoIdAndStatus(produto.getId(), "ATIVO");
     
     if (permissoes.isEmpty()) {
-      // Nenhum produtor pode vender este produto, não faz nada
       return;
     }
     
@@ -93,7 +90,7 @@ public class EstoqueVirtualService {
     int numProdutores = permissoes.size();
     BigDecimal quantidadePorProdutor = totalMeta.divide(
     new BigDecimal(numProdutores), 
-    3, // 3 casas decimais, conforme definido na entidade
+    3, 
     RoundingMode.HALF_UP
     );
     
@@ -105,9 +102,9 @@ public class EstoqueVirtualService {
       novaOferta.setMetaEstoque(meta);
       novaOferta.setProdutor(produtor);
       novaOferta.setQuantidadeOfertada(quantidadePorProdutor);
-      novaOferta.setQuantidadeDisponivel(quantidadePorProdutor); // Inicialmente é a mesma
+      novaOferta.setQuantidadeDisponivel(quantidadePorProdutor);
       novaOferta.setTotalVolumeVendido(BigDecimal.ZERO);
-      novaOferta.setStatus(OfertaStatus.PENDENTE); // Status inicial
+      novaOferta.setStatus(OfertaStatus.PENDENTE); 
       
       ofertaProdutorRepository.save(novaOferta);
     }
@@ -130,12 +127,22 @@ public class EstoqueVirtualService {
     var meta = estoqueRepository.findById(id)
     .orElseThrow(() -> new ResourceNotFoundException("Meta de estoque com id " + id + " não encontrada."));
     
-    // Não permite alterar meta que já tem ofertas (simplificação de negócio)
-    if (!meta.getOfertas().isEmpty()) {
-      throw new IllegalStateException("Não é possível alterar uma meta que já foi distribuída.");
+    // VERIFICAÇÃO DE MUDANÇAS
+    boolean produtoMudou = !meta.getProduto().getId().equals(requestDTO.getProdutoId());
+    boolean quantidadeMudou = meta.getQuantidadeMeta().compareTo(requestDTO.getQuantidadeMeta()) != 0;
+    
+    // Se nada mudou, retorna o objeto atual sem fazer nada
+    if (!produtoMudou && !quantidadeMudou) {
+      return estoqueMapper.toResponseDTO(meta);
     }
     
-    if (!meta.getProduto().getId().equals(requestDTO.getProdutoId())) {
+    // So limpa as ofertas antigas se realmente formos atualizar
+    if (meta.getOfertas() != null) {
+      meta.getOfertas().clear();
+    }
+    
+    // ATUALIZAÇÃO DOS CAMPOS
+    if (produtoMudou) {
       var novoProduto = productRepository.findById(requestDTO.getProdutoId())
       .orElseThrow(() -> new ResourceNotFoundException("Produto com id " + requestDTO.getProdutoId() + " não encontrado."));
       meta.setProduto(novoProduto);
@@ -143,7 +150,12 @@ public class EstoqueVirtualService {
     
     meta.setQuantidadeMeta(requestDTO.getQuantidadeMeta());
     
-    var updatedMeta = estoqueRepository.save(meta);
+    // Salva as mudancas
+    var updatedMeta = estoqueRepository.saveAndFlush(meta);
+    
+    // Gera novas ofertas baseadas na nova configuração
+    distribuirMetaParaProdutores(updatedMeta);
+    
     return estoqueMapper.toResponseDTO(updatedMeta);
   }
   

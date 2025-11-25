@@ -5,17 +5,36 @@ import InventoryTable from '../../../auth/components/profile/producer/producer-i
 import AddProductModal from '../../../auth/components/profile/producer/producer-inventory/AddProductModal';
 import apiRequester from '../../../auth/services/apiRequester';
 
-// Lista de produtos inicial (mock)
 const DashboardInventoryPage = () => {
   const [produtos, setProdutos] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
-
+  const [producerId, setProducerId] = useState(null);
+  const [isLoadingId, setIsLoadingId] = useState(true);
+  const [errorId, setErrorId] = useState(null);
   const API_URL = 'http://localhost:8080';
   const ENDPOINT = '/api/v1/produtor-produtos';
+  
+  useEffect(() => {
+    const fetchProducerId = async () => {
+      setIsLoadingId(true);
+      setErrorId(null);
+      try {
+        const response = await apiRequester.get(`/produtor/me`);
+        setProducerId(response.data.id); 
+      } catch (error) {
+        console.error("Falha ao buscar ID do produtor:", error);
+        setErrorId("Falha ao carregar o ID do produtor. Verifique se o perfil de produtor foi criado.");
+      } finally {
+        setIsLoadingId(false);
+      }
+    };
+
+    fetchProducerId();
+  }, []);
 
   const fetchInventario = async () => {
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('authToken'); 
     setIsLoading(true);
 
     try {
@@ -53,6 +72,7 @@ const DashboardInventoryPage = () => {
   useEffect(() => {
     fetchInventario();
   }, []);
+
   const handleDelete = async (id) => {
     if (!window.confirm("Tem certeza que deseja remover este item do seu inventário?")) return;
 
@@ -77,19 +97,57 @@ const DashboardInventoryPage = () => {
     }
   };
 
-  const handleAddProduct = () => {
-    setIsModalOpen(true);
+  const handleSaveProduct = async (selectedProducts) => {
+    if (isLoadingId) {
+      alert("Aguarde o carregamento dos dados do produtor.");
+      return;
+    }
+    if (errorId || !producerId) {
+      alert("Erro: Não foi possível identificar o produtor. Verifique sua autenticação.");
+      return;
+    }
+
+    try {
+      const produtosIds = Array.isArray(selectedProducts) 
+        ? selectedProducts.map(p => p.id) 
+        : [selectedProducts.id]; // Garante que funcione mesmo se passar objeto único
+
+      const response = await apiRequester.post(
+        '/api/v1/produtor-produtos/solicitar-venda',
+        {
+          idProdutor: producerId,
+          produtosIds: produtosIds
+        }
+      );
+
+      if (response.status === 200 || response.status === 201) {
+        alert("Solicitação enviada com sucesso!");
+        setIsModalOpen(false); 
+        fetchInventario(); 
+      } else {
+        alert("Erro ao salvar produtos.");
+      }
+    } catch (error) {
+      console.error(error);
+      alert("Erro ao tentar salvar produtos.");
+    }
   };
 
-  const handleSaveProduct = (novoProduto) => {
-    console.log("Salvar:", novoProduto);
-    setIsModalOpen(false);
-    fetchInventario(); 
+  const handleAddProduct = () => {
+    setIsModalOpen(true);
   };
 
   const handleEdit = (id) => {
     console.log("Editar id:", id);
   };
+
+  if (isLoadingId) {
+    return <div className={styles.wrapper}>Carregando perfil do produtor...</div>;
+  }
+
+  if (errorId) {
+    return <div className={styles.wrapper}><p style={{color: 'red'}}>Erro ao carregar dados: {errorId}</p></div>;
+  }
 
   return (
     <div className={styles.wrapper}>
