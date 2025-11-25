@@ -3,6 +3,7 @@ import {
   UserGroupIcon,
   ClipboardDocumentCheckIcon,
   ArchiveBoxIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
 import styles from "./ProducerLayout.module.css";
 import ProducerHeaderWidgets from "../auth/components/producer/ProducerHeaderWidgets";
@@ -43,7 +44,7 @@ export default function ProducerLayout() {
           <ul>
             <li>
               <SidebarLink 
-                to="/producer/registrations" 
+                to="/producer/dashboard" 
                 icon={ArchiveBoxIcon} 
                 label="Dashboard" 
               />
@@ -53,6 +54,13 @@ export default function ProducerLayout() {
                 to="/producer/products" 
                 icon={ClipboardDocumentCheckIcon} 
                 label="Estoque" 
+              />
+            </li>
+            <li>
+              <SidebarLink
+                to="/user/edit-profile"
+                icon={UserIcon}
+                label="Editar Perfil"
               />
             </li>
           </ul>

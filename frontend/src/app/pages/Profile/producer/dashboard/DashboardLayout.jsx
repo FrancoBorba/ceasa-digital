@@ -1,12 +1,12 @@
 import { Outlet, NavLink } from "react-router-dom";
-import {
+import { 
+  UserGroupIcon,
+  ClipboardDocumentCheckIcon,
   ArchiveBoxIcon,
-  ShoppingBagIcon,
-  BellIcon,
   UserIcon,
-} from "@heroicons/react/24/solid";
-import styles from "./DashboardLayout.module.css";
-import { useUser } from "../../../../context/UserContext.jsx";
+} from '@heroicons/react/24/solid';
+import styles from './DashboardLayout.module.css'; 
+import ProducerHeaderWidgets from "../../../auth/components/producer/ProducerHeaderWidgets";
 
 function SidebarLink({ to, icon: Icon, label }) {
   return (
@@ -22,19 +22,17 @@ function SidebarLink({ to, icon: Icon, label }) {
   );
 }
 
-export default function DashboardLayout() {
-  const { userName, avatar } = useUser();
-  const userRole = "Produtor"; // Mantido fixo
+export default function ProducerLayout() {
 
+  const userName = "Maria Silva";
+  const avatar = "/images/producer.jpg";
+  const userRole = "Produtor";
+  
   return (
     <div className={styles.layoutContainer}>
       <aside className={styles.sidebar}>
         <div className={styles.profileCard}>
-          <img
-            src={avatar}
-            alt="Foto do Produtor"
-            className={styles.profilePic}
-          />
+          <img src={avatar} alt="Foto do Produtor" className={styles.profilePic} />
           <h2 className={styles.profileName}>{userName}</h2>
           <p className={styles.profileRole}>{userRole}</p>
         </div>
@@ -42,17 +40,17 @@ export default function DashboardLayout() {
         <nav className={styles.navMenu}>
           <ul>
             <li>
-              <SidebarLink
-                to="/producer/dashboard"
-                icon={ArchiveBoxIcon}
-                label="Inventário"
+              <SidebarLink 
+                to="/producer/dashboard" 
+                icon={ArchiveBoxIcon} 
+                label="Dashboard" 
               />
             </li>
             <li>
-              <SidebarLink
-                to="/dashboard/solicitations"
-                icon={ShoppingBagIcon}
-                label="Solicitação de Produtos"
+              <SidebarLink 
+                to="/producer/products" 
+                icon={ClipboardDocumentCheckIcon} 
+                label="Estoque" 
               />
             </li>
             <li>
@@ -70,9 +68,16 @@ export default function DashboardLayout() {
         </footer>
       </aside>
 
-      <main className={styles.mainContent}>
-        <Outlet />
-      </main>
+      <div className={styles.contentWrapper}>
+        <header className={styles.topHeader}>
+          <ProducerHeaderWidgets /> 
+        </header>
+
+        <main className={styles.mainContent}>
+          <Outlet /> 
+        </main>
+      </div>
+
     </div>
   );
 }
