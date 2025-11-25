@@ -13,23 +13,41 @@ public class ProductResponseUserDTO {
   @Schema(description = "ID único do produto", example = "1")
   private Long id;
 
-  @Schema(description = "Nome do Produto ", example = "Batata ", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(
+  description = "Nome do Produto " , 
+  example = "Batata " , 
+  requiredMode = Schema.RequiredMode.REQUIRED)
   private String nome;
 
-  @Schema(description = "Preço do produto na sua unidade de medida", example = "100.00", requiredMode = Schema.RequiredMode.REQUIRED)
+
+  @Schema(
+    description = "Preço do produto na sua unidade de medida" ,
+    example = "100.00",
+   requiredMode = Schema.RequiredMode.REQUIRED )
   private BigDecimal preco;
 
-  @Schema(description = "Unidade de medida a qual vai ser vendido o produto", example = "Kg", requiredMode = Schema.RequiredMode.REQUIRED)
+    @Schema(
+    description = "Unidade de medida a qual vai ser vendido o produto" ,
+    example = "Kg",
+   requiredMode = Schema.RequiredMode.REQUIRED )
   private String unidadeDeMedida;
 
-  @Schema(description = "Descrição do produto", example = "Batata inglêsa vinda da chapada diamantina ótima para batata frita e purê", requiredMode = Schema.RequiredMode.REQUIRED)
+  @Schema(
+    description = "Descrição do produto",
+    example = "Batata inglêsa vinda da chapada diamantina ótima para batata frita e purê",
+    requiredMode = Schema.RequiredMode.REQUIRED
+  )
   private String descricao;
 
-  @Schema(description = "Url que contém a foto do produto", example = "/produtos/batata.jpg", requiredMode = Schema.RequiredMode.REQUIRED)
+ @Schema(
+    description = "Url que contém a foto do produto",
+    example = "/produtos/batata.jpg",
+    requiredMode = Schema.RequiredMode.REQUIRED
+  )
   private String fotoUrl;
-
+  
   private List<CategoryDTO> categories = new ArrayList<>();
-
+  
   public ProductResponseUserDTO() {
   }
 
@@ -37,13 +55,13 @@ public class ProductResponseUserDTO {
     this.id = product.getId();
     this.nome = product.getNome();
     this.preco = product.getPreco();
-    this.unidadeDeMedida = product.getUnidadeDeMedida().name();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
     this.descricao = product.getDescricao();
     this.fotoUrl = product.getFotoUrl();
   }
 
-  public ProductResponseUserDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao,
-      String fotoUrl) {
+
+  public ProductResponseUserDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao, String fotoUrl) {
     this.id = id;
     this.nome = nome;
     this.preco = preco;
@@ -56,7 +74,7 @@ public class ProductResponseUserDTO {
     this.id = product.getId();
     this.nome = product.getNome();
     this.preco = product.getPreco();
-    this.unidadeDeMedida = product.getUnidadeDeMedida().name();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
     this.descricao = product.getDescricao();
     this.fotoUrl = product.getFotoUrl();
     categories.forEach(category -> this.categories.add(category));
@@ -103,19 +121,19 @@ public class ProductResponseUserDTO {
   }
 
   public String getFotoUrl() {
-    return fotoUrl;
-  }
+  return fotoUrl;
+}
 
-  public void setFotoUrl(String fotoUrl) {
-    this.fotoUrl = fotoUrl;
-  }
+public void setFotoUrl(String fotoUrl) {
+  this.fotoUrl = fotoUrl;
+}
 
-  public List<CategoryDTO> getCategories() {
-    return categories;
-  }
+public List<CategoryDTO> getCategories() {
+  return categories;
+}
 
-  public void setCategories(List<CategoryDTO> categories) {
-    this.categories = categories;
-  }
+public void setCategories(List<CategoryDTO> categories) {
+  this.categories = categories;
+}
 
 }
