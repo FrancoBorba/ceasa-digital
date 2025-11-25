@@ -1,5 +1,7 @@
 package br.com.uesb.ceasadigital.api.features.product.service;
 
+
+
 import java.util.stream.Collectors;
 
 import org.slf4j.Logger;
@@ -17,7 +19,6 @@ import br.com.uesb.ceasadigital.api.features.product.dto.ProductRequestDTO;
 import br.com.uesb.ceasadigital.api.features.product.dto.ProductResponseUserDTO;
 import br.com.uesb.ceasadigital.api.features.product.mapper.ProductMapper;
 import br.com.uesb.ceasadigital.api.features.product.model.Product;
-import br.com.uesb.ceasadigital.api.features.product.model.Enum.UnidadeMedida;
 import br.com.uesb.ceasadigital.api.features.product.repository.ProductRepository;
 
 @Service
@@ -31,31 +32,33 @@ public class ProductService {
 
   private final Logger logger = LoggerFactory.getLogger(ProductService.class.getName());
 
-  public Page<ProductResponseUserDTO> findAllProducts(Pageable pageable) {
+  public Page<ProductResponseUserDTO> findAllProducts(Pageable pageable){
 
     logger.info("Find All Products");
 
-    Page<Product> products = repository.findAllWithCategories(pageable);
+    Page<Product> products = repository.findAllWithCategories(pageable);   
 
-    return products.map(product -> new ProductResponseUserDTO(product,
-        product.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList())));
+    return products.map(product -> new ProductResponseUserDTO(product, product.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList())));
   }
 
   @Transactional(readOnly = true)
-  public ProductResponseUserDTO findProductByID(Long id) {
-    logger.info("Find product with id: " + id);
+  public ProductResponseUserDTO findProductByID(Long id){
+      logger.info("Find product with id: " + id);
 
     // TODO:
     // Throw Excpetions like price negative , Null name , etc
     var entity = repository.findByIdWithCategories(id).orElseThrow(() -> new ProductNotFoundException(id));
 
-    return new ProductResponseUserDTO(entity,
-        entity.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList()));
+    return new ProductResponseUserDTO(entity, entity.getCategories().stream().map(CategoryDTO::new).collect(Collectors.toList()));
   }
 
+
   @Transactional
-  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO) {
+  public ProductResponseUserDTO createProduct(ProductRequestDTO productRequestDTO){
     logger.info("Create a product");
+    // TODO:
+    // Throw Excpetions like price negative , Null name , etc
+    var entity = mapper.toEntity(productRequestDTO);
 
     if (productRequestDTO.getNome() == null || productRequestDTO.getNome().isBlank()) {
       throw new InvalidProductException("O nome do produto não pode ser vazio.");
@@ -63,11 +66,6 @@ public class ProductService {
     if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
       throw new InvalidProductException("O preço do produto não pode ser negativo.");
     }
-    // TODO:
-    // Throw Excpetions like price negative , Null name , etc
-    var entity = mapper.toEntity(productRequestDTO);
-    entity.setUnidadeDeMedida(
-        UnidadeMedida.fromValue(productRequestDTO.getUnidadeDeMedida()));
 
     repository.save(entity);
 
@@ -75,8 +73,8 @@ public class ProductService {
   }
 
   @Transactional
-  public ProductResponseUserDTO updateProduct(Long id, ProductRequestDTO productRequestDTO) {
-
+  public ProductResponseUserDTO updateProduct(Long id , ProductRequestDTO productRequestDTO){
+    
     var entity = repository.findById(id).orElseThrow();
 
     if (productRequestDTO.getPreco() != null && productRequestDTO.getPreco().doubleValue() < 0) {
@@ -87,8 +85,7 @@ public class ProductService {
     entity.setDescricao(productRequestDTO.getDescricao());
     entity.setNome(productRequestDTO.getNome());
     entity.setPreco(productRequestDTO.getPreco());
-    entity.setUnidadeDeMedida(
-        UnidadeMedida.fromValue(productRequestDTO.getUnidadeDeMedida()));
+    entity.setUnidadeDeMedida(productRequestDTO.getUnidadeDeMedida());
 
     repository.save(entity);
 

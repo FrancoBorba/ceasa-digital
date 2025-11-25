@@ -51,7 +51,7 @@ class ProductServiceTest {
         product.setNome("Banana");
         product.setDescricao("Banana prata");
         product.setPreco(new BigDecimal("5.0"));
-        product.setUnidadeDeMedida(UnidadeMedida.KG);
+        product.setUnidadeDeMedida("Kg");
 
         requestDTO = new ProductRequestDTO();
         requestDTO.setNome("Banana");
@@ -67,31 +67,27 @@ class ProductServiceTest {
         responseDTO.setUnidadeDeMedida("Kg");
     }
 
-    /*
-     * @Test
-     * 
-     * @DisplayName("Should return paged products successfully")
-     * void findAllProducts_ShouldReturnPagedProducts() {
-     * // Arrange
-     * Page<Product> productPage = new PageImpl<>(List.of(product));
-     * when(repository.findAll(pageable)).thenReturn(productPage);
-     * when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO)
-     * ;
-     * 
-     * // Act
-     * Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
-     * 
-     * // Assert
-     * assertNotNull(result, "Result page should not be null");
-     * assertEquals(1, result.getTotalElements(),
-     * "Page should contain exactly one product");
-     * assertEquals("Banana", result.getContent().get(0).getNome(),
-     * "Product name should match");
-     * verify(repository, times(1)).findAll(pageable);
-     * verifyNoMoreInteractions(repository);
-     * }
-     */
+    /* 
+    @Test
+    @DisplayName("Should return paged products successfully")
+    void findAllProducts_ShouldReturnPagedProducts() {
+        // Arrange
+        Page<Product> productPage = new PageImpl<>(List.of(product));
+        when(repository.findAll(pageable)).thenReturn(productPage);
+        when(mapper.productToProductResponseUserDTO(product)).thenReturn(responseDTO);
 
+        // Act
+        Page<ProductResponseUserDTO> result = service.findAllProducts(pageable);
+
+        // Assert
+        assertNotNull(result, "Result page should not be null");
+        assertEquals(1, result.getTotalElements(), "Page should contain exactly one product");
+        assertEquals("Banana", result.getContent().get(0).getNome(), "Product name should match");
+        verify(repository, times(1)).findAll(pageable);
+        verifyNoMoreInteractions(repository);
+    }
+    */
+    
     @Test
     @DisplayName("Should return product when ID is valid")
     void findProductByID_ShouldReturnProduct_WhenIdExists() {
