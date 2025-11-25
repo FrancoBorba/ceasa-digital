@@ -1,5 +1,6 @@
 import { useState } from "react";
 import apiRequester from "../services/apiRequester";
+const API_URL = 'http://localhost:8080';
 
 function useForgotPassword() {
   const [isLoading, setIsLoading] = useState(false);
@@ -13,7 +14,7 @@ function useForgotPassword() {
 
     try {
     
-      await apiRequester.post("/auth/forgot-password", {
+      await apiRequester.post(`${API_URL}/users/forgot-password`, {
         email: email,
       });
       setIsSuccess(true);
