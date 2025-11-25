@@ -3,6 +3,7 @@ import {
   UserGroupIcon,
   ClipboardDocumentCheckIcon,
   ArchiveBoxIcon,
+  UserIcon,
 } from "@heroicons/react/24/solid";
 import styles from "./ProducerLayout.module.css";
 import ProducerHeaderWidgets from "../auth/components/producer/ProducerHeaderWidgets";
