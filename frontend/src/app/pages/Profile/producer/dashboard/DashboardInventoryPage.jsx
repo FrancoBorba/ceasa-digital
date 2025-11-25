@@ -1,15 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import styles from './DashboardInventoryPage.module.css';
 import InventoryControls from '../../../auth/components/profile/producer/producer-inventory/InventoryControls';
 import InventoryTable from '../../../auth/components/profile/producer/producer-inventory/InventoryTable';
-import AddProductModal from '../../../auth/components/profile/producer/producer-inventory/AddProductModal'
-
-// Lista de produtos inicial 
-const mockProdutosIniciais = [
-  { id: 1, nome: 'Tomate', idProduto: '#QWER1235', categoria: 'Frutas', estoque: 120 },
-  { id: 2, nome: 'Cebola', idProduto: '#QWER1236', categoria: 'Vegetais', estoque: 100 },
-  { id: 3, nome: 'Banana da terra', idProduto: '#QWER1237', categoria: 'Frutas', estoque: 15 },
-];
+import AddProductModal from '../../../auth/components/profile/producer/producer-inventory/AddProductModal';
+import { getMyProducts, deactivateProduct } from '../../../Home/services/produtorProdutoService';
 
 /**
  * Esta é a página principal que gerencia o estado do inventário.
@@ -17,7 +11,11 @@ const mockProdutosIniciais = [
  */
 const DashboardInventoryPage = () => {
   // Estado para a lista de produtos que é exibida na tabela
-  const [produtos, setProdutos] = useState(mockProdutosIniciais);
+  const [produtos, setProdutos] = useState([]);
+  
+  // Estados para loading e erro
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
   
   // Estado para controlar se o modal (pop-up) está aberto ou fechado
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -25,6 +23,35 @@ const DashboardInventoryPage = () => {
   // Estado para guardar o produto que está sendo editado.
   const [produtoParaEditar, setProdutoParaEditar] = useState(null);
 
+  /**
+   * useEffect para carregar os produtos ao montar o componente
+   * Integração: GET /api/v1/produtor-produtos/me
+   */
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const data = await getMyProducts();
+        // Mapeia os dados da API para o formato esperado pela tabela
+        const produtosFormatados = data.map(item => ({
+          id: item.id,
+          nome: item.produtoNome || 'N/A',
+          idProduto: `#${item.produtoId || item.id}`,
+          categoria: item.categoria || 'Geral',
+          estoque: item.quantidadeDisponivel || 0
+        }));
+        setProdutos(produtosFormatados);
+      } catch (err) {
+        console.error('Erro ao carregar produtos:', err);
+        setError('Erro ao carregar produtos. Tente novamente.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   /**
    * Chamada quando o usuário clica no botão "Editar" na tabela.
@@ -42,14 +69,25 @@ const DashboardInventoryPage = () => {
 
   /**
    * Chamada quando o usuário clica no botão "Excluir" (lixeira) na tabela.
+   * Integração: PUT /api/v1/produtor-produtos/desativar/{id}
    */
-  const handleDelete = (id) => {
+  const handleDelete = async (id) => {
     // Pede confirmação
-    if (window.confirm("Tem certeza que deseja excluir este produto?")) {
-      // Filtra a lista, removendo o produto com o ID clicado
-      setProdutos(produtosAtuais => 
-        produtosAtuais.filter(produto => produto.id !== id)
-      );
+    if (window.confirm("Tem certeza que deseja desativar este produto?")) {
+      try {
+        // Chama o endpoint para desativar
+        await deactivateProduct(id);
+        
+        // Remove o produto da lista localmente
+        setProdutos(produtosAtuais => 
+          produtosAtuais.filter(produto => produto.id !== id)
+        );
+        
+        alert('Produto desativado com sucesso!');
+      } catch (err) {
+        console.error('Erro ao desativar produto:', err);
+        alert('Erro ao desativar produto. Tente novamente.');
+      }
     }
   };
 
@@ -104,12 +142,18 @@ const DashboardInventoryPage = () => {
         onAddProduct={handleAddProduct}
       />
       
+      {/* Mensagens de Loading e Erro */}
+      {loading && <p>Carregando produtos...</p>}
+      {error && <p style={{color: 'red'}}>{error}</p>}
+      
       {/* Componente da Tabela (Lista os produtos) */}
-      <InventoryTable 
-        produtos={produtos}         // Passa a lista de produtos do estado
-        onEdit={handleEdit}         // Passa a função de editar
-        onDelete={handleDelete}     // Passa a função de excluir
-      />
+      {!loading && !error && (
+        <InventoryTable 
+          produtos={produtos}         // Passa a lista de produtos do estado
+          onEdit={handleEdit}         // Passa a função de editar
+          onDelete={handleDelete}     // Passa a função de excluir
+        />
+      )}
 
       {/* Renderização Condicional do Modal:
         O modal só é renderizado (e exibido) se 'isModalOpen' for true.

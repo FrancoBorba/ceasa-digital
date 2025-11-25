@@ -1,8 +1,8 @@
-/* Reset básico e integração com tema global */
-* { box-sizing: border-box; }
-
 /* Importa o tema global */
 @import './styles/theme.css';
+
+/* Reset básico e integração com tema global */
+* { box-sizing: border-box; }
 
 /* Base */
 html, body {

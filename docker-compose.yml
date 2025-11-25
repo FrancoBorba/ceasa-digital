@@ -89,6 +89,20 @@ services:
     environment:
       - VITE_API_URL=http://localhost:${SERVER_EXTERNAL_PORT}
 
+  # ====================== Adminer (Database Management) ======================
+  adminer:
+    container_name: ceasa-adminer
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - "8081:8080"
+    networks:
+      - ceasa-network
+    depends_on:
+      - database-ceasa-digital
+    environment:
+      ADMINER_DEFAULT_SERVER: database-ceasa-digital
+
 # ================================================================
 # Volumes e Networks
 # ================================================================

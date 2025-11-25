@@ -31,7 +31,7 @@ function useUserLoginAuthentication() {
 
       return apiRequester.post("/oauth2/token", params, {
         headers: {
-          'Authorization': 'Basic ' + btoa('myclientid:myclientsecret'),
+          'Authorization': 'Basic ' + btoa('ceasa-digital-client:ceasa-digital-secret'),
           'Content-Type': 'application/x-www-form-urlencoded',
         },
       });
