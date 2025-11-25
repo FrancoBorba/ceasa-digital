@@ -52,6 +52,13 @@ export default function ProducerLayout() {
                 label="Estoque" 
               />
             </li>
+            <li>
+              <SidebarLink
+                to="/user/edit-profile"
+                icon={UserIcon}
+                label="Editar Perfil"
+              />
+            </li>
           </ul>
         </nav>
 
