@@ -11,8 +11,8 @@ function SidebarLink({ to, icon: Icon, label }) {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => 
-        `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+      className={({ isActive }) =>
+        `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
       }
     >
       <Icon className={styles.navIcon} />
@@ -35,7 +35,7 @@ export default function ProducerLayout() {
           <h2 className={styles.profileName}>{userName}</h2>
           <p className={styles.profileRole}>{userRole}</p>
         </div>
-        
+
         <nav className={styles.navMenu}>
           <ul>
             <li>

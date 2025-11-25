@@ -77,4 +77,14 @@ public class ProdutorService {
         // 6. Retornar DTO de resposta
         return mapper.toResponseDTO(savedEntity);
     }
+
+    public ProdutorResponseDTO findProdutorByEmail(String email){
+        var entity = produtorRepository.findByUsuarioEmail(email).orElseThrow(() -> new ResourceNotFoundException("Produtor com email " + email + " não encontrado."));
+        return mapper.toResponseDTO(entity);
+    }
+
+    public ProdutorResponseDTO retornaPerfil(){
+       User user = userService.getCurrentUser();
+       return findProdutorByEmail(user.getEmail());
+    }
 }

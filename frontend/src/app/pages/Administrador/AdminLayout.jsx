@@ -1,19 +1,19 @@
 import { Outlet, NavLink } from "react-router-dom";
-import { 
-  UserGroupIcon, // Lista dos Produtores
-  ClipboardDocumentCheckIcon, // Avaliar Cadastros
-  ArchiveBoxIcon, // Avaliar Produtos (usando o mesmo do inventário)
-} from '@heroicons/react/24/solid';
-import styles from './AdminLayout.module.css'; 
-// import { useUser } from "../../context/UserContext";
+import {
+  UserGroupIcon,
+  ClipboardDocumentCheckIcon,
+  ArchiveBoxIcon,
+  UserIcon,
+} from "@heroicons/react/24/solid";
+import styles from "./AdminLayout.module.css";
 import AdminHeaderWidgets from "../auth/components/admin/AdminHeaderWidgets";
 
 function SidebarLink({ to, icon: Icon, label }) {
   return (
     <NavLink
       to={to}
-      className={({ isActive }) => 
-        `${styles.navItem} ${isActive ? styles.navItemActive : ''}`
+      className={({ isActive }) =>
+        `${styles.navItem} ${isActive ? styles.navItemActive : ""}`
       }
     >
       <Icon className={styles.navIcon} />
@@ -23,11 +23,10 @@ function SidebarLink({ to, icon: Icon, label }) {
 }
 
 export default function AdminLayout() {
-
   const userName = "Joao Silva";
   const avatar = "/images/admin.jpg";
   const userRole = "Administrador";
-  
+
   return (
     <div className={styles.layoutContainer}>
       <aside className={styles.sidebar}>
@@ -36,28 +35,28 @@ export default function AdminLayout() {
           <h2 className={styles.profileName}>{userName}</h2>
           <p className={styles.profileRole}>{userRole}</p>
         </div>
-        
+
         <nav className={styles.navMenu}>
           <ul>
             <li>
-              <SidebarLink 
-                to="/admin/producers" 
-                icon={UserGroupIcon} 
-                label="Lista dos Produtores" 
+              <SidebarLink
+                to="/admin/evaluation"
+                icon={ClipboardDocumentCheckIcon}
+                label="Solicitações de Venda"
               />
             </li>
             <li>
-              <SidebarLink 
-                to="/admin/registrations" 
-                icon={ClipboardDocumentCheckIcon} 
-                label="Avaliar Cadastros" 
+              <SidebarLink
+                to="/admin/products"
+                icon={ArchiveBoxIcon}
+                label="Solicitar Produtos"
               />
             </li>
             <li>
-              <SidebarLink 
-                to="/admin/products" 
-                icon={ArchiveBoxIcon} 
-                label="Solicitar Produtos" 
+              <SidebarLink
+                to="/user/edit-profile"
+                icon={UserIcon}
+                label="Editar Perfil"
               />
             </li>
           </ul>
@@ -68,18 +67,14 @@ export default function AdminLayout() {
         </footer>
       </aside>
       <div className={styles.contentWrapper}>
-        
-        {/* 2a. A BARRA SUPERIOR (onde os widgets vão) */}
         <header className={styles.topHeader}>
-          <AdminHeaderWidgets /> 
+          <AdminHeaderWidgets />
         </header>
-        
 
-      <main className={styles.mainContent}>
-        <Outlet /> 
-      </main>
-    </div>
+        <main className={styles.mainContent}>
+          <Outlet />
+        </main>
+      </div>
     </div>
   );
 }
-
