@@ -42,24 +42,17 @@ export default function ProducerLayout() {
         <nav className={styles.navMenu}>
           <ul>
             <li>
-              <SidebarLink
-                to="/producer/producers"
-                icon={UserGroupIcon}
-                label="Lista dos Produtores"
+              <SidebarLink 
+                to="/producer/registrations" 
+                icon={ArchiveBoxIcon} 
+                label="Dashboard" 
               />
             </li>
             <li>
-              <SidebarLink
-                to="/producer/registrations"
-                icon={ClipboardDocumentCheckIcon}
-                label="Avaliar Cadastros"
-              />
-            </li>
-            <li>
-              <SidebarLink
-                to="/producer/products"
-                icon={ArchiveBoxIcon}
-                label="Solicitação de Produtos"
+              <SidebarLink 
+                to="/producer/products" 
+                icon={ClipboardDocumentCheckIcon} 
+                label="Estoque" 
               />
             </li>
           </ul>
