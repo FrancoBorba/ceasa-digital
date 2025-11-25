@@ -40,7 +40,7 @@ export default function ProducerLayout() {
           <ul>
             <li>
               <SidebarLink 
-                to="/producer/registrations" 
+                to="/producer/dashboard" 
                 icon={ArchiveBoxIcon} 
                 label="Dashboard" 
               />

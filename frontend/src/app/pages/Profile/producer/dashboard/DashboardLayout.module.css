@@ -1,7 +1,7 @@
 .layoutContainer {
   display: flex;
   min-height: 100vh;
-  background-color: #f4fbf4; 
+  background-color: #f9f9f9; 
 }
 
 .sidebar {
@@ -10,6 +10,7 @@
   display: flex;
   flex-direction: column;
   box-sizing: border-box;
+  background-color: #f4f6f8; 
 }
 
 .mainContent {
@@ -23,9 +24,9 @@
   overflow-y: auto;
 }
 
-/* Card de Perfil (baseado no seu ProfileLayout.jsx) */
+/* Card de Perfil */
 .profileCard {
-  background-color: #fbfefb;
+  background-color: #ffffff; /* Card branco */
   border-radius: 20px;
   padding: 2rem;
   text-align: center;
@@ -38,7 +39,6 @@
   height: 100px;
   border-radius: 50%;
   object-fit: cover;
-  border: 4px solid var(--cor-fundo);
   margin-bottom: 1rem;
 }
 
@@ -55,7 +55,7 @@
   margin: 0.25rem 0 0;
 }
 
-/* Navegação (baseado no seu SubSidebarLink) */
+/* Navegação */
 .navMenu ul {
   list-style: none;
   padding: 0;
@@ -70,27 +70,26 @@
   margin-bottom: 0.5rem;
   font-size: 1rem;
   font-weight: 500;
-  color: #888; /* Cor suave */
+  color: #555; 
   text-decoration: none;
   transition: all 0.3s ease;
 }
 
 .navIcon {
   margin-right: 1rem;
-  width: 20px; /* Heroicons */
-  height: 20px; /* Heroicons */
+  width: 20px;
+  height: 20px;
 }
 
-/* Link Ativo (baseado no seu mockup) */
+/* Link Ativo (cinza escuro, como no mockup) */
 .navItemActive {
-  background-color: #4CAF50; /* Verde principal */
-  color: white;
-  box-shadow: 0 4px 10px rgba(76, 175, 80, 0.3);
+  background-color: #e4e6e8; 
+  color: #111;
+  font-weight: 600;
 }
 
 .navItem:not(.navItemActive):hover {
-  background-color: #f5f5f5;
-  color: #333;
+  background-color: #eef0f2;
 }
 
 .sidebarFooter {
@@ -98,4 +97,30 @@
   text-align: center;
   font-size: 0.85rem;
   color: #888;
+}
+.contentWrapper {
+  flex: 1; 
+  display: flex;
+  flex-direction: column;
+  padding: 1rem; 
+}
+
+.topHeader {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  width: 100%;
+  height: 60px; 
+  padding: 0 1.5rem; 
+  box-sizing: border-box;
+}
+
+.mainContent {
+  flex: 1;
+  padding: 2.5rem;
+  background-color: #ffffff;
+  border-radius: 30px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+  overflow-y: auto; 
+  
 }
