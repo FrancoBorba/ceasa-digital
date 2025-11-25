@@ -1,5 +1,6 @@
 import { createBrowserRouter } from "react-router-dom";
 import App from "../App";
+import ProtectedRoute from "../components/auth/ProtectedRoute";
 import Cart from "../pages/Cart/Cart";
 import PurchaseConfirmation from "../pages/Purchase/Purchase";
 import LoginPage from "../pages/auth/LoginPage";
@@ -38,6 +39,7 @@ import DashboardLayout from "../pages/Profile/producer/dashboard/DashboardLayout
 import DashboardInventoryPage from "../pages/Profile/producer/dashboard/DashboardInventoryPage";
 
 export const router = createBrowserRouter([
+  // Rotas Públicas
   {
     path: "/",
     element: <App />,
@@ -59,14 +61,6 @@ export const router = createBrowserRouter([
     element: <ResetPasswordPage />,
   },
   {
-    path: "/cart",
-    element: <Cart />,
-  },
-  {
-    path: "/purchase",
-    element: <PurchaseConfirmation />,
-  },
-  {
     path: "/productDetail/:id",
     element: <ProductDetail />,
   },
@@ -83,10 +77,6 @@ export const router = createBrowserRouter([
     element: <SelectRegistrationTypePage />,
   },
   {
-    path: "/changepassword",
-    element: <ChangePasswordPage />,
-  },
-  {
     path: "/emailverified",
     element: <EmailVerifiedPage />,
   },
@@ -95,100 +85,98 @@ export const router = createBrowserRouter([
     element: <EmailVerifiedFailPage />,
   },
   {
-  path: "/producer/products",
-  element: <ProducerLayout />,
-  children: [
-    {
-      index: true,
-      element: <ProducerProductRequestPage />,
-    },
-  ]
+    path: "/cart",
+    element: <Cart />,
   },
   {
-    path: "/storage-manager/sales",
-    element: <StorageManagerSalesPage />,
+    path: "/purchase",
+    element: <PurchaseConfirmation />,
   },
+
+  // --- Rotas Protegidas (Exigem Login Genérico) ---
   {
-    path: "/storage-manager/notification",
-    element: <StorageManagerNotificationPage />,
-  },
-  {
-    path: "/storage-manager/packages",
-    element: <StorageManagerPackagesPage />,
-  },
-  {
-    path: "/user/edit-profile",
-    element: <UserProfileLayout />,
+    element: <ProtectedRoute />,
     children: [
       {
-        index: true, 
-        element: <UserProfileInfoPage /> 
+        path: "/changepassword",
+        element: <ChangePasswordPage />,
       },
+      // Perfil de Usuário Comum
       {
-        path: "info",
-        element: <UserProfileInfoPage />
+        path: "/user/edit-profile",
+        element: <UserProfileLayout />,
+        children: [
+          { index: true, element: <UserProfileInfoPage /> },
+          { path: "info", element: <UserProfileInfoPage /> },
+          { path: "security", element: <UserProfileSecurityPage /> },
+        ],
       },
-      {
-        path: "security",
-        element: <UserProfileSecurityPage />
-      }
-    ]
+    ],
   },
+
+  // --- Rotas de Produtor (ROLE_PRODUTOR) ---
   {
-    path: "/producer/edit-profile",
-    element: <ProducerProfileLayout />,
+    element: <ProtectedRoute allowedRoles={["ROLE_PRODUTOR"]} />,
     children: [
       {
-        index: true,
-        element: <ProducerProfileInfoPage /> 
+        path: "/producer/products",
+        element: <ProducerLayout />,
+        children: [{ index: true, element: <ProducerProductRequestPage /> }],
       },
       {
-        path: "info",
-        element: <ProducerProfileInfoPage />
+        path: "/producer/edit-profile",
+        element: <ProducerProfileLayout />,
+        children: [
+          { index: true, element: <ProducerProfileInfoPage /> },
+          { path: "info", element: <ProducerProfileInfoPage /> },
+          { path: "security", element: <ProducerProfileSecurityPage /> },
+        ],
       },
       {
-        path: "security",
-        element: <ProducerProfileSecurityPage />
-      }
-    ]
+        path: "/producer/dashboard",
+        element: <DashboardLayout />,
+        children: [
+          { index: true, element: <DashboardInventoryPage /> },
+          { path: "inventory", element: <DashboardInventoryPage /> },
+        ],
+      },
+    ],
   },
+
+  // --- Rotas do Gerente de Estoque (ROLE_ADMIN ou outra Role?) ---
   {
-    path: '/producer/dashboard',
-    element: <DashboardLayout />,
+    element: <ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />,
     children: [
       {
-        index: true,
-        element: <DashboardInventoryPage /> 
+        path: "/storage-manager/sales",
+        element: <StorageManagerSalesPage />,
       },
       {
-        path: 'inventory',
-        element: <DashboardInventoryPage />
+        path: "/storage-manager/notification",
+        element: <StorageManagerNotificationPage />,
       },
-    ]
+      {
+        path: "/storage-manager/packages",
+        element: <StorageManagerPackagesPage />,
+      },
+    ],
   },
-{
-  path: "/admin",
-  children: [
-    {
-      path: "products",
-      element: <AdminLayout />,
-      children: [
-        {
-          index: true,
-          element: <AdminProductRequestPage />,
-        }
-      ]
-    },
-    {
-      path: "evaluation",
-      element: <AdminLayoutProfile />,
-      children: [
-        {
-          index: true,
-          element: <AdminProductEvaluationPage />,
-        }
-      ]
-    }
-  ]
-}
+
+  // --- Rotas de Administrador (ROLE_ADMIN) ---
+  {
+    element: <ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />,
+    path: "/admin",
+    children: [
+      {
+        path: "products",
+        element: <AdminLayout />,
+        children: [{ index: true, element: <AdminProductRequestPage /> }],
+      },
+      {
+        path: "evaluation",
+        element: <AdminLayout />,
+        children: [{ index: true, element: <AdminProductEvaluationPage /> }],
+      },
+    ],
+  },
 ]);
