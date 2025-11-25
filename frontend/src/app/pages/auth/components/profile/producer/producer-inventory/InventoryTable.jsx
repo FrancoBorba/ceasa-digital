@@ -1,13 +1,13 @@
 import React from 'react';
 import styles from './InventoryTable.module.css';
-import { 
-  PencilIcon,       // Ícone de Editar
+import {  
   TrashIcon,        // Ícone de Excluir
   ChevronLeftIcon,  // Ícone de Paginação
   ChevronRightIcon  // Ícone de Paginação
 } from '@heroicons/react/24/solid';
 
-const InventoryTable = ({ produtos, onEdit, onDelete }) => {
+
+const InventoryTable = ({ produtos, onDelete }) => {
   return (
     <>
       {/* Contêiner da Tabela para Gerenciamento */}
@@ -22,7 +22,6 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
               <th>Produto</th>
               <th>ID do produto</th>
               <th>Categoria</th>
-              <th>Estoque</th>
               <th>Ação</th>
             </tr>
           </thead>
@@ -33,24 +32,16 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
               <tr key={produto.id}>
                 <td><input type="checkbox" /></td>
                 <td>{String(index + 1).padStart(2, '0')}</td>
-                <td>{produto.nome}</td>
-                <td>{produto.idProduto}</td>
+                <td>{produto.produtoNome}</td>
+                <td>#{produto.produtoId}</td>
                 <td>
                   <span className={styles.categoriaTag}>
-                    {produto.categoria}
+                    {produto.produtoCategoriaNome}
                   </span>
                 </td>
-                <td>{produto.estoque}</td>
                 <td>
                   {/* Botões de Ação (História de Usuário: Gerenciar) */}
                   <div className={styles.actionButtons}>
-                    <button 
-                      className={`${styles.btnIcon} ${styles.btnEdit}`} 
-                      onClick={() => onEdit(produto.id)}
-                      title="Editar"
-                    >
-                      <PencilIcon className={styles.icon} />
-                    </button>
                     <button 
                       className={`${styles.btnIcon} ${styles.btnDelete}`} 
                       onClick={() => onDelete(produto.id)}
@@ -65,6 +56,7 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
           </tbody>
         </table>
       </div>
+
 
       {/* Rodapé com Paginação */}
       <footer className={styles.tabelaFooter}>
@@ -93,5 +85,6 @@ const InventoryTable = ({ produtos, onEdit, onDelete }) => {
     </>
   );
 };
+
 
 export default InventoryTable;
