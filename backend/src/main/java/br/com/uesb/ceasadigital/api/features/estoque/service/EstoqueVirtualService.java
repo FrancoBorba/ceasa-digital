@@ -80,7 +80,7 @@ public class EstoqueVirtualService {
     
     // 1. Encontrar todos os produtores que podem vender este produto
     List<ProdutorProduto> permissoes = produtorProdutoRepository
-    .findAllByProdutoIdAndStatus(produto.getId(), "ATIVO");
+    .findAllByProdutoIdAndStatus(produto.getId(), "STATUS_ATIVO");
     
     if (permissoes.isEmpty()) {
       return;

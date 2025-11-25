@@ -24,7 +24,9 @@ export default function AdminProductRequestPage() {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const productsResponse = await api.get("/api/v1/products");
+        const productsResponse = await api.get(
+          "/api/v1/products?size=2147483647"
+        );
         const allProducts = productsResponse.data.content || [];
 
         if (showRequested) {
