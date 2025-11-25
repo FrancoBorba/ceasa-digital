@@ -40,16 +40,9 @@ export default function AdminLayout() {
           <ul>
             <li>
               <SidebarLink
-                to="/admin/producers"
-                icon={UserGroupIcon}
-                label="Lista dos Produtores"
-              />
-            </li>
-            <li>
-              <SidebarLink
-                to="/admin/registrations"
+                to="/admin/evaluation"
                 icon={ClipboardDocumentCheckIcon}
-                label="Avaliar Cadastros"
+                label="Solicitações de Venda"
               />
             </li>
             <li>
@@ -59,7 +52,6 @@ export default function AdminLayout() {
                 label="Solicitar Produtos"
               />
             </li>
-            {/* --- Novo Botão Aqui --- */}
             <li>
               <SidebarLink
                 to="/user/edit-profile"

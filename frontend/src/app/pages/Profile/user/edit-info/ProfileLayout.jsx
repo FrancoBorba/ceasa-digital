@@ -110,12 +110,11 @@ export default function ProfileLayout() {
             label="DASHBOARD"
           />
         )}
-
-        <MainSidebarLink
+        {/* <MainSidebarLink
           to="/user/edit-profile"
           icon={PencilIcon}
           label="EDITAR PERFIL"
-        />
+         />*/}
         <MainSidebarLink to="/" icon={HomeIcon} label="HOME" />
       </aside>
 

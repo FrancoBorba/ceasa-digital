@@ -84,19 +84,19 @@ export const router = createBrowserRouter([
     path: "/emailverifiedfail",
     element: <EmailVerifiedFailPage />,
   },
+  {
+    path: "/cart",
+    element: <Cart />,
+  },
+  {
+    path: "/purchase",
+    element: <PurchaseConfirmation />,
+  },
 
   // --- Rotas Protegidas (Exigem Login Genérico) ---
   {
-    element: <ProtectedRoute />, // Sem allowedRoles, apenas exige login
+    element: <ProtectedRoute />,
     children: [
-      {
-        path: "/cart",
-        element: <Cart />,
-      },
-      {
-        path: "/purchase",
-        element: <PurchaseConfirmation />,
-      },
       {
         path: "/changepassword",
         element: <ChangePasswordPage />,
@@ -143,7 +143,7 @@ export const router = createBrowserRouter([
     ],
   },
 
-  // --- Rotas do Gerente de Estoque (Assumi ou ROLE_ADMIN) ---
+  // --- Rotas do Gerente de Estoque (ROLE_ADMIN ou outra Role?) ---
   {
     element: <ProtectedRoute allowedRoles={["ROLE_ADMIN"]} />,
     children: [
@@ -174,7 +174,7 @@ export const router = createBrowserRouter([
       },
       {
         path: "evaluation",
-        element: <AdminLayoutProfile />,
+        element: <AdminLayout />,
         children: [{ index: true, element: <AdminProductEvaluationPage /> }],
       },
     ],
