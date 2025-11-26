@@ -1,58 +1,66 @@
-import React, { createContext, useContext, useState, useEffect } from "react";
+import React, { createContext, useContext, useState, useEffect } from 'react';
 
 const avatarPlaceholder = "https://i.pravatar.cc/150";
 
 const UserContext = createContext(null);
 
 export function UserProvider({ children }) {
-  // 1. Recupera o usuário do localStorage ao iniciar
-  const [user, setUser] = useState(() => {
-    const savedUser = localStorage.getItem("user");
-    return savedUser ? JSON.parse(savedUser) : null;
-  });
-
+  const [userName, setUserName] = useState(null);
+  const [userEmail, setUserEmail] = useState(null);
+  const [userRole, setUserRole] = useState(null);
   const [avatar, setAvatar] = useState(avatarPlaceholder);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // 2. Função de Login
-  const login = (userData) => {
-    setUser(userData);
-    localStorage.setItem("user", JSON.stringify(userData));
-    // O token geralmente já foi salvo pelo hook de login, mas pode reforçar aqui se quiser
+  const handleLogin = (userData) => {
+    setUserName(userData.name);
+    setUserEmail(userData.email);
+    setUserRole(userData.role);
+    setAvatar(userData.avatarUrl || avatarPlaceholder);
+    setIsAuthenticated(true);
   };
 
-  // 3. Função de Logout Centralizada
-  const logoutContext = () => {
-    setUser(null);
+  const handleLogout = () => {
+    setUserName(null);
+    setUserEmail(null);
+    setUserRole(null);
     setAvatar(avatarPlaceholder);
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    localStorage.removeItem("access_token");
-    localStorage.removeItem("refresh_token");
+    setIsAuthenticated(false);
+    localStorage.removeItem('access_token');
+    localStorage.removeItem('refresh_token');
   };
 
-  // 4. Helper para verificar roles
-  const hasRole = (role) => {
-    return user?.roles?.includes(role);
-  };
+  useEffect(() => {
+    const token = localStorage.getItem('access_token');
+    if (token) {
+       setIsAuthenticated(true);
+    }
+  }, []);
 
   const value = {
-    user,
-    userName: user?.nome || "Ceasa Digital", // Nome vindo do objeto user ou fallback
+    userName,
+    setUserName,
+    userEmail,
+    setUserEmail,
+    userRole,
+    setUserRole,
     avatar,
     setAvatar,
-    login,
-    logout: logoutContext, // Expõe a função de logout
-    hasRole,
-    isAuthenticated: !!user, // Transforma o objeto user em booleano
+    isAuthenticated,
+    handleLogin,
+    handleLogout
   };
 
-  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
+  return (
+    <UserContext.Provider value={value}>
+      {children}
+    </UserContext.Provider>
+  );
 }
 
 export function useUser() {
   const context = useContext(UserContext);
   if (!context) {
-    throw new Error("useUser deve ser usado dentro de um UserProvider");
+    throw new Error('useUser deve ser usado dentro de um UserProvider');
   }
   return context;
 }

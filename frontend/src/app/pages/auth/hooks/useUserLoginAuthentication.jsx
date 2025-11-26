@@ -1,93 +1,65 @@
-import { useNavigate } from "react-router-dom"; // Nota: react-router-dom é o pacote padrão para web
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { setAccessAndRefreshToken } from "../services/authTokenStorage";
 import apiRequester from "../services/apiRequester";
-import { useUser } from "../../../context/UserContext"; // Importe o Contexto
+import { useUser } from "../../../context/UserContext";
 
 function useUserLoginAuthentication() {
+  const [isLoading, setIsLoading] = useState(false);
   const navigate = useNavigate();
-  const { login } = useUser(); // Pegamos a função de login do contexto
+  const { handleLogin } = useUser(); 
 
   const tryToAuthenticateUser = async ({ username, password }) => {
+    setIsLoading(true);
     try {
-      const { data } = await sendLoginRequestAndReturnDataResponse();
+      const params = new URLSearchParams();
+      params.append('username', username);
+      params.append('password', password);
+      params.append('grant_type', 'password');
 
-      console.log("🔑 Tokens recebidos:", {
-        access_token: data.access_token,
-        refresh_token: data.refresh_token,
+      const tokenResponse = await apiRequester.post("/oauth2/token", params, {
+        headers: {
+          'Authorization': 'Basic ' + btoa('myclientid:myclientsecret'),
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
       });
 
-      // 1. Salva no localStorage (persistência)
-      setAccessAndRefreshToken(data.access_token, data.refresh_token);
-      console.log("💾 Tokens salvos no localStorage");
+      const { access_token, refresh_token } = tokenResponse.data;
+      setAccessAndRefreshToken(access_token, refresh_token);
 
-      // 2. Decodifica o token para pegar infos do usuário (Roles, Nome, etc)
-      const decodedToken = parseJwt(data.access_token);
-      console.log("📜 Token decodificado:", decodedToken);
+      const userResponse = await apiRequester.get("/users/me");
+      const userData = userResponse.data;
 
-      // Extrai as roles. O padrão Spring Security pode colocar em 'authorities', 'scope' ou 'realm_access'
-      // Ajuste conforme o seu backend retorna. Geralmente é 'scope' ou 'authorities'.
-      const roles = decodedToken.authorities || decodedToken.scope || [];
-
-      // Ajuste: O 'scope' do Spring às vezes vem como string "ROLE_ADMIN ROLE_USER", precisamos transformar em array
-      const rolesArray = Array.isArray(roles) ? roles : roles.split(" ");
-
-      // 3. Atualiza o Contexto Global (Memória da App)
-      login({
-        username: decodedToken.sub || username, // 'sub' costuma ser o username/email no JWT
-        roles: rolesArray,
-        token: data.access_token,
+      handleLogin({
+        name: userData.name,
+        email: userData.email,
+        role: userData.role,
+        avatarUrl: userData.avatarUrl
       });
 
-      // 4. Redireciona
-      navigate("/");
+      if (userData.role === 'ROLE_PRODUTOR') {
+        navigate("/producer/dashboard");
+      } else if (userData.role === 'ROLE_ADMIN') {
+        navigate("/admin/products");
+      } else {
+        navigate("/"); 
+      }
+
     } catch (err) {
       console.error(err);
       const status = err?.response?.status;
+      
       if (status === 400 || status === 401) {
-        alert("Usuário ou senha incorretos.");
+        alert("E-mail ou senha incorretos.");
       } else {
-        alert("Erro ao tentar fazer login. Tente novamente mais tarde.");
+        alert("Erro ao conectar com o servidor.");
       }
-    }
-
-    function sendLoginRequestAndReturnDataResponse() {
-      const params = new URLSearchParams();
-      params.append("username", username);
-      params.append("password", password);
-      params.append("grant_type", "password");
-
-      // Nota: Verifique se as credenciais 'myclientid:myclientsecret' estão certas com seu backend
-      return apiRequester.post("/oauth2/token", params, {
-        headers: {
-          Authorization: "Basic " + btoa("myclientid:myclientsecret"),
-          "Content-Type": "application/x-www-form-urlencoded",
-        },
-      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { tryToAuthenticateUser };
-}
-
-// Função auxiliar para ler o JWT sem precisar de biblioteca externa
-function parseJwt(token) {
-  try {
-    var base64Url = token.split(".")[1];
-    var base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
-    var jsonPayload = decodeURIComponent(
-      window
-        .atob(base64)
-        .split("")
-        .map(function (c) {
-          return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
-        })
-        .join("")
-    );
-
-    return JSON.parse(jsonPayload);
-  } catch (e) {
-    return {};
-  }
+  return { tryToAuthenticateUser, isLoading };
 }
 
 export default useUserLoginAuthentication;

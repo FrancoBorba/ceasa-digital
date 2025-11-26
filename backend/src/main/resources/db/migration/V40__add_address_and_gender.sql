@@ -1,0 +1,2 @@
+ALTER TABLE tb_user ADD COLUMN address VARCHAR(255);
+ALTER TABLE tb_user ADD COLUMN gender VARCHAR(20);

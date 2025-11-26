@@ -1,218 +1,211 @@
 package br.com.uesb.ceasadigital.api.features.user.model;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
-import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.context.annotation.Profile;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
+import jakarta.persistence.*;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.JoinTable;
-import jakarta.persistence.ManyToMany;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "tb_user")
-@Profile({"test", "dev"})
-public class User implements UserDetails {
-  
-  /* Base fiels for User */
-  @Id
-  @GeneratedValue(strategy = GenerationType.IDENTITY)
-  private Long id;
+public class User implements UserDetails { // Implementa UserDetails para corrigir o erro do UserService
 
-  @Column(nullable = false)
-  private String name;
-  
-  @Column(unique = true)
-  private String email;
-
-  @Column(nullable = false)
-  private String password;
-
-  @Column(length=20)
-  private String telefone; 
-
-  @Column(unique = true, nullable = false, length = 14)
-  private String cpf;
-  
-  private boolean ativo;
-
-  @CreationTimestamp
-  @Column(name = "criado_em")
-  private LocalDateTime criadoEm;
-
-  @UpdateTimestamp
-  @Column(name = "atualizado_em")
-  private LocalDateTime atualizadoEm;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     
-  @Column(name = "email_confirmado", nullable = false)
-  private boolean emailConfirmado;
+    private String name;
+    private String email;
+    private String password;
+    private String cpf;
+    private String telefone;
 
-  @ManyToMany
-  @JoinTable(name = "tb_user_roles", joinColumns = @JoinColumn(name = "user_id"), inverseJoinColumns = @JoinColumn(name = "role_id"))
-  private Set<Role> roles = new HashSet<>();
-  
-  /* Other Fields */
-  
-  @OneToMany(mappedBy = "usuario")
-  private List<Pedido> pedidos = new ArrayList<>();
-  
-  /* Getters and Setters */
-  
-  public Long getId() {
-    return id;
-  }
-  
-  public void setId(Long id) {
-    this.id = id;
-  }
-  
-  public String getName() {
-    return name;
-  }
-  
-  public void setName(String name) {
-    this.name = name;
-  }
-  
-  public String getEmail() {
-    return email;
-  }
-  
-  public void setEmail(String email) {
-    this.email = email;
-  }
-  
-  public String getPassword() {
-    return password;
-  }
-  
-  public void setPassword(String password) {
-    this.password = password;
-  }
+    // --- Campos para o Perfil ---
+    private String address;
+    private String gender;
+    // ----------------------------
 
-  public String getTelefone() {
-    return telefone;
-  }
+    private Boolean emailConfirmado;
+    private Boolean ativo;
+    
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private LocalDateTime criadoEm;
+    
+    @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
+    private LocalDateTime atualizadoEm;
 
-  public void setTelefone(String telefone) {
-    this.telefone = telefone;
-  }
+    @ManyToMany(fetch = FetchType.EAGER)
+    @JoinTable(name = "tb_user_roles",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id"))
+    private Set<Role> roles = new HashSet<>();
 
-  public String getCpf() {
-    return cpf;
-  }
-
-  public void setCpf(String cpf) {
-    this.cpf = cpf;
-  }
-
-  public boolean isAtivo() {
-    return ativo;
-  }
-
-  public void setAtivo(boolean ativo) {
-    this.ativo = ativo;
-  }
-
-  public LocalDateTime getCriadoEm() {
-    return criadoEm;
-  }
-
-  public void setCriadoEm(LocalDateTime criadoEm) {
-    this.criadoEm = criadoEm;
-  }
-
-  public LocalDateTime getAtualizadoEm() {
-    return atualizadoEm;
-  }
-
-  public void setAtualizadoEm(LocalDateTime atualizadoEm) {
-    this.atualizadoEm = atualizadoEm;
-  }
-
-  
-  public boolean isEmailConfirmado() {
-    return emailConfirmado;
-  }
-
-  public void setEmailConfirmado(boolean emailConfirmado) {
-    this.emailConfirmado = emailConfirmado;
-  }
-
-  public List<Pedido> getPedidos() {
-    return pedidos;
-  }
-  
-  public Set<Role> getRoles() {
-    return roles;
-  }
-  
-  public void setRoles(Set<Role> roles) {
-    this.roles = roles;
-  }
-  
-  public void addRole(Role role) {
-    this.roles.add(role);
-  }
-  
-  public boolean hasRole(String roleName) {
-    for (Role role : roles) {
-      if (role.getAuthority().equals(roleName)) {
-        return true;
-      }
+    public User() {
     }
-    return false;
-  }
-  
-  @Override
-  public Collection<? extends GrantedAuthority> getAuthorities() {
-    return this.roles;
-  }
-  
-  @Override
-  public String getUsername() {
-    return this.email;
-  }
-  
-  @Override
-  public boolean isAccountNonExpired() {
-    // Considerando que a conta não está expirada por padrão
-    return true;
-  }
-  
-  @Override
-  public boolean isAccountNonLocked() {
-    // Considerando que o usuário não está bloqueado por padrão
-    return true;
-  }
-  
-  @Override
-  public boolean isCredentialsNonExpired() {
-    // Considerando que as credenciais não estão expiradas por padrão
-    return true;
-  }
-  
-  @Override
-  public boolean isEnabled() {
-    // Considerando que o usuário está habilitado por padrão
-    return true;
-  }
-  
+
+    @PrePersist
+    public void prePersist() {
+        criadoEm = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        atualizadoEm = LocalDateTime.now();
+    }
+
+    // --- MÉTODOS ESPECÍFICOS PARA CORRIGIR OS ERROS DE COMPILAÇÃO ---
+
+    // Corrige o erro em AuthService e CustomPasswordAuthenticationProvider
+    public boolean isEmailConfirmado() {
+        return Boolean.TRUE.equals(this.emailConfirmado);
+    }
+
+    // Corrige o erro em ProdutorService, EntregadorService, etc.
+    public boolean hasRole(String roleName) {
+        for (Role role : roles) {
+            if (role.getAuthority().equals(roleName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // --- IMPLEMENTAÇÃO DO USERDETAILS (SPRING SECURITY) ---
+    
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return roles.stream()
+                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return email;
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return Boolean.TRUE.equals(ativo);
+    }
+
+    // --- GETTERS E SETTERS PADRÃO ---
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
+    public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getTelefone() {
+        return telefone;
+    }
+
+    public void setTelefone(String telefone) {
+        this.telefone = telefone;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(String address) {
+        this.address = address;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
+    public Boolean getEmailConfirmado() {
+        return emailConfirmado;
+    }
+
+    public void setEmailConfirmado(Boolean emailConfirmado) {
+        this.emailConfirmado = emailConfirmado;
+    }
+
+    public Boolean getAtivo() {
+        return ativo;
+    }
+
+    public void setAtivo(Boolean ativo) {
+        this.ativo = ativo;
+    }
+
+    public LocalDateTime getCriadoEm() {
+        return criadoEm;
+    }
+
+    public LocalDateTime getAtualizadoEm() {
+        return atualizadoEm;
+    }
+
+    public Set<Role> getRoles() {
+        return roles;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
 }
