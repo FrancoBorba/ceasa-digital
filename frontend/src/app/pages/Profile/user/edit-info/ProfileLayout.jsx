@@ -100,7 +100,7 @@ export default function ProfileLayout() {
     <div className={styles.layoutContainer}>
       <aside className={styles.mainSidebar}>
         {/* Link PERFIL (Acessível a todos ou ajuste conforme necessidade) */}
-        <MainSidebarLink to="/profile-view" icon={UserIcon} label="PERFIL" />
+        {/*<MainSidebarLink to="/profile-view" icon={UserIcon} label="PERFIL" />*/}
 
         {/* 4. Implementação da Condicional: Só renderiza se for Admin ou Produtor */}
         {(hasRole("ROLE_ADMIN") || hasRole("ROLE_PRODUTOR")) && (
