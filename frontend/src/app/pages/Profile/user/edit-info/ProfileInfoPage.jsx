@@ -9,7 +9,7 @@ export default function ProfileInfoPage() {
   const [isLoading, setIsLoading] = useState(false);
   
   const [formData, setFormData] = useState({
-    name: "", // Nome Completo
+    name: "",
     email: "",
     cpf: "",
     telefone: "",
@@ -44,7 +44,7 @@ export default function ProfileInfoPage() {
       }
     }
     fetchUserData();
-  }, [setAvatar]);
+  }, []);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -67,7 +67,8 @@ export default function ProfileInfoPage() {
           name: formData.name,
           email: formData.email,
           telefone: formData.telefone,
-          cpf: formData.cpf
+          cpf: formData.cpf,
+          address: formData.address
         })
       });
 
@@ -91,7 +92,6 @@ export default function ProfileInfoPage() {
         <h1 className={styles.header}>INFORMAÇÕES PESSOAIS</h1>
         
         <div className={styles.fieldsContainer}>
-          {/* Apenas um campo para Nome Completo */}
           <ProfileInput 
             label="NOME COMPLETO" 
             name="name" 

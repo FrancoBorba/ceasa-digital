@@ -5,33 +5,26 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
 import jakarta.persistence.*;
 import br.com.uesb.ceasadigital.api.features.role.model.Role;
 
 @Entity
 @Table(name = "tb_user")
-public class User implements UserDetails { // Implementa UserDetails para corrigir o erro do UserService
+public class User implements UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    
     private String name;
     private String email;
     private String password;
     private String cpf;
     private String telefone;
-
-    // --- Campos para o Perfil ---
     private String address;
     private String gender;
-    // ----------------------------
-
     private Boolean emailConfirmado;
     private Boolean ativo;
     
@@ -47,165 +40,60 @@ public class User implements UserDetails { // Implementa UserDetails para corrig
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+    public User() {}
 
     @PrePersist
-    public void prePersist() {
-        criadoEm = LocalDateTime.now();
-    }
+    public void prePersist() { criadoEm = LocalDateTime.now(); }
 
     @PreUpdate
-    public void preUpdate() {
-        atualizadoEm = LocalDateTime.now();
-    }
+    public void preUpdate() { atualizadoEm = LocalDateTime.now(); }
 
-    // --- MÉTODOS ESPECÍFICOS PARA CORRIGIR OS ERROS DE COMPILAÇÃO ---
-
-    // Corrige o erro em AuthService e CustomPasswordAuthenticationProvider
-    public boolean isEmailConfirmado() {
-        return Boolean.TRUE.equals(this.emailConfirmado);
-    }
-
-    // Corrige o erro em ProdutorService, EntregadorService, etc.
+    public boolean isEmailConfirmado() { return Boolean.TRUE.equals(this.emailConfirmado); }
     public boolean hasRole(String roleName) {
         for (Role role : roles) {
-            if (role.getAuthority().equals(roleName)) {
-                return true;
-            }
+            if (role.getAuthority().equals(roleName)) return true;
         }
         return false;
     }
 
-    // --- IMPLEMENTAÇÃO DO USERDETAILS (SPRING SECURITY) ---
-    
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(role.getAuthority()))
-                .collect(Collectors.toList());
+        return roles.stream().map(role -> new SimpleGrantedAuthority(role.getAuthority())).collect(Collectors.toList());
     }
-
     @Override
-    public String getUsername() {
-        return email;
-    }
-
+    public String getUsername() { return email; }
     @Override
-    public boolean isAccountNonExpired() {
-        return true;
-    }
-
+    public boolean isAccountNonExpired() { return true; }
     @Override
-    public boolean isAccountNonLocked() {
-        return true;
-    }
-
+    public boolean isAccountNonLocked() { return true; }
     @Override
-    public boolean isCredentialsNonExpired() {
-        return true;
-    }
-
+    public boolean isCredentialsNonExpired() { return true; }
     @Override
-    public boolean isEnabled() {
-        return Boolean.TRUE.equals(ativo);
-    }
+    public boolean isEnabled() { return Boolean.TRUE.equals(ativo); }
 
-    // --- GETTERS E SETTERS PADRÃO ---
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getCpf() {
-        return cpf;
-    }
-
-    public void setCpf(String cpf) {
-        this.cpf = cpf;
-    }
-
-    public String getTelefone() {
-        return telefone;
-    }
-
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public void setAddress(String address) {
-        this.address = address;
-    }
-
-    public String getGender() {
-        return gender;
-    }
-
-    public void setGender(String gender) {
-        this.gender = gender;
-    }
-
-    public Boolean getEmailConfirmado() {
-        return emailConfirmado;
-    }
-
-    public void setEmailConfirmado(Boolean emailConfirmado) {
-        this.emailConfirmado = emailConfirmado;
-    }
-
-    public Boolean getAtivo() {
-        return ativo;
-    }
-
-    public void setAtivo(Boolean ativo) {
-        this.ativo = ativo;
-    }
-
-    public LocalDateTime getCriadoEm() {
-        return criadoEm;
-    }
-
-    public LocalDateTime getAtualizadoEm() {
-        return atualizadoEm;
-    }
-
-    public Set<Role> getRoles() {
-        return roles;
-    }
-
-    public void addRole(Role role) {
-        roles.add(role);
-    }
+    // Getters/Setters
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getEmail() { return email; }
+    public void setEmail(String email) { this.email = email; }
+    public String getPassword() { return password; }
+    public void setPassword(String password) { this.password = password; }
+    public String getCpf() { return cpf; }
+    public void setCpf(String cpf) { this.cpf = cpf; }
+    public String getTelefone() { return telefone; }
+    public void setTelefone(String telefone) { this.telefone = telefone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getGender() { return gender; }
+    public void setGender(String gender) { this.gender = gender; }
+    public Boolean getEmailConfirmado() { return emailConfirmado; }
+    public void setEmailConfirmado(Boolean emailConfirmado) { this.emailConfirmado = emailConfirmado; }
+    public Boolean getAtivo() { return ativo; }
+    public void setAtivo(Boolean ativo) { this.ativo = ativo; }
+    public LocalDateTime getCriadoEm() { return criadoEm; }
+    public LocalDateTime getAtualizadoEm() { return atualizadoEm; }
+    public Set<Role> getRoles() { return roles; }
+    public void addRole(Role role) { roles.add(role); }
 }
