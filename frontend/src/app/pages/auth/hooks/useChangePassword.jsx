@@ -1,29 +1,52 @@
-import apiRequester from "../services/apiRequester";
-import { removeAccessAndRefreshToken } from "../services/authTokenStorage";
-import { useNavigate } from "react-router";
+import { useState } from "react";
+
+const API_URL = 'http://localhost:8080';
 
 function useChangePassword() {
-  const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState(null);
 
-  const tryToChangePassword = async ({ oldPassword, newPassword }) => {
+  const tryToChangePassword = async ({ currentPassword, newPassword }) => {
+    setIsLoading(true);
+    setError(null);
+    const token = localStorage.getItem('authToken');
+
     try {
-      await apiRequester.post("/oauth2-docs/change-password", null, {
-        params: {
-          old_password: oldPassword,
-          new_password: newPassword,
+      const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+      if (!passwordRegex.test(newPassword)) {
+         throw new Error("A senha deve ter no mínimo 8 caracteres, maiúscula, minúscula, número e especial.");
+      }
+      const response = await fetch(`${API_URL}/users/me/password`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
+        body: JSON.stringify({
+          oldPassword: currentPassword,
+          newPassword: newPassword
+        })
       });
 
-      alert("Senha alterada com sucesso! Faça login novamente.");
-      removeAccessAndRefreshToken();
-      navigate("/login");
+      if (!response.ok) {
+        if (response.status === 400) {
+            throw new Error("Senha atual incorreta ou dados inválidos.");
+        }
+        throw new Error(`Erro ao alterar senha: ${response.status}`);
+      }
+
+      return true;
+
     } catch (err) {
       console.error(err);
-      alert("Erro ao alterar senha. Verifique seus dados.");
+      setError(err.message);
+      throw err; 
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  return { tryToChangePassword };
+  return { tryToChangePassword, isLoading, error };
 }
 
 export default useChangePassword;
