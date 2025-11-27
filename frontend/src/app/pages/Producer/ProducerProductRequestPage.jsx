@@ -8,6 +8,9 @@ function ProducerProductRequestPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
+  // URL do Backend para carregar as imagens
+  const BACKEND_URL = "http://localhost:8080";
+
   // Função para formatar a data
   const formatDate = (dateString) => {
     if (!dateString) return "";
@@ -81,6 +84,7 @@ function ProducerProductRequestPage() {
         totalVolumeVendido: offer.totalVolumeVendido,
         status: offer.status,
         criadoEm: offer.criadoEm,
+        fotoUrl: offer.fotoUrl || null,
       }));
 
       setProducts(mappedProducts);
@@ -179,13 +183,18 @@ function ProducerProductRequestPage() {
       <div className={styles.productList}>
         {filteredProducts.map((product) => (
           <div key={product.id} className={styles.productCard}>
-            {/* Imagem padrão já que não vem da API */}
             <img
-              src="/images/abacaxi.jpg"
+              src={
+                product.fotoUrl
+                  ? `${BACKEND_URL}${product.fotoUrl}` // Vai usar a URL vinda do banco
+                  : "/images/abacaxi.jpg" // Imagem padrão se não houver foto
+              }
               alt={product.nomeProduto}
               className={styles.productImage}
+              onError={(e) => {
+                e.target.src = "/images/abacaxi.jpg";
+              }}
             />
-
             <div className={styles.productInfo}>
               <h2>{product.nomeProduto}</h2>
               {/* Apenas quantidade ofertada e data */}

@@ -13,6 +13,7 @@ public interface OfertaProdutorMapper {
   @Mapping(source = "metaEstoque.id", target = "metaEstoqueId")
   @Mapping(source = "metaEstoque.produto.nome", target = "nomeProduto")
   @Mapping(source = "produtor.id", target = "produtorId")
+  @Mapping(source = "metaEstoque.produto.fotoUrl", target = "fotoUrl")
   OfertaProdutorResponseDTO toResponseDTO(OfertaProdutor oferta);
   
   List<OfertaProdutorResponseDTO> toResponseDTOList(List<OfertaProdutor> ofertas);

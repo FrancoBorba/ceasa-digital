@@ -34,6 +34,9 @@ public class OfertaProdutorResponseDTO {
   
   @Schema(description = "Data de criação da oferta")
   private LocalDateTime criadoEm;
+
+  @Schema(description = "URL da foto do produto", example = "/produtos/tomate.jpg")
+  private String fotoUrl;
   
   // Getters e Setters
   public Long getId() {
@@ -106,5 +109,13 @@ public class OfertaProdutorResponseDTO {
   
   public void setCriadoEm(LocalDateTime criadoEm) {
     this.criadoEm = criadoEm;
+  }
+
+  public String getFotoUrl() {
+    return fotoUrl;
+  }
+
+  public void setFotoUrl(String fotoUrl) {
+    this.fotoUrl = fotoUrl;
   }
 }
