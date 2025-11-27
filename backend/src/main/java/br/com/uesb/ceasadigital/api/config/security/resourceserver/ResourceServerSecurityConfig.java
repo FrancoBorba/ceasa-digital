@@ -12,6 +12,7 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
+import org.springframework.http.HttpMethod;	
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
@@ -77,17 +78,20 @@ public class ResourceServerSecurityConfig {
 					"/swagger-ui/**",      // Interface of Swagger UI
 					"/v3/api-docs/**",     // Configuration of the API (JSON)
 					"/swagger-resources/**", // Resources of Swagger
-					"/webjars/**"          // libraries JS/CSS
+					"/webjars/**"          // libraries JS/CSS				
 				).permitAll()
 
 				// OAuth2 Documentation endpoints (read-only for Swagger)
 				.requestMatchers("/oauth2-docs/**").permitAll()
-
-        .requestMatchers("/api/v1/products").permitAll()
-        .requestMatchers("/api/v1/products/{id}").permitAll()
+				//.requestMatchers("/auth/**").permitAll()
 
         // Docker Health Check Endpoints
         .requestMatchers("/actuator/**").permitAll()
+
+				.requestMatchers(HttpMethod.POST, "/users").permitAll() 
+				.requestMatchers("/users/confirmar-email").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/forgot-password").permitAll() 
+				.requestMatchers(HttpMethod.POST, "/users/reset-password").permitAll() 
 
 				// Internal endpoints for error delegation (protected from external access)
 				.requestMatchers("/error/auth").access((authentication, context) -> {
@@ -109,7 +113,7 @@ public class ResourceServerSecurityConfig {
         .anyRequest().permitAll());
         //Make all endpoints authenticated:
 				//.anyRequest().authenticated());
-    /* 
+    
     http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer
 		    .jwt(jwt -> jwt
 		        .decoder(resourceServerJwtDecoder())
@@ -117,7 +121,7 @@ public class ResourceServerSecurityConfig {
 		    .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
     http.exceptionHandling(exceptionHandling -> exceptionHandling
       .authenticationEntryPoint(delegatingAuthenticationEntryPoint));
-    */
+    
 		http.cors(cors -> cors.configurationSource(corsConfigurationSource()));
 		return http.build();
 	}
@@ -156,9 +160,11 @@ public class ResourceServerSecurityConfig {
 
 		CorsConfiguration corsConfig = new CorsConfiguration();
 		corsConfig.setAllowedOriginPatterns(Arrays.asList(origins));
-		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH"));
+		corsConfig.setAllowedMethods(Arrays.asList("POST", "GET", "PUT", "DELETE", "PATCH", "OPTIONS"));
 		corsConfig.setAllowCredentials(true);
-		corsConfig.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
+		corsConfig.setAllowedHeaders(Arrays.asList("*")); // Allow all headers
+		corsConfig.setExposedHeaders(Arrays.asList("Authorization", "Content-Type")); // Expose headers to frontend
+		corsConfig.setMaxAge(3600L); // Cache preflight response for 1 hour
 
 		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		source.registerCorsConfiguration("/**", corsConfig);

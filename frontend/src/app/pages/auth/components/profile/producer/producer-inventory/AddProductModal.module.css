@@ -1,0 +1,205 @@
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.599);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modalContent {
+  background: white;
+  padding: 2rem;
+  border-radius: 2rem;
+  width: 100%;
+  max-width: 500px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #EFEFEF;
+  padding-bottom: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.header h2 {
+  margin: 0;
+  font-size: 1.25rem;
+  font-weight: bold;
+}
+
+.closeButton {
+  background: none;
+  border-radius: 2rem;
+  border: none;
+  cursor: pointer;
+  color: #888;
+  width: 24px;
+  height: 24px;
+}
+
+.closeButton:hover {
+  background: #d6d6d6;
+  color: #333;
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+}
+
+.formGroup label {
+  font-weight: 450;
+  font-size: 1.05rem;
+}
+
+.formGroup input {
+  padding: 0.75rem 0.75rem 0.25rem 0.75rem; 
+  border-bottom: 1px solid #ccc;
+  font-size: 1rem;
+}
+
+.formGroup input:focus {
+  outline: none;
+  border-bottom: 2px solid #73eb02;
+}
+
+.formGroup input::placeholder {
+  font-size: small;
+}
+
+.formRow {
+  display: flex;
+  gap: 1rem;
+}
+
+.selectedProductsContainer {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.productTag {
+  background-color: #dcfce7;
+  padding: 4px 12px;
+  border-radius: 16px;
+  color: #166534;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.removeTagButton {
+  background: none;
+  border: none;
+  color: #22c55e;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 0 4px;
+}
+
+.removeTagButton:hover {
+  color: #137035;
+}
+
+.productListContainer {
+  max-height: 300px;
+  overflow-y: auto;
+  border-radius: 8px;
+
+  margin-top: 8px;
+}
+
+.loadingText,
+.errorText,
+.emptyText {
+  text-align: center;
+  color: #666;
+}
+
+.errorText {
+  color: #d32f2f;
+}
+
+.productItem {
+  padding: 12px;
+  margin: 4px 0;
+  background-color: #ebffce;
+  border: 1px solid #e1ffbb;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.productItem:hover {
+  background-color: #e0ffb8;
+}
+
+.productItemSelected {
+  background-color: #e8f5e9;
+  border: 2px solid #4caf50;
+  display: none;
+}
+
+.productName {
+  color: #225710;
+  font-weight: 500;
+}
+
+.productCategory {
+  margin-left: 0.5rem;
+  font-size: 12px;
+  color: #316d01;
+}
+
+.footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding-top: 1rem;
+  border-top: 2px solid #EFEFEF;
+}
+
+.footer button {
+  padding: 0.75rem 1.25rem;
+  border: none;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btnCancel {
+  background-color: #F2F2F2;
+  color: #333;
+  border: 1px solid #eaeaea;
+}
+
+.btnCancel:hover {
+  background-color: #e0e0e0;
+}
+
+.btnSave {
+  background-color: #4CAF50;
+  color: white;
+}
+
+.btnSave:hover {
+  opacity: 0.85;
+}

@@ -1,0 +1,216 @@
+{
+  "info": {
+    "name": "Pedidos API - Paginação",
+    "description": "Coleção de testes para endpoints de pedidos com paginação",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Listar Pedidos do Usuário (com paginação opcional)",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Pedidos do Usuário - Primeira Página",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos?page=0&size=5",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos"],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "5"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Pedidos do Usuário - Ordenação Ascendente",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos?direction=asc&sortBy=dataPedido",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos"],
+          "query": [
+            {
+              "key": "direction",
+              "value": "asc"
+            },
+            {
+              "key": "sortBy",
+              "value": "dataPedido"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Pedidos do Usuário - Ordenação Descendente",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos?direction=desc&sortBy=criadoEm&page=0&size=10",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos"],
+          "query": [
+            {
+              "key": "direction",
+              "value": "desc"
+            },
+            {
+              "key": "sortBy",
+              "value": "criadoEm"
+            },
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "10"
+            }
+          ]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Todos os Pedidos - Admin",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos/admin",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos", "admin"]
+        }
+      },
+      "response": []
+    },
+    {
+      "name": "Listar Todos os Pedidos - Admin com Paginação",
+      "request": {
+        "method": "GET",
+        "header": [
+          {
+            "key": "Authorization",
+            "value": "Bearer {{admin_token}}",
+            "type": "text"
+          }
+        ],
+        "url": {
+          "raw": "{{base_url}}/pedidos/admin?page=0&size=20&direction=desc&sortBy=atualizadoEm",
+          "host": ["{{base_url}}"],
+          "path": ["pedidos", "admin"],
+          "query": [
+            {
+              "key": "page",
+              "value": "0"
+            },
+            {
+              "key": "size",
+              "value": "20"
+            },
+            {
+              "key": "direction",
+              "value": "desc"
+            },
+            {
+              "key": "sortBy",
+              "value": "atualizadoEm"
+            }
+          ]
+        }
+      },
+      "response": []
+    }
+  ],
+  "variable": [
+    {
+      "key": "base_url",
+      "value": "http://localhost:8080",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "seu_token_de_usuario_aqui",
+      "type": "string"
+    },
+    {
+      "key": "admin_token",
+      "value": "seu_token_de_admin_aqui",
+      "type": "string"
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ]
+}

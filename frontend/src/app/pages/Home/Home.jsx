@@ -1,11 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect} from 'react';
 import Header from '../../layouts/header/header';
-import { getProducts } from '../../services/productService';
+import Footer from '../../layouts/footer/footer';
+import Products from '../Product/Product';
 
 const Home = () => {
     const [currentSlide, setCurrentSlide] = useState(0);
-    const [products, setProducts] = useState([]);
-    const [loading, setLoading] = useState(true);
+    
 
     // Imagens promocionais para o carrossel
     const promotionalImages = [
@@ -23,12 +23,6 @@ const Home = () => {
         },
         {
             id: 3,
-            title: "CARNES SELECIONADAS",
-            subtitle: "Qualidade premium garantida",
-            image: "https://images.unsplash.com/photo-1529692236671-f1f6cf9683ba?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2070&q=80"
-        },
-        {
-            id: 4,
             title: "QUEIJOS ARTESANAIS",
             subtitle: "Sabores únicos e tradicionais",
             image: "https://images.unsplash.com/photo-1486297678162-eb2a19b0a32d?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=2073&q=80"
@@ -39,7 +33,7 @@ const Home = () => {
     useEffect(() => {
         const interval = setInterval(() => {
             setCurrentSlide((prev) => (prev + 1) % promotionalImages.length);
-        }, 3500); // Passa a cada 1 segundo
+        }, 3500); // Passa a cada x milissegundos
 
         return () => clearInterval(interval);
     }, [promotionalImages.length]);
@@ -55,23 +49,12 @@ const Home = () => {
     const goToSlide = (index) => {
         setCurrentSlide(index);
     };
-    //retornando produtos do backend
-    useEffect(() => {
-        const fetchProducts = async () => {
-            try {
-                const data = await getProducts();
-                setProducts(data);
-            } catch (error) {
-                console.error('Erro ao buscar produtos:', error);
-            } finally {
-                setLoading(false);
-            }
-        };
-        fetchProducts();
-    }, []);
+    // removido: busca de produtos local (Home usa componente Products)
+
+    
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen" style={{ backgroundColor: 'var(--color-bg)' }}>
             <Header />
             <main className="p-5 px-4 md:p-5 md:px-4">
                 {/* Carrossel*/}
@@ -86,32 +69,40 @@ const Home = () => {
                         </button>
                         
                         <div className="w-full h-full relative">
-                            <div className="w-full h-full relative">
-                                <img 
-                                    src={promotionalImages[currentSlide].image} 
-                                    alt={promotionalImages[currentSlide].title}
-                                    className="w-full h-full object-cover transition-transform duration-500"
+                            {promotionalImages.map((img, index) => (
+                            <div
+                                key={index}
+                                className={`absolute inset-0 transition-opacity duration-3500 ease-in-out ${
+                                index === currentSlide ? 'opacity-100 z-10' : 'opacity-0 z-0'
+                                }`}
+                            >
+                                <img
+                                src={img.image}
+                                alt={img.title}
+                                className="w-full h-full object-cover"
                                 />
-                                <div 
-                                    className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
-                                    style={{
-                                        background: 'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)'
-                                    }}
+                                <div
+                                className="absolute inset-0 flex flex-col justify-center items-center text-center text-white"
+                                style={{
+                                    background:
+                                    'linear-gradient(135deg, rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.3) 50%, rgba(0, 0, 0, 0.7) 100%)',
+                                }}
                                 >
-                                    <h2 
-                                        className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
-                                        style={{textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)'}}
+                                    <h2
+                                    className="text-6xl md:text-4xl sm:text-3xl font-black mb-2 tracking-widest md:tracking-wide"
+                                    style={{ textShadow: '2px 2px 4px rgba(0, 0, 0, 0.8)' }}
                                     >
-                                        {promotionalImages[currentSlide].title}
-                                    </h2>
-                                    <p 
-                                        className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
-                                        style={{textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)'}}
-                                    >
-                                        {promotionalImages[currentSlide].subtitle}
-                                    </p>
+                                    {img.title}
+                                </h2>
+                                <p
+                                    className="text-2xl md:text-xl sm:text-lg font-semibold opacity-90"
+                                    style={{ textShadow: '1px 1px 2px rgba(0, 0, 0, 0.8)' }}
+                                >
+                                    {img.subtitle}
+                                </p>
                                 </div>
                             </div>
+                            ))}
                         </div>
                         
                         <button 
@@ -146,38 +137,46 @@ const Home = () => {
                         </div>
                     </div>
                 </section>
-
-                {/* Seção de Produtos */}
-                <section>
-                    <h2 className="text-2xl font-bold mb-6 text-gray-800">Produtos disponíveis</h2>
-
-                    {loading ? (
-                        <p>Carregando produtos...</p>
-                    ) : !Array.isArray(products) || products.length === 0 ? (
-                        <p>Nenhum produto encontrado.</p>
-                    ) : (
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
-                            {products.map((p) => (
-                                <div 
-                                    key={p.id} 
-                                    className="bg-white shadow-md rounded-2xl p-4 hover:shadow-lg transition-all duration-200"
-                                >
-                                    <img 
-                                        src={`http://localhost:8080${p.fotoUrl}`}
-                                        alt={p.name} 
-                                        className="w-full h-40 object-cover rounded-xl mb-3"
-                                    />
-                                    <h3 className="text-lg font-semibold text-gray-900">{p.nome}</h3>
-                                    <p className="text-gray-600 text-sm mb-2">{p.descricao}</p>
-                                    <span className="text-green-600 font-bold">
-                                        R$ {p.preco?.toFixed(2)}
-                                    </span>
-                                </div>
-                            ))}
-                        </div>
-                    )}
+                {/* Categorias (chips) */}
+                <section className="w-full max-w-none m-0 mt-6">
+                    <div className="rounded-2xl shadow-md p-4 flex flex-wrap items-center justify-around gap-6 px-6" style={{ backgroundColor: 'var(--color-panel)' }}>
+                        {[
+                            { icon: '🥬', label: 'Legumes' },
+                            { icon: '🍎', label: 'Frutas' },
+                            { icon: '🥦', label: 'Verduras' },
+                            { icon: '🌾', label: 'Grãos' },
+                            { icon: '🌶️', label: 'Temperos' }
+                        ].map((c, idx) => (
+                            <button
+                                key={idx}
+                                className="group flex flex-col items-center gap-1 text-sm text-gray-700 hover:text-ceasa-primary rounded-xl px-3 py-2 transition-colors border border-transparent outline-none focus:outline-none focus-visible:outline-none focus:ring-0 active:outline-none select-none"
+                                style={{ backgroundColor: 'transparent', appearance: 'none' }}
+                                aria-label={c.label}
+                            >
+                                <span className="text-2xl transition-transform duration-200 ease-out group-hover:scale-[1.15] group-hover:-translate-y-[1px] text-ceasa-primary">
+                                    {c.icon}
+                                </span>
+                                <span>{c.label}</span>
+                            </button>
+                        ))}
+                    </div>
                 </section>
+
+                {/* Calendário Sazonal */}
+                <section className="mt-10">
+                    <h2 className="text-3xl font-bold text-gray-900 mb-4">Calendário Sazonal</h2>
+                    <div className="bg-white rounded-2xl shadow-md p-6 h-40 flex items-center justify-center text-gray-500">
+                        <p>Em breve: calendário sazonal com frutas e legumes por estação.</p>
+                    </div>
+                </section>
+
+                {/* Lista de produtos reutilizando o componente Products */}
+                <section className="mt-10">
+                    <Products />
+                </section>
+                
             </main>
+            <Footer />
         </div>
     );
 };

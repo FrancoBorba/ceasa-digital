@@ -2,65 +2,201 @@ package br.com.uesb.ceasadigital.api.features.pedido.dto.response;
 
 import java.math.BigDecimal;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+import br.com.uesb.ceasadigital.api.features.endereco.dto.EnderecoDTO;
+import br.com.uesb.ceasadigital.api.features.pagamento.dto.pix.response.ResultadoCobrancaDTO;
 import br.com.uesb.ceasadigital.api.features.pedido.model.Pedido;
 import br.com.uesb.ceasadigital.api.features.pedido.model.enums.PedidoStatus;
 
 public class PedidoResponseDTO {
   
   private Long id;
-  private Long usuario_id;
-  private BigDecimal valor_total;
+
+  @JsonProperty("moment")
+  private Instant moment;
+
+  @JsonProperty("status")
   private PedidoStatus status;
-  private Instant data_pedido;
+
+  @JsonProperty("client")
+  private ClienteDTO client;
+
+  @JsonProperty("endereco")
+  private EnderecoDTO endereco;
+
+  @JsonProperty("payment")
+  private PaymentDTO payment;
+
+  @JsonProperty("items")
+  private List<ItemPedidoDetalhesDTO> items = new ArrayList<>();
+
+  @JsonProperty("total")
+  private BigDecimal total;
+
+  @JsonInclude(JsonInclude.Include.NON_NULL) 
+  private ResultadoCobrancaDTO dadosPix;
+
+
+  public PedidoResponseDTO() {
+  }
 
   public PedidoResponseDTO(Pedido pedido) {
     this.id = pedido.getId();
-    this.usuario_id = pedido.getUsuario().getId();
-    this.valor_total = pedido.getValorTotal();
+    this.moment = pedido.getDataPedido();
     this.status = pedido.getStatus();
-    this.data_pedido = pedido.getDataPedido();
+    this.total = pedido.getValorTotal();
+    
+    if (pedido.getUsuario() != null) {
+      this.client = new ClienteDTO(pedido.getUsuario().getId(), pedido.getUsuario().getName());
+    }
+    
+    if (pedido.getEndereco() != null) {
+      this.endereco = new EnderecoDTO(pedido.getEndereco());
+    }
+
+    this.payment = new PaymentDTO(null, null);
+    
+    if (pedido.getItens() != null) {
+      this.items = pedido.getItens().stream()
+          .map(ItemPedidoDetalhesDTO::new)
+          .collect(Collectors.toList());
+    }
+  }
+
+  
+  public ResultadoCobrancaDTO getDadosPix() {
+    return dadosPix;
+  }
+
+  public void setDadosPix(ResultadoCobrancaDTO dadosPix) {
+    this.dadosPix = dadosPix;
+  }
+
+  public static class ClienteDTO {
+    private Long id;
+    private String name;
+
+    public ClienteDTO() {
+    }
+
+    public ClienteDTO(Long id, String name) {
+      this.id = id;
+      this.name = name;
+    }
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+
+    public String getName() {
+      return name;
+    }
+
+    public void setName(String name) {
+      this.name = name;
+    }
+  }
+
+  public static class PaymentDTO {
+    private Long id;
+    private Instant moment;
+
+    public PaymentDTO() {
+    }
+
+    public PaymentDTO(Long id, Instant moment) {
+      this.id = id;
+      this.moment = moment;
+    }
+
+    public Long getId() {
+      return id;
+    }
+
+    public void setId(Long id) {
+      this.id = id;
+    }
+
+    public Instant getMoment() {
+      return moment;
+    }
+
+    public void setMoment(Instant moment) {
+      this.moment = moment;
+    }
   }
   
   public void setId(Long id) {
     this.id = id;
   }
 
-  public void setUsuario_id(Long usuario_id) {
-    this.usuario_id = usuario_id;
-  }
-
-  public void setValor_total(BigDecimal valor_total) {
-    this.valor_total = valor_total;
-  }
-
-  public void setStatus(PedidoStatus status) {
-    this.status = status;
-  }
-
-  public void setData_pedido(Instant data_pedido) {
-    this.data_pedido = data_pedido;
-  }
-
-
   public Long getId() {
     return id;
   }
 
-  public Long getUsuario_id() {
-    return usuario_id;
+  public Instant getMoment() {
+    return moment;
   }
 
-  public BigDecimal getValor_total() {
-    return valor_total;
+  public void setMoment(Instant moment) {
+    this.moment = moment;
   }
 
   public PedidoStatus getStatus() {
     return status;
   }
 
-  public Instant getData_pedido() {
-    return data_pedido;
+  public void setStatus(PedidoStatus status) {
+    this.status = status;
   }
 
+  public ClienteDTO getClient() {
+    return client;
+  }
+
+  public void setClient(ClienteDTO client) {
+    this.client = client;
+  }
+
+  public EnderecoDTO getEndereco() {
+    return endereco;
+  }
+
+  public void setEndereco(EnderecoDTO endereco) {
+    this.endereco = endereco;
+  }
+
+  public List<ItemPedidoDetalhesDTO> getItems() {
+    return items;
+  }
+
+  public void setItems(List<ItemPedidoDetalhesDTO> items) {
+    this.items = items;
+  }
+
+  public BigDecimal getTotal() {
+    return total;
+  }
+
+  public void setTotal(BigDecimal total) {
+    this.total = total;
+  }
+
+  public PaymentDTO getPayment() {
+    return payment;
+  }
+
+  public void setPayment(PaymentDTO payment) {
+    this.payment = payment;
+  }
 }

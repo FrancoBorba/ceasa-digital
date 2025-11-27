@@ -17,9 +17,7 @@ public interface ItemPedidoMapper {
   @Mapping(source = "pedido.id", target = "pedido_id")
   @Mapping(source = "oferta.id", target = "oferta_id")
   @Mapping(source = "quantidade", target = "quantidade")
-  @Mapping(source = "precoUnitario", target = "preco_unitario")
-  @Mapping(source = "criadoEm", target = "criado_em")
-  @Mapping(source = "atualizadoEm", target = "atualizado_em")
+  @Mapping(source = "precoTotal", target = "precoTotal")
   ItemPedidoResponseDTO toResponseDTO(ItemPedido item);
 
 }

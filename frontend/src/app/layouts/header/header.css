@@ -1,3 +1,4 @@
+
 /* Logo styling */
 .logo-container {
   width: 120px;
@@ -19,5 +20,28 @@
   .logo-container {
     width: 240px;
     height: 240px;
+  }
+}
+
+/* Address prompt tweaks */
+.address-prompt {
+  transition: background-color 0.2s ease-in-out;
+}
+.address-prompt:hover {
+  background-color: rgba(255, 255, 255, 0.12);
+}
+
+/* Truncate long address on single line with ellipsis */
+.address-value {
+  max-width: 260px;
+  display: inline-block;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+@media (max-width: 768px) {
+  .address-value {
+    max-width: 150px;
   }
 }

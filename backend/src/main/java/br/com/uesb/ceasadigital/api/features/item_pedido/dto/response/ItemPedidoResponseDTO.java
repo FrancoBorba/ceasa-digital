@@ -1,9 +1,7 @@
 package br.com.uesb.ceasadigital.api.features.item_pedido.dto.response;
 
 import java.math.BigDecimal;
-import java.time.Instant;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import br.com.uesb.ceasadigital.api.features.item_pedido.model.ItemPedido;
 
 /**
  * @author: Caíque Santos Santana
@@ -20,29 +18,16 @@ public class ItemPedidoResponseDTO {
   @JsonProperty("oferta_id")
   private Long oferta_id;
 
+  @JsonProperty("nome_produtor")
+  private String nomeProdutor;
+
   @JsonProperty("quantidade")
   private BigDecimal quantidade;
 
-  @JsonProperty("preco_unitario")
-  private BigDecimal preco_unitario;
-
-  @JsonProperty("criado_em")
-  private Instant criado_em;
-
-  @JsonProperty("atualizado_em")
-  private Instant atualizado_em;
+  @JsonProperty("preco_total_do_item")
+  private BigDecimal precoTotal;
 
   public ItemPedidoResponseDTO() {
-  }
-
-  public ItemPedidoResponseDTO(ItemPedido item) {
-    this.id = item.getId();
-    this.pedido_id = item.getPedido().getId();
-    this.oferta_id = item.getOferta().getId();
-    this.quantidade = item.getQuantidade();
-    this.preco_unitario = item.getPrecoUnitario();
-    this.criado_em = item.getCriadoEm();
-    this.atualizado_em = item.getAtualizadoEm();
   }
 
   public Long getId() {
@@ -69,6 +54,14 @@ public class ItemPedidoResponseDTO {
     this.oferta_id = oferta_id;
   }
 
+  public String getNomeProdutor() {
+    return nomeProdutor;
+  }
+
+  public void setNomeProdutor(String nomeProdutor) {
+    this.nomeProdutor = nomeProdutor;
+  }
+
   public BigDecimal getQuantidade() {
     return quantidade;
   }
@@ -77,27 +70,11 @@ public class ItemPedidoResponseDTO {
     this.quantidade = quantidade;
   }
 
-  public BigDecimal getPreco_unitario() {
-    return preco_unitario;
+  public BigDecimal getPrecoTotal() {
+    return precoTotal;
   }
 
-  public void setPreco_unitario(BigDecimal preco_unitario) {
-    this.preco_unitario = preco_unitario;
-  }
-
-  public Instant getCriado_em() {
-    return criado_em;
-  }
-
-  public void setCriado_em(Instant criado_em) {
-    this.criado_em = criado_em;
-  }
-
-  public Instant getAtualizado_em() {
-    return atualizado_em;
-  }
-
-  public void setAtualizado_em(Instant atualizado_em) {
-    this.atualizado_em = atualizado_em;
+  public void setPrecoTotal(BigDecimal precoTotal) {
+    this.precoTotal = precoTotal;
   }
 }

@@ -17,7 +17,6 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.OAuth2Token;
@@ -80,24 +79,36 @@ public class AuthorizationServerSecurityConfig {
 	@Autowired
 	private OAuth2ResponseInterceptorFilter oauth2ResponseInterceptorFilter;
 
+	@Autowired
+    private PasswordEncoder passwordEncoder;
+
 	@Bean
 	@Order(2)
 	public SecurityFilterChain asSecurityFilterChain(HttpSecurity http) throws Exception {
 
-		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-
 		// @formatter:off
+		// IMPORTANT: CORS and CSRF must be configured BEFORE applying default security
+		// to ensure they are not overridden by the OAuth2 Authorization Server defaults
+		
+		// Step 1: Disable CSRF first
+		http.csrf(csrf -> csrf.disable());
+		
+		// Step 2: Configure CORS with explicit configuration
+		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
+		
+		// Step 3: Apply default OAuth2 Authorization Server security
+		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
+		
+		// Step 4: Configure custom authentication provider
 		http.getConfigurer(OAuth2AuthorizationServerConfigurer.class)
 			.tokenEndpoint(tokenEndpoint -> tokenEndpoint
 				.accessTokenRequestConverter(new CustomPasswordAuthenticationConverter())
-				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder())));
+				.authenticationProvider(new CustomPasswordAuthenticationProvider(authorizationService(), tokenGenerator(), userDetailsService, passwordEncoder)));
 
+		// Step 5: Configure OAuth2 Resource Server
 		http.oauth2ResourceServer(oauth2ResourceServer -> oauth2ResourceServer.jwt(Customizer.withDefaults()));
 		
-		// Configure CORS explicitly using the same configuration source
-		http.cors(cors -> cors.configurationSource(corsConfigurationSource));
-		
-		// Add filter to intercept OAuth2 responses
+		// Step 6: Add filter to intercept OAuth2 responses
 		http.addFilterBefore(oauth2ResponseInterceptorFilter, LogoutFilter.class);
 		// @formatter:on
 
@@ -115,17 +126,12 @@ public class AuthorizationServerSecurityConfig {
 	}
 
 	@Bean
-	public PasswordEncoder passwordEncoder() {
-		return new BCryptPasswordEncoder();
-	}
-
-	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
 		// @formatter:off
 		RegisteredClient registeredClient = RegisteredClient
 			.withId(UUID.randomUUID().toString())
 			.clientId(clientId)
-			.clientSecret(passwordEncoder().encode(clientSecret))
+			.clientSecret(passwordEncoder.encode(clientSecret))
 			.scope("read")
 			.scope("write")
 			.authorizationGrantType(new AuthorizationGrantType("password"))

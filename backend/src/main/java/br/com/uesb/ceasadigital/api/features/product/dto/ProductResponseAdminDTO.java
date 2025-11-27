@@ -2,7 +2,11 @@ package br.com.uesb.ceasadigital.api.features.product.dto;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
+import br.com.uesb.ceasadigital.api.features.categoria.dto.CategoryDTO;
+import br.com.uesb.ceasadigital.api.features.product.model.Product;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 
@@ -40,6 +44,36 @@ public class ProductResponseAdminDTO{
   private LocalDateTime criadoEm;
 
   private LocalDateTime atualizadoEm;
+
+  private List<CategoryDTO> categories = new ArrayList<>();
+  
+  public ProductResponseAdminDTO() {
+  }
+
+  public ProductResponseAdminDTO(Long id, String nome, BigDecimal preco, String unidadeDeMedida, String descricao, String fotoUrl) {
+    this.id = id;
+    this.nome = nome;
+    this.preco = preco;
+    this.unidadeDeMedida = unidadeDeMedida;
+    this.descricao = descricao;
+  }
+
+  public ProductResponseAdminDTO(Product product) {
+    this.id = product.getId();
+    this.nome = product.getNome();
+    this.preco = product.getPreco();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.descricao = product.getDescricao();
+  }
+
+  public ProductResponseAdminDTO(Product product, List<CategoryDTO> categories) {
+    this.id = product.getId();
+    this.nome = product.getNome();
+    this.preco = product.getPreco();
+    this.unidadeDeMedida = product.getUnidadeDeMedida();
+    this.descricao = product.getDescricao();
+    categories.forEach(category -> this.categories.add(category));
+  }
 
 
   public Long getId() {
@@ -96,5 +130,13 @@ public class ProductResponseAdminDTO{
 
   public void setAtualizadoEm(LocalDateTime atualizado_em) {
     this.atualizadoEm = atualizado_em;
+  }
+
+  public List<CategoryDTO> getCategories() {
+    return categories;
+  }
+
+  public void setCategories(List<CategoryDTO> categories) {
+    this.categories = categories;
   }
 }

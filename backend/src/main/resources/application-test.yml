@@ -38,3 +38,7 @@ spring:
   # Desabilitar Flyway para testes com H2
   flyway:
     enabled: false
+  
+  # Propriedade mínima necessária para EmailService (não envia emails em testes)
+  mail:
+    username: test@example.com

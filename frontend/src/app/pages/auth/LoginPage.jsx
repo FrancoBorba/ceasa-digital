@@ -1,15 +1,12 @@
-import {useEffect, useState } from "react";
-import AuthFormBrackground from "../../components/auth/AuthFormBrackground";
-import AuthUnderlineInputText from "../../components/auth/AuthUnderlineInputText";
-import useUserLoginAuthentication from "../../hooks/auth/useUserLoginAuthentication";
-import AuthLinkText from "../../components/auth/AuthLinkText";
-import useTryToRefreshAccessToken from "../../hooks/auth/useTryToRefreshAccessToken";
+import { useState } from "react";
+import AuthFormBrackground from "./components/login/AuthFormBrackground";
+import AuthUnderlineInputText from "./components/login/AuthUnderlineInputText";
+import useUserLoginAuthentication from "./hooks/useUserLoginAuthentication";
+import AuthLinkText from "./components/login/AuthLinkText";
+//import useEffectTryToRefreshAccessToken from "./hooks/useEffectTryToRefreshAccessToken";
 
 function LoginPage() {
-  const tryToRefreshAccessToken = useTryToRefreshAccessToken();
-  useEffect(() => {
-    tryToRefreshAccessToken();
-  }, [tryToRefreshAccessToken]);
+  //useEffectTryToRefreshAccessToken();
 
   const { tryToAuthenticateUser } = useUserLoginAuthentication();
   const [formData, setFormData] = useState({
@@ -48,8 +45,10 @@ function LoginPage() {
         type={"password"}
       />
       <div className="flex flex-col gap-1">
-        <AuthLinkText link={"/"} >Esqueceu o e-mail ou senha?</AuthLinkText>
-        <AuthLinkText link={"/register"} >Crie sua conta</AuthLinkText>
+        <AuthLinkText link={"/forgot-password"}>
+          Esqueceu o e-mail ou senha?
+        </AuthLinkText>
+        <AuthLinkText link={"/select-register"}>Crie sua conta</AuthLinkText>
       </div>
     </AuthFormBrackground>
   );
